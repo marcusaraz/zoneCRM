@@ -27,6 +27,8 @@ export const getAuthProvidersByWorkspace = ({
       workspace.isPasswordAuthEnabled && systemEnabledProviders.password,
     microsoft:
       workspace.isMicrosoftAuthEnabled && systemEnabledProviders.microsoft,
+    oidc: systemEnabledProviders.oidc ?? false,
+    oidcLabel: systemEnabledProviders.oidcLabel,
     sso: workspace.workspaceSsoIdentityProviders
       .map((identityProvider: WorkspaceSsoIdentityProviderEntity) =>
         identityProvider.status === SsoIdentityProviderStatus.Active

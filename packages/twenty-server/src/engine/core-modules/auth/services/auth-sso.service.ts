@@ -43,7 +43,10 @@ export class AuthSsoService {
       // so get the first workspace with the current auth method enable
       const workspace = await this.workspaceRepository.findOne({
         where: {
-          [this.getAuthProviderColumnNameByProvider(authProvider)]: true,
+          // Zone CRM: the server-wide OIDC provider is not switched per workspace.
+          ...(authProvider === AuthProviderEnum.Oidc
+            ? {}
+            : { [this.getAuthProviderColumnNameByProvider(authProvider)]: true }),
           workspaceUsers: {
             user: {
               email,

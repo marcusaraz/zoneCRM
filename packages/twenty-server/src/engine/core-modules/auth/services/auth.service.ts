@@ -983,7 +983,10 @@ export class AuthService {
       locale,
       returnToPath,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
-    authProvider: AuthProviderEnum.Google | AuthProviderEnum.Microsoft,
+    authProvider:
+      | AuthProviderEnum.Google
+      | AuthProviderEnum.Microsoft
+      | AuthProviderEnum.Oidc,
   ): Promise<string> {
     const email = rawEmail.toLowerCase();
 
@@ -1114,6 +1117,7 @@ export class AuthService {
       | AuthProviderEnum.Google
       | AuthProviderEnum.Microsoft
       | AuthProviderEnum.SSO;
+      | AuthProviderEnum.Oidc
     oidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
@@ -1139,7 +1143,8 @@ export class AuthService {
     authProvider:
       | AuthProviderEnum.Google
       | AuthProviderEnum.Microsoft
-      | AuthProviderEnum.SSO,
+      | AuthProviderEnum.SSO
+      | AuthProviderEnum.Oidc,
   ): ConnectedAccountProvider {
     switch (authProvider) {
       case AuthProviderEnum.Google:
@@ -1147,6 +1152,7 @@ export class AuthService {
       case AuthProviderEnum.Microsoft:
         return ConnectedAccountProvider.MICROSOFT;
       case AuthProviderEnum.SSO:
+      case AuthProviderEnum.Oidc:
         return ConnectedAccountProvider.OIDC;
       default:
         throw new Error(

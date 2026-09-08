@@ -196,6 +196,8 @@ export class ClientConfigService {
         magicLink: false,
         password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
+        oidc: this.twentyConfigService.get('AUTH_OIDC_ENABLED'),
+        oidcLabel: this.twentyConfigService.get('AUTH_OIDC_LABEL'),
         sso: [],
       },
       signInPrefilled: this.twentyConfigService.get('SIGN_IN_PREFILLED'),

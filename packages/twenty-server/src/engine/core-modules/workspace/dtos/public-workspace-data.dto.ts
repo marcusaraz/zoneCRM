@@ -42,6 +42,12 @@ export class AuthProvidersDTO {
 
   @Field(() => Boolean)
   microsoft: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  oidc?: boolean;
+
+  @Field(() => String, { nullable: true })
+  oidcLabel?: string;
 }
 
 @ObjectType('AuthBypassProviders')

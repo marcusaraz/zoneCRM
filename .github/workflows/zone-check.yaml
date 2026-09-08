@@ -1,0 +1,47 @@
+name: Zone CRM check
+
+on:
+  push:
+    branches: [zone]
+    paths:
+      - 'packages/twenty-server/**'
+      - 'packages/twenty-front/**'
+      - 'packages/twenty-shared/**'
+      - 'packages/twenty-ui/**'
+      - '.github/workflows/zone-check.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    timeout-minutes: 40
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server typecheck
+        run: npx nx run twenty-server:typecheck
+      - name: Server lint
+        run: npx nx run twenty-server:lint
+
+  front:
+    timeout-minutes: 40
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build libraries
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-ui
+          npx nx build twenty-front-component-renderer
+      - name: Front typecheck
+        run: npx nx run twenty-front:typecheck
+      - name: Front lint
+        run: npx nx run twenty-front:lint

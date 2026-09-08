@@ -601,6 +601,18 @@ export const useAuth = () => {
     [buildRedirectUrl, redirect],
   );
 
+  // Zone CRM: server-wide OpenID Connect provider.
+  const handleOidcLogin = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+      action: string;
+    }) => {
+      redirect(buildRedirectUrl('/auth/oidc', params));
+    },
+    [buildRedirectUrl, redirect],
+  );
+
   const handleGetAuthTokensFromOTP = useCallback(
     async (otp: string, loginToken: string, captchaToken?: string) => {
       const getAuthTokensFromOtpResult = await getAuthTokensFromOtp({
@@ -640,6 +652,7 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    signInWithOidc: handleOidcLogin,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
     navigateAfterMultiWorkspaceSignInUp,
   };

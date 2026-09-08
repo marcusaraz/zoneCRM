@@ -12,11 +12,13 @@ import { ConnectionProviderModule } from 'src/engine/core-modules/application/co
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
+import { OidcAuthController } from 'src/engine/core-modules/auth/controllers/oidc-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { OAuthPropagatorController } from 'src/engine/core-modules/auth/controllers/oauth-propagator.controller';
 import { SsoAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { OidcAuthService } from 'src/engine/core-modules/auth/services/oidc-auth.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
@@ -140,6 +142,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
+    OidcAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,
@@ -171,6 +174,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,
+    OidcAuthService,
   ],
   exports: [
     AccessTokenService,

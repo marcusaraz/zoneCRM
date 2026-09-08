@@ -183,6 +183,70 @@ export class ConfigVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
+  // Zone CRM: one OpenID Connect provider for the whole server (Authentik).
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    description: 'Enable or disable sign-in through a server-wide OpenID Connect provider',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AUTH_OIDC_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Issuer URL of the OpenID Connect provider (discovery document is read from it)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_ISSUER: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Client ID registered at the OpenID Connect provider',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CLIENT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: true,
+    description: 'Client secret registered at the OpenID Connect provider',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CLIENT_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description:
+      'Callback URL registered at the provider; defaults to SERVER_URL/auth/oidc/redirect',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  AUTH_OIDC_CALLBACK_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    description: 'Scopes requested from the OpenID Connect provider',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_OIDC_SCOPES = 'openid email profile';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    description: 'Label of the sign-in button shown for the OpenID Connect provider',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_OIDC_LABEL = 'Continue with single sign-on';
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable the Gmail messaging integration',
