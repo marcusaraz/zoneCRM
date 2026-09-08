@@ -43,6 +43,12 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     isHiddenOnLoad: false,
     isHiddenInAdminPanel: false,
   },
+  [ConfigVariablesGroup.OIDC_AUTH]: {
+    position: 550,
+    description: 'Configure the server-wide OpenID Connect sign-in (Zone CRM)',
+    isHiddenOnLoad: false,
+    isHiddenInAdminPanel: false,
+  },
   [ConfigVariablesGroup.EMAIL_SETTINGS]: {
     position: 600,
     description:
