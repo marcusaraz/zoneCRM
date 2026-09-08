@@ -32,6 +32,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Work out a semver for APP_VERSION
+        id: version
+        run: |
+          base=$(node -p "require('./packages/twenty-server/package.json').version")
+          echo "app_version=${base}-zone.${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -43,6 +49,6 @@ jobs:
             ghcr.io/marcusaraz/zonecrm:zone
             ghcr.io/marcusaraz/zonecrm:${{ github.sha }}
           build-args: |
-            APP_VERSION=zone-${{ github.sha }}
+            APP_VERSION=${{ steps.version.outputs.app_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
