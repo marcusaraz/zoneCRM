@@ -1116,8 +1116,8 @@ export class AuthService {
     authProvider:
       | AuthProviderEnum.Google
       | AuthProviderEnum.Microsoft
-      | AuthProviderEnum.SSO;
-      | AuthProviderEnum.Oidc
+      | AuthProviderEnum.SSO
+      | AuthProviderEnum.Oidc;
     oidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
