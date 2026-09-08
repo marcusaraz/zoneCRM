@@ -76,6 +76,27 @@ export class OidcAuthService {
     return `${serverUrl}/auth/oidc/redirect`;
   }
 
+  // The flow starts on whatever host the front is served from (app, or a
+  // workspace subdomain) and comes back on the callback host, so the
+  // transaction cookie is scoped to the shared parent domain when there is one.
+  private getCookieDomain(): string | undefined {
+    const frontendUrl = this.twentyConfigService.get('FRONTEND_URL');
+
+    if (!frontendUrl) {
+      return undefined;
+    }
+
+    try {
+      const hostname = new URL(frontendUrl).hostname;
+
+      return hostname.includes('.') && !/^[\d.]+$/.test(hostname)
+        ? hostname
+        : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
   private async getClient(): Promise<Client> {
     const issuerUrl = this.twentyConfigService.get('AUTH_OIDC_ISSUER');
     const clientId = this.twentyConfigService.get('AUTH_OIDC_CLIENT_ID');
@@ -142,6 +163,7 @@ export class OidcAuthService {
       sameSite: 'lax',
       maxAge: OIDC_TRANSACTION_TTL_MS,
       path: OIDC_COOKIE_PATH,
+      domain: this.getCookieDomain(),
     });
 
     return client.authorizationUrl({
@@ -166,7 +188,10 @@ export class OidcAuthService {
 
     const raw = readCookie(request, OIDC_COOKIE_NAME);
 
-    response.clearCookie(OIDC_COOKIE_NAME, { path: OIDC_COOKIE_PATH });
+    response.clearCookie(OIDC_COOKIE_NAME, {
+      path: OIDC_COOKIE_PATH,
+      domain: this.getCookieDomain(),
+    });
 
     const transaction = raw ? parseJson<OidcTransaction>(raw) : undefined;
 
