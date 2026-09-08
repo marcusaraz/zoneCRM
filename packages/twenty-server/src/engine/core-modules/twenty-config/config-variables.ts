@@ -186,7 +186,8 @@ export class ConfigVariables {
   // Zone CRM: one OpenID Connect provider for the whole server (Authentik).
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OIDC_AUTH,
-    description: 'Enable or disable sign-in through a server-wide OpenID Connect provider',
+    description:
+      'Enable or disable sign-in through a server-wide OpenID Connect provider',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -195,7 +196,8 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OIDC_AUTH,
     isSensitive: false,
-    description: 'Issuer URL of the OpenID Connect provider (discovery document is read from it)',
+    description:
+      'Issuer URL of the OpenID Connect provider (discovery document is read from it)',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -241,7 +243,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OIDC_AUTH,
-    description: 'Label of the sign-in button shown for the OpenID Connect provider',
+    description:
+      'Label of the sign-in button shown for the OpenID Connect provider',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()

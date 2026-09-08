@@ -79,7 +79,9 @@ export class OidcAuthService {
   private async getClient(): Promise<Client> {
     const issuerUrl = this.twentyConfigService.get('AUTH_OIDC_ISSUER');
     const clientId = this.twentyConfigService.get('AUTH_OIDC_CLIENT_ID');
-    const clientSecret = this.twentyConfigService.get('AUTH_OIDC_CLIENT_SECRET');
+    const clientSecret = this.twentyConfigService.get(
+      'AUTH_OIDC_CLIENT_SECRET',
+    );
     const callbackUrl = this.getCallbackUrl();
 
     if (!issuerUrl || !clientId || !clientSecret) {
@@ -168,7 +170,11 @@ export class OidcAuthService {
 
     const transaction = raw ? parseJson<OidcTransaction>(raw) : undefined;
 
-    if (!transaction?.state || !transaction.nonce || !transaction.codeVerifier) {
+    if (
+      !transaction?.state ||
+      !transaction.nonce ||
+      !transaction.codeVerifier
+    ) {
       throw new AuthException(
         'Sign-in session expired, please start again',
         AuthExceptionCode.INVALID_INPUT,

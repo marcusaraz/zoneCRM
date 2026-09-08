@@ -43,10 +43,7 @@ export class OidcAuthController {
     const user = await this.oidcAuthService.handleCallback(req, res);
 
     return res.redirect(
-      await this.authService.signInUpWithSocialSso(
-        user,
-        AuthProviderEnum.Oidc,
-      ),
+      await this.authService.signInUpWithSocialSso(user, AuthProviderEnum.Oidc),
     );
   }
 }

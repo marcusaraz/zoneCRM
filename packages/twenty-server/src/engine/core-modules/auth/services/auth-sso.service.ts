@@ -46,7 +46,9 @@ export class AuthSsoService {
           // Zone CRM: the server-wide OIDC provider is not switched per workspace.
           ...(authProvider === AuthProviderEnum.Oidc
             ? {}
-            : { [this.getAuthProviderColumnNameByProvider(authProvider)]: true }),
+            : {
+                [this.getAuthProviderColumnNameByProvider(authProvider)]: true,
+              }),
           workspaceUsers: {
             user: {
               email,
