@@ -14,7 +14,10 @@ import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
 import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
 import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
-import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
+import {
+  getTimelineActivityAuthorFullName,
+  SYSTEM_AUTHOR_NAME,
+} from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
@@ -170,10 +173,26 @@ export const EventRow = ({
     allowRequestsToTwentyIcons,
   });
 
-  const authorFullName = getTimelineActivityAuthorFullName(
+  // Zone CRM: an event on the record itself that no member caused is signed
+  // by where the record came from (HubSpot, Zone Chat), when that is known.
+  const systemAuthorFullName = getTimelineActivityAuthorFullName(
     event,
     currentWorkspaceMember,
   );
+  const createdBy = recordStore.createdBy as
+    | { source?: string; name?: string }
+    | null
+    | undefined;
+  const importedFrom =
+    createdBy?.source === 'IMPORT' && isDefined(createdBy.name)
+      ? createdBy.name
+      : null;
+  const authorFullName =
+    systemAuthorFullName === SYSTEM_AUTHOR_NAME &&
+    !isDefined(event.linkedRecordId) &&
+    isDefined(importedFrom)
+      ? importedFrom
+      : systemAuthorFullName;
 
   return (
     <>

@@ -11,6 +11,7 @@ import { EventRowDate } from '@/activities/timeline-activities/rows/components/E
 import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { getAuthorizedLinkedRecordName } from '@/activities/timeline-activities/rows/generic/utils/getAuthorizedLinkedRecordName';
+import { SYSTEM_AUTHOR_NAME } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import {
   StyledEventRow,
   StyledEventRowContainer,
@@ -47,7 +48,8 @@ export const EventRowGenericLinked = ({
   // Records created through the API carry the workspace name as author. An
   // imported note or task knows who wrote it in HubSpot (createdBy, source
   // IMPORT), so that name stands in for the workspace.
-  const isImportedActivity = isActivity && authorFullName === 'Twenty';
+  const isImportedActivity =
+    isActivity && authorFullName === SYSTEM_AUTHOR_NAME;
   const { record: activityRecord } = useFindOneRecord<
     ObjectRecord & { createdBy?: FieldActorValue | null }
   >({
