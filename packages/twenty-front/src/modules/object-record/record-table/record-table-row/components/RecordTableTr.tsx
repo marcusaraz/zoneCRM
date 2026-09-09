@@ -69,6 +69,8 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
           isDragging={isDragging}
           ref={ref}
           data-active={isRecordTableRowActive}
+          data-selected={isRowSelected}
+          data-striped={focusIndex % 2 === 1}
           data-focused={
             isRecordTableRowFocusActive &&
             isRecordTableRowFocused &&

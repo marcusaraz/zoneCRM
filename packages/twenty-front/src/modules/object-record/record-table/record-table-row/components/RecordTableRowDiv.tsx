@@ -14,6 +14,16 @@ const StyledTr = styled.div<{
 
   position: relative;
 
+  /* Zone CRM: zebra rows. Cells paint their own background so the sticky
+     columns stay opaque; every second row paints them light grey instead,
+     unless the row is selected. */
+  &[data-striped='true']:not([data-selected='true']) {
+    div.table-cell,
+    div.table-cell-0-0 {
+      background-color: ${themeCssVariables.background.secondary};
+    }
+  }
+
   &[data-focused='true'],
   &[data-active='true'] {
     div.table-cell,

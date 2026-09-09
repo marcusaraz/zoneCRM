@@ -1,7 +1,7 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useChipFieldDisplay';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipSize } from 'twenty-ui/data-display';
+import { ChipSize, ChipVariant } from 'twenty-ui/data-display';
 
 export const ChipFieldDisplay = () => {
   const {
@@ -24,6 +24,8 @@ export const ChipFieldDisplay = () => {
       objectNameSingular={objectNameSingular}
       record={recordValue}
       size={ChipSize.Small}
+      // Zone CRM: the name reads as text on the striped row, not as a grey chip.
+      variant={ChipVariant.Transparent}
       to={labelIdentifierLink}
       forceDisableClick={disableChipClick}
       triggerEvent={triggerEvent}
