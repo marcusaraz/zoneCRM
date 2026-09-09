@@ -22,7 +22,7 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  max-width: 560px;
+  min-width: 0;
   padding: ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
@@ -30,6 +30,8 @@ const StyledCard = styled.div`
 const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
+  overflow-wrap: anywhere;
+  white-space: normal;
 `;
 
 const StyledBody = styled.div<{ expanded: boolean }>`

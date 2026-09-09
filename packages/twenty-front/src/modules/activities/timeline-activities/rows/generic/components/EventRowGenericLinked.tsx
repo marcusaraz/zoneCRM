@@ -144,7 +144,7 @@ export const EventRowGenericLinked = ({
         <EventRowDate happensAt={happensAt} />
       </StyledEventRowContainer>
       {canOpen && (
-        <EventCard isOpen={isOpen}>
+        <EventCard isOpen={isOpen} isFullWidth={isActivity}>
           {isActivity ? (
             <EventRowActivityCard
               objectNameSingular={activityObjectName}
