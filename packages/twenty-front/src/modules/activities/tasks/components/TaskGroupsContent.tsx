@@ -8,7 +8,6 @@ import groupBy from 'lodash.groupby';
 import { isDefined } from 'twenty-shared/utils';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -51,7 +50,6 @@ export const TaskGroupsContent = ({
   if (isTasksEmpty) {
     return (
       <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
             {t`Mission accomplished!`}
