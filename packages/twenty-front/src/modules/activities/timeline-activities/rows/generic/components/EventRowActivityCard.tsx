@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { getActivityCardText } from '@/activities/utils/getActivityCardText';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -60,6 +61,7 @@ const StyledMore = styled.button`
 `;
 
 type ActivityRecord = ObjectRecord & {
+  createdBy?: { name?: string | null } | null;
   title?: string | null;
   bodyV2?: { blocknote?: string | null; markdown?: string | null } | null;
   status?: string | null;
@@ -83,6 +85,7 @@ export const EventRowActivityCard = ({
       id: true,
       title: true,
       bodyV2: true,
+      createdBy: true,
       ...(objectNameSingular === 'task' ? { status: true, dueAt: true } : {}),
     },
   });
@@ -92,9 +95,13 @@ export const EventRowActivityCard = ({
   }
 
   const blocknote = record.bodyV2?.blocknote ?? null;
-  const body = isDefined(blocknote)
-    ? getActivityPreview(blocknote)
-    : (record.bodyV2?.markdown ?? '');
+  const { title, body } = getActivityCardText({
+    title: record.title,
+    body: isDefined(blocknote)
+      ? getActivityPreview(blocknote)
+      : (record.bodyV2?.markdown ?? ''),
+    author: record.createdBy?.name,
+  });
   const isLong = body.split('\n').length > PREVIEW_LINES || body.length > 600;
 
   const meta =
@@ -110,9 +117,7 @@ export const EventRowActivityCard = ({
         openRecordInSidePanel({ recordId: record.id, objectNameSingular })
       }
     >
-      {isDefined(record.title) && record.title !== '' && (
-        <StyledTitle>{record.title}</StyledTitle>
-      )}
+      {title !== '' && <StyledTitle>{title}</StyledTitle>}
       {meta !== '' && <StyledMeta>{meta}</StyledMeta>}
       {body !== '' && <StyledBody expanded={expanded}>{body}</StyledBody>}
       {isLong && (

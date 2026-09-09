@@ -7,4 +7,9 @@ export type Activity = {
     blocknote: string | null;
     markdown: string | null;
   };
+  // Zone CRM: who wrote it, so a card can say so instead of repeating it in the body.
+  createdBy?: {
+    name?: string | null;
+    source?: string | null;
+  } | null;
 };
