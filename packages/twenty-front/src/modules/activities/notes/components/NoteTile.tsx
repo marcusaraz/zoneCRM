@@ -6,6 +6,7 @@ import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { beautifyExactDateTime } from '~/utils/date-utils';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -31,9 +32,26 @@ const StyledCardDetailsContainer = styled.div`
   width: calc(100% - ${themeCssVariables.spacing[8]});
 `;
 
+const StyledNoteHead = styled.div`
+  align-items: baseline;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  width: 100%;
+`;
+
 const StyledNoteTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
+  min-width: 0;
+`;
+
+// Zone CRM: when the note was written, on the card itself.
+const StyledNoteDate = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
+  white-space: nowrap;
 `;
 
 const StyledCardContent = styled.div`
@@ -70,7 +88,12 @@ export const NoteTile = ({
           })
         }
       >
-        <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
+        <StyledNoteHead>
+          <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
+          <StyledNoteDate>
+            {beautifyExactDateTime(note.createdAt)}
+          </StyledNoteDate>
+        </StyledNoteHead>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
     </StyledCard>
