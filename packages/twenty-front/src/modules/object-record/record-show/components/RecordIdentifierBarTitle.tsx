@@ -45,6 +45,9 @@ export const RecordIdentifierBarTitle = ({
 
   const isAvatarEditable = isDefined(onUploadPicture);
   const isInSidePanel = variant === 'side-panel';
+  // Zone CRM: a note or task has no face; its initial in a square said nothing.
+  const hasAvatar =
+    objectNameSingular !== 'note' && objectNameSingular !== 'task';
 
   const handleRecordLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (
@@ -84,15 +87,21 @@ export const RecordIdentifierBarTitle = ({
     <>
       <HeaderIdentifier
         fontSize={isInSidePanel ? 'md' : 'lg'}
-        avatar={{
-          avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
-          onClick: isAvatarEditable
-            ? () => inputFileRef.current?.click?.()
-            : undefined,
-          placeholderColorSeed: objectRecordId,
-          placeholder: recordIdentifier?.name ?? '',
-          type: recordIdentifier?.avatarType ?? 'rounded',
-        }}
+        avatar={
+          hasAvatar
+            ? {
+                avatarUrl: getAbsoluteImageUrl(
+                  recordIdentifier?.avatarUrl ?? '',
+                ),
+                onClick: isAvatarEditable
+                  ? () => inputFileRef.current?.click?.()
+                  : undefined,
+                placeholderColorSeed: objectRecordId,
+                placeholder: recordIdentifier?.name ?? '',
+                type: recordIdentifier?.avatarType ?? 'rounded',
+              }
+            : undefined
+        }
         title={
           // A writable title has to stay click-to-edit, so only a read-only one
           // can double as a link to the record page.
