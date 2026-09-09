@@ -6,6 +6,8 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -46,7 +48,11 @@ export const SidePanelSearchRecordsPage = () => {
 
   const previewedItem = useSidePanelSearchRecordPreviewItem(searchResultItems);
 
-  const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
+  // Zone CRM: no preview card until something has been typed; the list that
+  // opens with the panel would otherwise pop the first record's card at once.
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const shouldDisplayPreview =
+    !isMobile && isDefined(previewedItem) && sidePanelSearch.trim() !== '';
 
   return (
     <>

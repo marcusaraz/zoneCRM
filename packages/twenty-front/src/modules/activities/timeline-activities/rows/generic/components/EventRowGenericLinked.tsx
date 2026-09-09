@@ -3,6 +3,7 @@ import { type KeyboardEvent, useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
+import { EventRowActivityCard } from '@/activities/timeline-activities/rows/generic/components/EventRowActivityCard';
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
@@ -33,7 +34,18 @@ export const EventRowGenericLinked = ({
   hasRenderer,
 }: EventRowGenericLinkedProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const [isOpen, setIsOpen] = useState(false);
+
+  // Zone CRM: a note or task attached to the record is shown as itself, open by
+  // default, rather than as a "linked a related note" line with a hidden card.
+  const activityObjectName = linkedObjectMetadataItem?.nameSingular;
+  const isActivity =
+    (activityObjectName === 'note' || activityObjectName === 'task') &&
+    eventTypeLabel?.startsWith('linked') === true;
+  // Records created through the API carry the workspace name as author;
+  // an imported note already names its author in the body.
+  const showAuthor = !isActivity || authorFullName !== 'Twenty';
+
+  const [isOpen, setIsOpen] = useState(isActivity);
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -89,11 +101,15 @@ export const EventRowGenericLinked = ({
     <StyledEventRow>
       <StyledEventRowContainer>
         <StyledEventRowContent>
-          <EventRowItem>{authorFullName}</EventRowItem>
+          {showAuthor && <EventRowItem>{authorFullName}</EventRowItem>}
           <EventRowItem variant="action">
-            {eventTypeLabel ?? t`linked a ${objectLabel}`}
+            {isActivity
+              ? activityObjectName === 'note'
+                ? t`added a note`
+                : t`added a task`
+              : (eventTypeLabel ?? t`linked a ${objectLabel}`)}
           </EventRowItem>
-          {canOpen && (
+          {canOpen && !isActivity && (
             <StyledEventRowLinkedRecord
               role="button"
               tabIndex={0}
@@ -111,11 +127,18 @@ export const EventRowGenericLinked = ({
       </StyledEventRowContainer>
       {canOpen && (
         <EventCard isOpen={isOpen}>
-          <SidePanelSearchRecordPreviewCard
-            objectNameSingular={linkedRecord.objectNameSingular}
-            recordId={linkedRecord.id}
-            label={linkedRecordName}
-          />
+          {isActivity ? (
+            <EventRowActivityCard
+              objectNameSingular={activityObjectName}
+              recordId={linkedRecord.id}
+            />
+          ) : (
+            <SidePanelSearchRecordPreviewCard
+              objectNameSingular={linkedRecord.objectNameSingular}
+              recordId={linkedRecord.id}
+              label={linkedRecordName}
+            />
+          )}
         </EventCard>
       )}
     </StyledEventRow>
