@@ -33,12 +33,12 @@ const StyledTitle = styled.div`
 `;
 
 const StyledBody = styled.div<{ expanded: boolean }>`
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${({ expanded }) => (expanded ? 'unset' : PREVIEW_LINES)};
   color: ${themeCssVariables.font.color.secondary};
   display: -webkit-box;
   line-break: anywhere;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: ${({ expanded }) => (expanded ? 'unset' : PREVIEW_LINES)};
   white-space: pre-line;
 `;
 
