@@ -25,6 +25,20 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 // Tooltips render at 0.9 opacity, which would make the card translucent.
+// Zone CRM: results read as a striped list, without the grey band that
+// followed the keyboard selection and the pointer over the names.
+const resultItemClass = css`
+  & > div > [data-focused],
+  & > div > [data-key-selected],
+  & > div > :hover {
+    background: transparent;
+  }
+`;
+
+const resultItemStripedClass = css`
+  background: ${themeCssVariables.background.secondary};
+`;
+
 const previewTooltipClass = css`
   background: transparent !important;
   border-radius: ${themeCssVariables.border.radius.md} !important;
@@ -63,7 +77,7 @@ export const SidePanelSearchRecordsPage = () => {
       >
         {searchResultItems.length > 0 && (
           <SidePanelGroup heading={t`Results`}>
-            {searchResultItems.map((item) => {
+            {searchResultItems.map((item, index) => {
               const isTaskOrNote = [
                 CoreObjectNameSingular.Task,
                 CoreObjectNameSingular.Note,
@@ -92,6 +106,11 @@ export const SidePanelSearchRecordsPage = () => {
                   key={item.id}
                   itemId={item.id}
                   onEnter={handleClick}
+                  className={
+                    index % 2 === 1
+                      ? `${resultItemClass} ${resultItemStripedClass}`
+                      : resultItemClass
+                  }
                 >
                   <div id={getSidePanelSearchResultAnchorId(item.id)}>
                     <CommandMenuItem

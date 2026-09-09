@@ -4,6 +4,9 @@ import { type KeyboardEvent, useState } from 'react';
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowActivityCard } from '@/activities/timeline-activities/rows/generic/components/EventRowActivityCard';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
@@ -41,9 +44,24 @@ export const EventRowGenericLinked = ({
   const isActivity =
     (activityObjectName === 'note' || activityObjectName === 'task') &&
     eventTypeLabel?.startsWith('linked') === true;
-  // Records created through the API carry the workspace name as author;
-  // an imported note already names its author in the body.
-  const showAuthor = !isActivity || authorFullName !== 'Twenty';
+  // Records created through the API carry the workspace name as author. An
+  // imported note or task knows who wrote it in HubSpot (createdBy, source
+  // IMPORT), so that name stands in for the workspace.
+  const isImportedActivity = isActivity && authorFullName === 'Twenty';
+  const { record: activityRecord } = useFindOneRecord<
+    ObjectRecord & { createdBy?: FieldActorValue | null }
+  >({
+    objectNameSingular: activityObjectName ?? 'note',
+    objectRecordId: event.linkedRecordId ?? '',
+    recordGqlFields: { id: true, createdBy: true },
+    skip: !isImportedActivity,
+  });
+  const importedAuthor =
+    activityRecord?.createdBy?.source === 'IMPORT'
+      ? activityRecord.createdBy.name
+      : null;
+  const displayedAuthor = isImportedActivity ? importedAuthor : authorFullName;
+  const showAuthor = isDefined(displayedAuthor) && displayedAuthor !== '';
 
   const [isOpen, setIsOpen] = useState(isActivity);
 
@@ -101,7 +119,7 @@ export const EventRowGenericLinked = ({
     <StyledEventRow>
       <StyledEventRowContainer>
         <StyledEventRowContent>
-          {showAuthor && <EventRowItem>{authorFullName}</EventRowItem>}
+          {showAuthor && <EventRowItem>{displayedAuthor}</EventRowItem>}
           <EventRowItem variant="action">
             {isActivity
               ? activityObjectName === 'note'

@@ -97,9 +97,12 @@ const StyledShowMoreContainer = styled.div`
   display: flex;
 `;
 
+// Zone CRM: a long body or a wide relation must not spill over the rows below;
+// the value is cut to the row's own height.
 const StyledFieldValue = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
+  max-height: 24px;
   min-width: 0;
   overflow: hidden;
 `;
