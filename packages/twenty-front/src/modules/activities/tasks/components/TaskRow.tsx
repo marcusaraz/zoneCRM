@@ -5,17 +5,9 @@ import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
-import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Task } from '@/activities/types/Task';
-import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useContext } from 'react';
 import { IconCalendar } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
@@ -67,11 +59,6 @@ const StyledRightSideContainer = styled.div`
   max-width: 50%;
 `;
 
-const StyledActivityTargetsContainer = styled.div`
-  overflow: clip;
-  width: 100%;
-`;
-
 const StyledPlaceholder = styled.div`
   color: ${themeCssVariables.font.color.light};
 `;
@@ -95,18 +82,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
   const { completeTask } = useCompleteTask(task);
-
-  const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  }).junctionField.name;
-
-  const instanceIdPrefix =
-    useActivityFieldComponentInstanceId('task-row-targets');
-  const componentInstanceId = getRecordFieldInputInstanceId({
-    recordId: task.id,
-    fieldName: junctionFieldName,
-    prefix: instanceIdPrefix,
-  });
 
   return (
     <ActivityRow
@@ -145,33 +120,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}
-        {
-          <StyledActivityTargetsContainer>
-            <FieldContextProvider
-              objectNameSingular={CoreObjectNameSingular.Task}
-              objectRecordId={task.id}
-              fieldMetadataName={junctionFieldName}
-              fieldPosition={0}
-              showLabel={false}
-              maxWidth={200}
-              isDisplayModeFixHeight
-            >
-              <RecordFieldsScopeContextProvider
-                value={{
-                  scopeInstanceId: task.id,
-                }}
-              >
-                <StopPropagationContainer>
-                  <RecordFieldComponentInstanceContext.Provider
-                    value={{ instanceId: componentInstanceId }}
-                  >
-                    <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-                  </RecordFieldComponentInstanceContext.Provider>
-                </StopPropagationContainer>
-              </RecordFieldsScopeContextProvider>
-            </FieldContextProvider>
-          </StyledActivityTargetsContainer>
-        }
       </StyledRightSideContainer>
     </ActivityRow>
   );

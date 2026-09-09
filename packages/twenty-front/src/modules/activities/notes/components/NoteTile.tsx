@@ -1,17 +1,10 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
@@ -56,19 +49,6 @@ const StyledCardContent = styled.div`
   width: 100%;
 `;
 
-const StyledFooter = styled.div`
-  align-items: center;
-  align-self: stretch;
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[2]};
-  width: calc(100% - ${themeCssVariables.spacing[4]});
-`;
-
 export const NoteTile = ({
   note,
   isSingleNote,
@@ -79,18 +59,6 @@ export const NoteTile = ({
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
-
-  const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  }).junctionField.name;
-
-  const instanceIdPrefix =
-    useActivityFieldComponentInstanceId('note-card-targets');
-  const componentInstanceId = getRecordFieldInputInstanceId({
-    recordId: note.id,
-    fieldName: junctionFieldName,
-    prefix: instanceIdPrefix,
-  });
 
   return (
     <StyledCard isSingleNote={isSingleNote}>
@@ -105,27 +73,6 @@ export const NoteTile = ({
         <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
-      <StyledFooter>
-        <FieldContextProvider
-          objectNameSingular={CoreObjectNameSingular.Note}
-          objectRecordId={note.id}
-          fieldMetadataName={junctionFieldName}
-          fieldPosition={0}
-          isDisplayModeFixHeight
-        >
-          <RecordFieldsScopeContextProvider
-            value={{
-              scopeInstanceId: note.id,
-            }}
-          >
-            <RecordFieldComponentInstanceContext.Provider
-              value={{ instanceId: componentInstanceId }}
-            >
-              <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-            </RecordFieldComponentInstanceContext.Provider>
-          </RecordFieldsScopeContextProvider>
-        </FieldContextProvider>
-      </StyledFooter>
     </StyledCard>
   );
 };
