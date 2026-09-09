@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
 // Zone CRM: a note or a task shown in the timeline as itself (title and the
@@ -56,8 +57,7 @@ const StyledMore = styled.button`
   padding: 0;
 `;
 
-type ActivityRecord = {
-  id: string;
+type ActivityRecord = ObjectRecord & {
   title?: string | null;
   bodyV2?: { blocknote?: string | null; markdown?: string | null } | null;
   status?: string | null;
