@@ -1,9 +1,9 @@
 {
-  "short_name": "Twenty",
-  "name": "Twenty",
+  "short_name": "Zone CRM",
+  "name": "Zone CRM",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#1a73d6",
   "background_color": "#ffffff",
   "icons": [
     {
