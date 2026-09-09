@@ -20,7 +20,7 @@ const StyledTr = styled.div<{
   &[data-striped='true']:not([data-selected='true']) {
     div.table-cell,
     div.table-cell-0-0 {
-      background-color: ${themeCssVariables.background.secondary};
+      background-color: ${themeCssVariables.background.tertiary};
     }
   }
 
