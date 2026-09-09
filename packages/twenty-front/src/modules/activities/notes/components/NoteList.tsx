@@ -18,11 +18,12 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
+// Zone CRM: one note under the other, newest first, rather than a grid of
+// equal boxes; a note reads like a diary entry, not a tile.
 const StyledNoteContainer = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[4]};
-  grid-auto-rows: 1fr;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
