@@ -189,6 +189,7 @@ export const EventRow = ({
       : null;
   const authorFullName =
     systemAuthorFullName === SYSTEM_AUTHOR_NAME &&
+    timelineActivityAction === 'created' &&
     !isDefined(event.linkedRecordId) &&
     isDefined(importedFrom)
       ? importedFrom
