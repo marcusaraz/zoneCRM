@@ -10,6 +10,7 @@ import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/state
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { matchRecordShowPathname } from '@/object-record/record-show/utils/recordSlugRoutes';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
@@ -39,20 +40,26 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const currentPath = location.pathname;
   const currentPathWithSearch = location.pathname + location.search;
 
+  // Zone CRM: a readable record address (/customer/:slug) names its object too.
+  const recordShowMatch = matchRecordShowPathname(currentPath);
+  const routedObjectNameSingular =
+    currentObjectNameSingular ?? recordShowMatch?.objectNameSingular;
+
   const currentObjectMetadataItem = activeObjectMetadataItems.find(
     (item) =>
       item.namePlural === currentObjectNamePlural ||
-      item.nameSingular === currentObjectNameSingular,
+      item.nameSingular === routedObjectNameSingular,
   );
 
   const isOnRecordShowPage =
     isDefined(currentObjectMetadataItem) &&
-    currentPath.includes(
-      getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: currentObjectMetadataItem.nameSingular,
-        objectRecordId: '',
-      }) + '/',
-    );
+    (isDefined(recordShowMatch) ||
+      currentPath.includes(
+        getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular: currentObjectMetadataItem.nameSingular,
+          objectRecordId: '',
+        }) + '/',
+      ));
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,

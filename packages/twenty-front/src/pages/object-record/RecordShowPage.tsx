@@ -15,6 +15,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
+import { RecordShowPrettyUrlEffect } from '@/object-record/record-show/components/RecordShowPrettyUrlEffect';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
@@ -56,11 +57,17 @@ const RecordShowPageContent = ({
     );
 
   const resourceEffect = (
-    <RecordShowPageResourceEffect
-      loading={loading}
-      record={record}
-      recordId={objectRecordId}
-    />
+    <>
+      <RecordShowPageResourceEffect
+        loading={loading}
+        record={record}
+        recordId={objectRecordId}
+      />
+      <RecordShowPrettyUrlEffect
+        objectNameSingular={objectNameSingular}
+        record={record}
+      />
+    </>
   );
 
   if (isInSidePanel && !loading && (isDefined(error) || !isDefined(record))) {
@@ -127,8 +134,13 @@ const RecordShowPageContent = ({
   );
 };
 
-export const RecordShowPage = () => {
-  const parameters = useParams<RecordShowPageParameters>();
+// Zone CRM: the page for known parameters, so a readable address
+// (/customer/:slug) can open it once the slug is resolved to an id.
+export const RecordShowPageForParameters = ({
+  parameters,
+}: {
+  parameters: RecordShowPageParameters;
+}) => {
   const workspaceSurface = useWorkspaceSurface();
   const { objectMetadataItems } = useObjectMetadataItems();
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
@@ -157,4 +169,10 @@ export const RecordShowPage = () => {
   }
 
   return <RecordShowPageContent parameters={parameters} />;
+};
+
+export const RecordShowPage = () => {
+  const parameters = useParams<RecordShowPageParameters>();
+
+  return <RecordShowPageForParameters parameters={parameters} />;
 };

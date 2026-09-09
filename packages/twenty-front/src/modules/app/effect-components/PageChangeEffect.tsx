@@ -40,6 +40,10 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import {
+  isRecordShowPathname,
+  matchRecordShowPathname,
+} from '@/object-record/record-show/utils/recordSlugRoutes';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -220,7 +224,7 @@ export const PageChangeEffect = () => {
         resetFocusStackToRecordIndex();
         break;
       }
-      case isMatchingLocation(location, AppPath.RecordShowPage): {
+      case isRecordShowPathname(location.pathname): {
         const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
 
         if (!isSidePanelOpen) {
@@ -244,10 +248,9 @@ export const PageChangeEffect = () => {
         );
 
         if (isDefined(newRecordTitleCellToOpen)) {
-          const objectRecordIdFromPath = matchPath(
-            AppPath.RecordShowPage,
+          const objectRecordIdFromPath = matchRecordShowPathname(
             location.pathname,
-          )?.params.objectRecordId;
+          )?.objectRecordId;
 
           if (newRecordTitleCellToOpen.recordId === objectRecordIdFromPath) {
             openNewRecordTitleCell(newRecordTitleCellToOpen);

@@ -12,6 +12,10 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import {
+  isRecordShowPathname,
+  matchRecordShowPathname,
+} from '@/object-record/record-show/utils/recordSlugRoutes';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
@@ -45,14 +49,16 @@ export const RouteContextStoreProvider = () => {
     location,
     AppPath.RecordIndexPage,
   );
-  const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
+  const isRecordShowPage = isRecordShowPathname(location.pathname);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = routeParams?.objectNameSingular;
+  const objectNameSingular =
+    routeParams?.objectNameSingular ??
+    matchRecordShowPathname(location.pathname)?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');

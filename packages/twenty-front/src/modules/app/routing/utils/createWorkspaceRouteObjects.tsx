@@ -29,6 +29,12 @@ const RecordShowPage = lazy(() =>
   })),
 );
 
+const RecordSlugPage = lazy(() =>
+  import('~/pages/object-record/RecordSlugPage').then((module) => ({
+    default: module.RecordSlugPage,
+  })),
+);
+
 const StandalonePageLayoutPage = lazy(() =>
   import('~/pages/page-layout/StandalonePageLayoutPage').then((module) => ({
     default: module.StandalonePageLayoutPage,
@@ -107,6 +113,24 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <RecordShowPage />
+        </LazyRoute>
+      ),
+      handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+    },
+    {
+      path: AppPath.CustomerPage,
+      element: (
+        <LazyRoute>
+          <RecordSlugPage objectNameSingular="person" />
+        </LazyRoute>
+      ),
+      handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+    },
+    {
+      path: AppPath.CompanyPage,
+      element: (
+        <LazyRoute>
+          <RecordSlugPage objectNameSingular="company" />
         </LazyRoute>
       ),
       handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
