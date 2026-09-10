@@ -71,24 +71,24 @@ export const EventRowGenericLinked = ({
   const isPhoneCall = linkedObjectMetadataItem?.nameSingular === 'phoneCall';
   const { record: phoneCallRecord, loading: isPhoneCallLoading } =
     useFindOneRecord<
-    ObjectRecord & {
-      direction?: string | null;
-      status?: string | null;
-      talkTimeInSeconds?: number | null;
-      phoneNumber?: string | null;
-    }
-  >({
-    objectNameSingular: 'phoneCall',
-    objectRecordId: event.linkedRecordId ?? '',
-    recordGqlFields: {
-      id: true,
-      direction: true,
-      status: true,
-      talkTimeInSeconds: true,
-      phoneNumber: true,
-    },
-    skip: !isPhoneCall,
-  });
+      ObjectRecord & {
+        direction?: string | null;
+        status?: string | null;
+        talkTimeInSeconds?: number | null;
+        phoneNumber?: string | null;
+      }
+    >({
+      objectNameSingular: 'phoneCall',
+      objectRecordId: event.linkedRecordId ?? '',
+      recordGqlFields: {
+        id: true,
+        direction: true,
+        status: true,
+        talkTimeInSeconds: true,
+        phoneNumber: true,
+      },
+      skip: !isPhoneCall,
+    });
 
   // A deleted call leaves its timeline row behind. Without the call there is
   // nothing true to say about it, so the row says nothing.
