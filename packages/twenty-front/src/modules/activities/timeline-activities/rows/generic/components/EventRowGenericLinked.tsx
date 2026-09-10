@@ -11,6 +11,7 @@ import { EventRowDate } from '@/activities/timeline-activities/rows/components/E
 import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { getAuthorizedLinkedRecordName } from '@/activities/timeline-activities/rows/generic/utils/getAuthorizedLinkedRecordName';
+import { getPhoneCallEventText } from '@/activities/timeline-activities/rows/generic/utils/getPhoneCallEventText';
 import { SYSTEM_AUTHOR_NAME } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import {
   StyledEventRow,
@@ -65,6 +66,29 @@ export const EventRowGenericLinked = ({
   const displayedAuthor = isImportedActivity ? importedAuthor : authorFullName;
   const showAuthor = isDefined(displayedAuthor) && displayedAuthor !== '';
 
+  // Zone CRM: a call reads as what happened on the phone, not as a record that was
+  // linked. The switchboard writes it, so naming an author would be noise.
+  const isPhoneCall = linkedObjectMetadataItem?.nameSingular === 'phoneCall';
+  const { record: phoneCallRecord } = useFindOneRecord<
+    ObjectRecord & {
+      direction?: string | null;
+      status?: string | null;
+      talkTimeInSeconds?: number | null;
+      phoneNumber?: string | null;
+    }
+  >({
+    objectNameSingular: 'phoneCall',
+    objectRecordId: event.linkedRecordId ?? '',
+    recordGqlFields: {
+      id: true,
+      direction: true,
+      status: true,
+      talkTimeInSeconds: true,
+      phoneNumber: true,
+    },
+    skip: !isPhoneCall,
+  });
+
   const [isOpen, setIsOpen] = useState(isActivity);
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -81,9 +105,9 @@ export const EventRowGenericLinked = ({
   const objectLabel =
     linkedObjectMetadataItem?.labelSingular?.toLowerCase() ?? t`record`;
 
-  const linkedRecordName = getAuthorizedLinkedRecordName(
-    linkedRecordIdentifier?.name,
-  );
+  const linkedRecordName = isPhoneCall
+    ? (phoneCallRecord?.phoneNumber ?? null)
+    : getAuthorizedLinkedRecordName(linkedRecordIdentifier?.name);
 
   const linkedRecord =
     isDefined(event.linkedRecordId) &&
@@ -121,13 +145,17 @@ export const EventRowGenericLinked = ({
     <StyledEventRow>
       <StyledEventRowContainer>
         <StyledEventRowContent>
-          {showAuthor && <EventRowItem>{displayedAuthor}</EventRowItem>}
+          {showAuthor && !isPhoneCall && (
+            <EventRowItem>{displayedAuthor}</EventRowItem>
+          )}
           <EventRowItem variant="action">
-            {isActivity
-              ? activityObjectName === 'note'
-                ? t`added a note`
-                : t`added a task`
-              : (eventTypeLabel ?? t`linked a ${objectLabel}`)}
+            {isPhoneCall
+              ? getPhoneCallEventText(phoneCallRecord ?? {})
+              : isActivity
+                ? activityObjectName === 'note'
+                  ? t`added a note`
+                  : t`added a task`
+                : (eventTypeLabel ?? t`linked a ${objectLabel}`)}
           </EventRowItem>
           {canOpen && !isActivity && (
             <StyledEventRowLinkedRecord
