@@ -69,7 +69,8 @@ export const EventRowGenericLinked = ({
   // Zone CRM: a call reads as what happened on the phone, not as a record that was
   // linked. The switchboard writes it, so naming an author would be noise.
   const isPhoneCall = linkedObjectMetadataItem?.nameSingular === 'phoneCall';
-  const { record: phoneCallRecord } = useFindOneRecord<
+  const { record: phoneCallRecord, loading: isPhoneCallLoading } =
+    useFindOneRecord<
     ObjectRecord & {
       direction?: string | null;
       status?: string | null;
@@ -88,6 +89,11 @@ export const EventRowGenericLinked = ({
     },
     skip: !isPhoneCall,
   });
+
+  // A deleted call leaves its timeline row behind. Without the call there is
+  // nothing true to say about it, so the row says nothing.
+  const isOrphanedPhoneCall =
+    isPhoneCall && !isPhoneCallLoading && !isDefined(phoneCallRecord);
 
   const [isOpen, setIsOpen] = useState(isActivity);
 
@@ -140,6 +146,10 @@ export const EventRowGenericLinked = ({
       handleOpen();
     }
   };
+
+  if (isOrphanedPhoneCall) {
+    return null;
+  }
 
   return (
     <StyledEventRow>
