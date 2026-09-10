@@ -29,6 +29,7 @@ export enum AppPath {
   // Zone CRM: readable addresses for people and companies (see recordSlugRoutes).
   CustomerPage = '/customer/:slug',
   CompanyPage = '/company/:slug',
+  SearchPage = '/search',
   PageLayoutPage = '/page/:pageLayoutId',
   WorkflowCoreIndexPage = '/workflow-core',
 

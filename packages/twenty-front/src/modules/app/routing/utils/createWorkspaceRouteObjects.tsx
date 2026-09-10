@@ -17,6 +17,12 @@ const WorkflowCoreIndexPage = lazy(() =>
   })),
 );
 
+const SearchPage = lazy(() =>
+  import('~/pages/search/SearchPage').then((module) => ({
+    default: module.SearchPage,
+  })),
+);
+
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
     default: module.RecordIndexPage,
@@ -116,6 +122,14 @@ export const createWorkspaceRouteObjects = ({
         </LazyRoute>
       ),
       handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+    },
+    {
+      path: AppPath.SearchPage,
+      element: (
+        <LazyRoute>
+          <SearchPage />
+        </LazyRoute>
+      ),
     },
     {
       path: AppPath.CustomerPage,

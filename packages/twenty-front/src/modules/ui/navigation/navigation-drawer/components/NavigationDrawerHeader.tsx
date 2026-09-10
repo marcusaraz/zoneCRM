@@ -4,7 +4,7 @@ import { IconSearch } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useOpenSearchPage } from '@/search-page/hooks/useOpenSearchPage';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
@@ -72,7 +72,7 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
+  const { openSearchPage } = useOpenSearchPage();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
   return (
@@ -86,7 +86,7 @@ export const NavigationDrawerHeader = ({
             Icon={IconSearch}
             accent="secondary"
             size="small"
-            onClick={openRecordsSearchPage}
+            onClick={() => openSearchPage()}
             aria-label={t`Search`}
           />
         )}

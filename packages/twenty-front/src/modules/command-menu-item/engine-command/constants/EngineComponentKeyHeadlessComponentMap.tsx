@@ -55,7 +55,7 @@ import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-co
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
-import { IconSearch, IconSparkles } from 'twenty-ui/icon';
+import { IconSparkles } from 'twenty-ui/icon';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
@@ -197,20 +197,13 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
       params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
     />
   ),
+  // Zone CRM: search has the main screen now, so the command walks out of the
+  // panel instead of opening another list inside it.
   [EngineComponentKey.SEARCH_RECORDS]: (
-    <HeadlessOpenSidePanelPageEngineCommand
-      page={SidePanelPages.SearchRecords}
-      pageTitle={msg`Search`}
-      pageIcon={IconSearch}
-      shouldResetSearchState={true}
-    />
+    <HeadlessNavigateEngineCommand to={AppPath.SearchPage} />
   ),
   [EngineComponentKey.SEARCH_RECORDS_FALLBACK]: (
-    <HeadlessOpenSidePanelPageEngineCommand
-      page={SidePanelPages.SearchRecords}
-      pageTitle={msg`Search`}
-      pageIcon={IconSearch}
-    />
+    <HeadlessNavigateEngineCommand to={AppPath.SearchPage} />
   ),
   [EngineComponentKey.ASK_AI]: (
     <HeadlessOpenSidePanelPageEngineCommand

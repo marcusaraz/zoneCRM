@@ -6,7 +6,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useOpenSearchPage } from '@/search-page/hooks/useOpenSearchPage';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -40,7 +40,7 @@ export const useMobileNavigationBarItems = (): {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
+  const { openSearchPage } = useOpenSearchPage();
   const { switchToNewChat } = useSwitchToNewAiChat();
   const isSettingsPage = useIsSettingsPage();
   const isSettingsDrawer = useIsSettingsDrawer();
@@ -104,7 +104,7 @@ export const useMobileNavigationBarItems = (): {
             }
           }
 
-          openRecordsSearchPage();
+          openSearchPage();
         },
       },
       ...(hasAiPermission
