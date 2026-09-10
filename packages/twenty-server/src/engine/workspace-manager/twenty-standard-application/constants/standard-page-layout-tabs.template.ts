@@ -105,7 +105,8 @@ export const TAB_PROPS = {
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   calendar: {
-    title: 'Calendar',
+    // Zone CRM: the tab is opened to arrange a meeting, so it is named for that.
+    title: 'Set Meeting',
     position: 70,
     icon: 'IconCalendarEvent',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -174,7 +175,7 @@ export const WIDGET_PROPS = {
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   calendar: {
-    title: 'Calendar',
+    title: 'Set Meeting',
     type: WidgetType.CALENDAR,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
