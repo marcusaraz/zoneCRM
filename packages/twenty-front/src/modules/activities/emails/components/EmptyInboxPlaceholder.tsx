@@ -4,7 +4,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -19,7 +18,6 @@ export const EmptyInboxPlaceholder = () => {
 
   return (
     <AnimatedPlaceholderEmptyContainer>
-      <AnimatedPlaceholder type="emptyInbox" />
       <AnimatedPlaceholderEmptyTextContainer>
         <AnimatedPlaceholderEmptyTitle>
           <Trans>Empty Inbox</Trans>

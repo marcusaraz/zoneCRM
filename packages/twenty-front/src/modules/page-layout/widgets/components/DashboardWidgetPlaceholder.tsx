@@ -11,7 +11,6 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -66,7 +65,6 @@ export const DashboardWidgetPlaceholder = () => {
         isEmpty
       />
       <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noWidgets" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
             <Trans>Add widget</Trans>

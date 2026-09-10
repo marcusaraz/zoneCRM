@@ -1,5 +1,4 @@
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -8,18 +7,17 @@ import {
 } from 'twenty-ui/feedback';
 
 type CallRecordingWidgetEmptyStateDisplayProps = {
-  animatedPlaceholderType: AnimatedPlaceholderType;
+  // Zone CRM: kept so every caller stays unchanged; an empty page is words now.
+  animatedPlaceholderType?: AnimatedPlaceholderType;
   title: string;
   subTitle: string;
 };
 
 export const CallRecordingWidgetEmptyStateDisplay = ({
-  animatedPlaceholderType,
   title,
   subTitle,
 }: CallRecordingWidgetEmptyStateDisplayProps) => (
   <AnimatedPlaceholderEmptyContainer>
-    <AnimatedPlaceholder type={animatedPlaceholderType} />
     <AnimatedPlaceholderEmptyTextContainer>
       <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
       <AnimatedPlaceholderEmptySubTitle>

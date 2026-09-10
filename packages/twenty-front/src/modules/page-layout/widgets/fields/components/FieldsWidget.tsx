@@ -16,7 +16,6 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -106,7 +105,6 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
       <SidePanelProvider value={{ isInSidePanel }}>
         <StyledWidgetScrollContainer>
           <AnimatedPlaceholderEmptyContainer>
-            <AnimatedPlaceholder type="noRecord" />
             <AnimatedPlaceholderEmptyTextContainer>
               <AnimatedPlaceholderEmptyTitle>
                 {t`No fields to display`}

@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -26,7 +25,6 @@ export const RecordIndexEmptyStateNotShared = ({
   return (
     <StyledEmptyPlaceholderOuterContainer>
       <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="notShared" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
             {isDefined(nonReadableViewFieldInfo)

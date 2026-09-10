@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
@@ -9,7 +8,6 @@ import {
 
 export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
   <AnimatedPlaceholderEmptyContainer>
-    <AnimatedPlaceholder type="loadingMessages" />
     <AnimatedPlaceholderEmptyTextContainer>
       <AnimatedPlaceholderEmptyTitle>
         {loadingText || t`Loading emails`}

@@ -9,7 +9,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -69,10 +68,8 @@ export const CalendarEventsCardContent = ({
   }
 
   if (!timelineCalendarEvents?.length) {
-    // TODO: change animated placeholder
     return (
       <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
             {t`No Events`}

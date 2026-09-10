@@ -10,10 +10,14 @@ export const getActivityCardText = ({
   title,
   body,
   author,
+  keepTitle = false,
 }: {
   title: string | null | undefined;
   body: string;
   author: string | null | undefined;
+  // A task is named by its title, so there the repeated line goes from the body
+  // instead; a note is its body, so there the title is the one that goes.
+  keepTitle?: boolean;
 }): { title: string; body: string } => {
   const lines = body.split('\n');
 
@@ -42,8 +46,22 @@ export const getActivityCardText = ({
     stem !== '' &&
     cleanBody.trimStart().toLowerCase().startsWith(stem.toLowerCase());
 
-  return {
-    title: opensWithTitle ? '' : (title ?? '').trim(),
-    body: cleanBody,
-  };
+  if (!keepTitle) {
+    return {
+      title: opensWithTitle ? '' : (title ?? '').trim(),
+      body: cleanBody,
+    };
+  }
+
+  const bodyLines = cleanBody.split('\n');
+
+  if (opensWithTitle) {
+    bodyLines.shift();
+  }
+
+  while (bodyLines.length > 0 && bodyLines[0].trim() === '') {
+    bodyLines.shift();
+  }
+
+  return { title: (title ?? '').trim(), body: bodyLines.join('\n') };
 };

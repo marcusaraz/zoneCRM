@@ -13,7 +13,6 @@ import { Status } from 'twenty-ui/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -170,7 +169,6 @@ export const SettingsAgentLogsTab = ({
   if (turns.length === 0) {
     return (
       <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
             {t`No logs yet`}

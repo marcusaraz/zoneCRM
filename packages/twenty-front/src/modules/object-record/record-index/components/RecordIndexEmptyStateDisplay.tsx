@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
@@ -17,7 +16,8 @@ const StyledEmptyStateContainer = styled.div`
 `;
 
 type RecordIndexEmptyStateDisplayProps = {
-  animatedPlaceholderType: AnimatedPlaceholderType;
+  // Zone CRM: kept so every caller stays unchanged; an empty page is words now.
+  animatedPlaceholderType?: AnimatedPlaceholderType;
   title: string;
   subTitle: string;
   ButtonIcon?: IconComponent;
@@ -27,7 +27,6 @@ type RecordIndexEmptyStateDisplayProps = {
 };
 
 export const RecordIndexEmptyStateDisplay = ({
-  animatedPlaceholderType,
   title,
   subTitle,
   ButtonIcon,
@@ -37,7 +36,6 @@ export const RecordIndexEmptyStateDisplay = ({
 }: RecordIndexEmptyStateDisplayProps) => (
   <StyledEmptyStateContainer>
     <AnimatedPlaceholderEmptyContainer width={width}>
-      <AnimatedPlaceholder type={animatedPlaceholderType} />
       <AnimatedPlaceholderEmptyTextContainer>
         <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
         <AnimatedPlaceholderEmptySubTitle>
