@@ -13,10 +13,7 @@ export const SidePanelTopBarInputFocusEffect = ({
   const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
 
   useEffect(() => {
-    if (
-      sidePanelPage === SidePanelPages.CommandMenuDisplay ||
-      sidePanelPage === SidePanelPages.SearchRecords
-    ) {
+    if (sidePanelPage === SidePanelPages.CommandMenuDisplay) {
       inputRef.current?.focus();
     }
   }, [sidePanelPage, inputRef]);

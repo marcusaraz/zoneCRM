@@ -4,8 +4,6 @@ import { type ChangeEvent, useEffect, useRef } from 'react';
 import { IconSearch, IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SEARCH_PAGE_INPUT_ID } from '@/search-page/constants/SearchPageInputId';
-
 const StyledField = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
@@ -70,17 +68,10 @@ const StyledClearButton = styled.button`
 type SearchPageInputProps = {
   value: string;
   onChange: (value: string) => void;
-  onMoveHighlight: (offset: number) => void;
-  onOpenHighlighted: () => void;
 };
 
 // The one thing on the page that should already be waiting for you.
-export const SearchPageInput = ({
-  value,
-  onChange,
-  onMoveHighlight,
-  onOpenHighlighted,
-}: SearchPageInputProps) => {
+export const SearchPageInput = ({ value, onChange }: SearchPageInputProps) => {
   const { t } = useLingui();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -95,7 +86,6 @@ export const SearchPageInput = ({
       </StyledIcon>
       <StyledInput
         ref={inputRef}
-        id={SEARCH_PAGE_INPUT_ID}
         type="text"
         autoComplete="off"
         spellCheck={false}
@@ -105,24 +95,6 @@ export const SearchPageInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange(event.target.value)
         }
-        onKeyDown={(event) => {
-          // The list is walked from the box, so the caret never has to be given
-          // up to move through the results and refine the words.
-          if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            onMoveHighlight(1);
-          }
-
-          if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            onMoveHighlight(-1);
-          }
-
-          if (event.key === 'Enter') {
-            event.preventDefault();
-            onOpenHighlighted();
-          }
-        }}
       />
       {value !== '' && (
         <StyledClearButton

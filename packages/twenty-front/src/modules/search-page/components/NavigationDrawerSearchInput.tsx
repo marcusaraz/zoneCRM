@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { type ChangeEvent } from 'react';
 import { IconSearch } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SEARCH_PAGE_QUERY_PARAM } from '@/search-page/constants/SearchPageQueryParam';
-import { getSearchPagePath } from '@/search-page/utils/getSearchPagePath';
+import { SEARCH_PAGE_INPUT_ID } from '@/search-page/constants/SearchPageInputId';
+import { useOpenSearchResultsInSidePanel } from '@/search-page/hooks/useOpenSearchResultsInSidePanel';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledField = styled.label`
   align-items: center;
@@ -52,41 +52,17 @@ const StyledInput = styled.input`
 /**
  * The search box, always where it was left.
  *
- * Search used to be a button that opened an empty page waiting to be typed
- * into. The box sits in the drawer instead, so a search starts from wherever
- * you already are and the results fill the screen you were looking at.
+ * Typing opens the results beside whatever is already on screen, so looking
+ * someone up costs nothing: the record being read stays where it is, and an
+ * empty box puts the panel away again.
  */
 export const NavigationDrawerSearchInput = () => {
   const { t } = useLingui();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const isOnSearchPage = location.pathname === AppPath.SearchPage;
-  const queryInAddress = isOnSearchPage
-    ? (new URLSearchParams(location.search).get(SEARCH_PAGE_QUERY_PARAM) ?? '')
-    : '';
-
-  const [value, setValue] = useState(queryInAddress);
-
-  // Leaving search empties the box; arriving with a search in the address fills
-  // it, so the box and the results never disagree.
-  useEffect(() => {
-    setValue(queryInAddress);
-  }, [queryInAddress]);
+  const query = useAtomStateValue(sidePanelSearchState);
+  const { search } = useOpenSearchResultsInSidePanel();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const nextValue = event.target.value;
-
-    setValue(nextValue);
-
-    // The first letter opens the results; the rest of the word replaces them,
-    // so leaving search takes one press of the back button rather than one per
-    // letter typed.
-    // oxlint-disable-next-line twenty/no-navigate-prefer-link
-    navigate(getSearchPagePath({ query: nextValue }), {
-      replace: isOnSearchPage,
-    });
+    search(event.target.value);
   };
 
   return (
@@ -95,11 +71,11 @@ export const NavigationDrawerSearchInput = () => {
         <IconSearch size={16} />
       </StyledIcon>
       <StyledInput
-        ref={inputRef}
+        id={SEARCH_PAGE_INPUT_ID}
         type="text"
         autoComplete="off"
         spellCheck={false}
-        value={value}
+        value={query}
         placeholder={t`Search`}
         aria-label={t`Search`}
         onChange={handleChange}

@@ -28,7 +28,7 @@ import { SidePanelPageLayoutWidgetSettings } from '@/side-panel/pages/page-layou
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
-import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
+import { SidePanelSearchResultsPage } from '@/side-panel/pages/search/components/SidePanelSearchResultsPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
 import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
 import { SidePanelWorkflowStepSettings } from '@/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettings';
@@ -57,7 +57,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.WorkflowStepSettings, <SidePanelWorkflowStepSettings />],
   [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
   [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
-  [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
+  [SidePanelPages.SearchRecords, <SidePanelSearchResultsPage />],
   [SidePanelPages.AskAI, <SidePanelAskAiPage />],
   [
     SidePanelPages.PageLayoutDashboardWidgetTypeSelect,

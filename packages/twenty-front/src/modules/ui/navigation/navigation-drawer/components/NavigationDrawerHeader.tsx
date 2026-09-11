@@ -1,14 +1,9 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useOpenSearchPage } from '@/search-page/hooks/useOpenSearchPage';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div<{ isExpanded: boolean }>`
@@ -71,8 +66,6 @@ type NavigationDrawerHeaderProps = {
 export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
-  const isMobile = useIsMobile();
-  const { openSearchPage } = useOpenSearchPage();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
   return (
@@ -81,15 +74,6 @@ export const NavigationDrawerHeader = ({
         <MultiWorkspaceDropdownButton />
       </StyledWorkspaceDropdownContainer>
       <StyledRightActions isExpanded={isExpanded}>
-        {!isMobile && (
-          <LightIconButton
-            Icon={IconSearch}
-            accent="secondary"
-            size="small"
-            onClick={() => openSearchPage()}
-            aria-label={t`Search`}
-          />
-        )}
         {isExpanded && showCollapseButton && (
           <StyledNavigationDrawerCollapseButtonContainer>
             <NavigationDrawerCollapseButton direction="left" />
