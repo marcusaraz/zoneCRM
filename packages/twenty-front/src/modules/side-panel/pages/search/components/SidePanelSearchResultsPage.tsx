@@ -15,11 +15,11 @@ const StyledContent = styled.div`
 // The results of what is being typed in the drawer, beside the record that was
 // already open. Nothing is left behind to come back to.
 export const SidePanelSearchResultsPage = () => {
-  const query = useAtomStateValue(sidePanelSearchState);
-  const objectNameSingular = useAtomStateValue(
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const sidePanelSearchObjectFilter = useAtomStateValue(
     sidePanelSearchObjectFilterState,
   );
-  const setObjectNameSingular = useSetAtomState(
+  const setSidePanelSearchObjectFilter = useSetAtomState(
     sidePanelSearchObjectFilterState,
   );
 
@@ -27,9 +27,9 @@ export const SidePanelSearchResultsPage = () => {
     <ScrollWrapper componentInstanceId="side-panel-search-results">
       <StyledContent>
         <SearchResultsView
-          query={query}
-          objectNameSingular={objectNameSingular}
-          onSelectObject={setObjectNameSingular}
+          query={sidePanelSearch}
+          objectNameSingular={sidePanelSearchObjectFilter}
+          onSelectObject={setSidePanelSearchObjectFilter}
         />
       </StyledContent>
     </ScrollWrapper>

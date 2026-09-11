@@ -21,21 +21,25 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
  */
 export const useOpenSearchResultsInSidePanel = () => {
   const { navigateSidePanelMenu, closeSidePanelMenu } = useSidePanelMenu();
-  const setQuery = useSetAtomState(sidePanelSearchState);
-  const setObjectFilter = useSetAtomState(sidePanelSearchObjectFilterState);
-  const navigationStack = useAtomStateValue(sidePanelNavigationStackState);
+  const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
+  const setSidePanelSearchObjectFilter = useSetAtomState(
+    sidePanelSearchObjectFilterState,
+  );
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const isShowingResults =
     isSidePanelOpened &&
-    navigationStack.at(-1)?.page === SidePanelPages.SearchRecords;
+    sidePanelNavigationStack.at(-1)?.page === SidePanelPages.SearchRecords;
 
   const search = useCallback(
     (nextQuery: string) => {
-      setQuery(nextQuery);
+      setSidePanelSearch(nextQuery);
 
       if (nextQuery.trim() === '') {
-        setObjectFilter(null);
+        setSidePanelSearchObjectFilter(null);
 
         if (isShowingResults) {
           closeSidePanelMenu();
@@ -48,7 +52,7 @@ export const useOpenSearchResultsInSidePanel = () => {
         return;
       }
 
-      setObjectFilter(null);
+      setSidePanelSearchObjectFilter(null);
       navigateSidePanelMenu({
         page: SidePanelPages.SearchRecords,
         pageTitle: t`Search`,
@@ -61,8 +65,8 @@ export const useOpenSearchResultsInSidePanel = () => {
       closeSidePanelMenu,
       isShowingResults,
       navigateSidePanelMenu,
-      setObjectFilter,
-      setQuery,
+      setSidePanelSearch,
+      setSidePanelSearchObjectFilter,
     ],
   );
 
