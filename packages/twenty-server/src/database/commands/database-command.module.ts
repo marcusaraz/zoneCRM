@@ -14,7 +14,13 @@ import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebu
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
+import { ZoneProvisionCalendarAccountsCommand } from 'src/database/commands/zone-provision-calendar-accounts.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { IMAPAPIsModule } from 'src/modules/connected-account/imap-api/imap-apis.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
@@ -63,7 +69,17 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      RoleEntity,
+      UserWorkspaceEntity,
+    ]),
+    // Zone CRM: what zone:calendar:provision needs to point a colleague at their
+    // own calendar through the service account.
+    ImapSmtpCaldavModule,
+    IMAPAPIsModule,
+    ConnectedAccountMetadataModule,
+    TwentyOrmModule,
     WorkspaceExportModule,
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
@@ -114,6 +130,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     InstanceCommandGenerationService,
     RunInstanceCommandsCommand,
     ListOrphanedWorkspaceEntitiesCommand,
+    ZoneProvisionCalendarAccountsCommand,
     EnterpriseKeyValidationCronCommand,
     RotateSigningKeysCronCommand,
     GenerateApiKeyCommand,
