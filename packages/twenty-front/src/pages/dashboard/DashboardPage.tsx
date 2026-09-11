@@ -34,14 +34,16 @@ const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[10]};
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[12]};
   width: 100%;
 `;
 
 const StyledKpis = styled.div`
   display: grid;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[4]};
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 `;
 
@@ -49,44 +51,35 @@ const StyledSplit = styled.div`
   align-items: start;
   display: grid;
   gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const StyledPair = styled.div`
-  align-items: start;
-  display: grid;
-  gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: 1fr 1fr;
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
+// A surface that sits on the page rather than being drawn onto it: no outline,
+// a soft shadow, and a corner round enough to feel like an object.
 const StyledCard = styled.section`
   background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   display: flex;
   flex-direction: column;
   overflow: hidden;
 `;
 
 const StyledCardHeading = styled.h2`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.01em;
   margin: 0;
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]} 0;
 `;
 
 const StyledDrilldown = styled.div`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
+  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]};
 `;
 
 /**
@@ -200,7 +193,7 @@ export const DashboardPage = () => {
             </StyledCard>
           </StyledSplit>
 
-          <StyledPair>
+          <StyledSplit>
             <StyledCard>
               <StyledCardHeading>{t`Where everyone stands`}</StyledCardHeading>
               <DashboardDonut
@@ -208,6 +201,7 @@ export const DashboardPage = () => {
                 selectedKey={openStage}
                 onSelect={setOpenStage}
                 centreLabel={t`with a stage`}
+                isWide
               />
               {openStage !== null && (
                 <StyledDrilldown>
@@ -237,7 +231,7 @@ export const DashboardPage = () => {
                 </StyledDrilldown>
               )}
             </StyledCard>
-          </StyledPair>
+          </StyledSplit>
 
           <StyledCard>
             <StyledCardHeading>{t`Who is carrying the book`}</StyledCardHeading>

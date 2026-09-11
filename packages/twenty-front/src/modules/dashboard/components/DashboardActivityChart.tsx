@@ -8,38 +8,60 @@ const StyledChart = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[6]};
+`;
+
+const StyledPlot = styled.div`
+  height: 260px;
+  position: relative;
+`;
+
+// Four faint lines are enough to read a height against without drawing a grid.
+const StyledGridLines = styled.div`
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  justify-content: space-between;
+  pointer-events: none;
+  position: absolute;
+
+  span {
+    background: ${themeCssVariables.border.color.light};
+    display: block;
+    height: 1px;
+  }
 `;
 
 const StyledColumns = styled.div`
   align-items: flex-end;
   display: flex;
-  gap: 2px;
-  height: 140px;
+  gap: ${themeCssVariables.spacing[2]};
+  inset: 0;
+  position: absolute;
 `;
 
 const StyledColumn = styled.div`
-  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm}
+    ${themeCssVariables.border.radius.sm} 0 0;
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 1px;
   height: 100%;
   justify-content: flex-end;
   min-width: 0;
-  position: relative;
+  overflow: hidden;
+  transition: opacity ${themeCssVariables.animation.duration.fast} ease;
 
-  &:hover > span {
+  &:hover {
     opacity: 0.75;
   }
 `;
 
 const StyledSegment = styled.span<{ height: number; tone: string }>`
   background: ${({ tone }) => tone};
-  border-radius: 2px;
   display: block;
   height: ${({ height }) => height}%;
-  transition: opacity ${themeCssVariables.animation.duration.fast} ease;
   width: 100%;
 `;
 
@@ -72,7 +94,7 @@ const StyledSwatch = styled.span<{ tone: string }>`
 `;
 
 const INCOMING_TONE = 'var(--t-tag-text-blue)';
-const OUTGOING_TONE = 'var(--t-tag-text-purple)';
+const OUTGOING_TONE = 'var(--t-accent-accent6)';
 
 type DashboardActivityChartProps = {
   days: DashboardDay[];
@@ -91,23 +113,31 @@ export const DashboardActivityChart = ({
 
   return (
     <StyledChart>
-      <StyledColumns>
-        {days.map((day) => (
-          <StyledColumn
-            key={day.key}
-            title={t`${day.label}: ${day.incoming} in, ${day.outgoing} out`}
-          >
-            <StyledSegment
-              height={(day.outgoing / busiest) * 100}
-              tone={OUTGOING_TONE}
-            />
-            <StyledSegment
-              height={(day.incoming / busiest) * 100}
-              tone={INCOMING_TONE}
-            />
-          </StyledColumn>
-        ))}
-      </StyledColumns>
+      <StyledPlot>
+        <StyledGridLines>
+          <span />
+          <span />
+          <span />
+          <span />
+        </StyledGridLines>
+        <StyledColumns>
+          {days.map((day) => (
+            <StyledColumn
+              key={day.key}
+              title={t`${day.label}: ${day.incoming} in, ${day.outgoing} out`}
+            >
+              <StyledSegment
+                height={(day.outgoing / busiest) * 100}
+                tone={OUTGOING_TONE}
+              />
+              <StyledSegment
+                height={(day.incoming / busiest) * 100}
+                tone={INCOMING_TONE}
+              />
+            </StyledColumn>
+          ))}
+        </StyledColumns>
+      </StyledPlot>
       <StyledAxis>
         <span>{days[0]?.label}</span>
         <span>{days[days.length - 1]?.label}</span>

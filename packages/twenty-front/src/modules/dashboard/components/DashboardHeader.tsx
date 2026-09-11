@@ -21,20 +21,21 @@ const StyledGreeting = styled.div`
 
 const StyledTitle = styled.h1`
   color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
+  font-size: 2.1rem;
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   margin: 0;
 `;
 
 const StyledDate = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
+  font-size: ${themeCssVariables.font.size.lg};
 `;
 
 const StyledSwitch = styled.div`
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  background: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-shrink: 0;
   gap: 2px;
@@ -45,7 +46,9 @@ const StyledSwitchButton = styled.button<{ isSelected: boolean }>`
   background: ${({ isSelected }) =>
     isSelected ? themeCssVariables.background.primary : 'transparent'};
   border: none;
-  border-radius: ${themeCssVariables.border.radius.xs};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-shadow: ${({ isSelected }) =>
+    isSelected ? themeCssVariables.boxShadow.light : 'none'};
   color: ${({ isSelected }) =>
     isSelected
       ? themeCssVariables.font.color.primary
@@ -54,7 +57,7 @@ const StyledSwitchButton = styled.button<{ isSelected: boolean }>`
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[4]};
 
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.border.color.blue};

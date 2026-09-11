@@ -5,10 +5,11 @@ const StyledChart = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]};
 `;
 
-const StyledRow = styled.button<{ isSelected: boolean }>`
+const StyledRow = styled.button<{ isSelected: boolean; isEmpty: boolean }>`
+  opacity: ${({ isEmpty }) => (isEmpty ? 0.55 : 1)};
   align-items: center;
   background: ${({ isSelected }) =>
     isSelected ? themeCssVariables.background.tertiary : 'transparent'};
@@ -19,8 +20,9 @@ const StyledRow = styled.button<{ isSelected: boolean }>`
   font-family: ${themeCssVariables.font.family};
   gap: ${themeCssVariables.spacing[3]};
   grid-template-columns: minmax(7rem, 11rem) 1fr 3rem;
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   text-align: left;
+  transition: background ${themeCssVariables.animation.duration.fast} ease;
   width: 100%;
 
   &:hover {
@@ -42,10 +44,10 @@ const StyledLabel = styled.span`
 `;
 
 const StyledTrack = styled.span`
-  background: ${themeCssVariables.background.secondary};
+  background: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.pill};
   display: block;
-  height: 10px;
+  height: 8px;
   overflow: hidden;
   width: 100%;
 `;
@@ -96,6 +98,7 @@ export const DashboardBarChart = ({
           key={segment.key}
           type="button"
           isSelected={selectedKey === segment.key}
+          isEmpty={segment.count === 0}
           aria-pressed={selectedKey === segment.key}
           onClick={() =>
             onSelect(selectedKey === segment.key ? null : segment.key)

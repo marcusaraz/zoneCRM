@@ -6,20 +6,18 @@ import { type DashboardDelta } from '@/dashboard/utils/getDashboardDelta';
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]};
 `;
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledFigure = styled.div`
@@ -30,10 +28,11 @@ const StyledFigure = styled.div`
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xxl};
+  font-size: 2.5rem;
   font-variant-numeric: tabular-nums;
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  line-height: 1.1;
+  letter-spacing: -0.03em;
+  line-height: 1;
 `;
 
 const StyledDelta = styled.span<{ direction: DashboardDelta['direction'] }>`

@@ -3,19 +3,18 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type DashboardChartSegment } from '@/dashboard/components/DashboardBarChart';
 
-const RADIUS = 52;
-const STROKE = 20;
+const RADIUS = 62;
+const STROKE = 26;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const StyledChart = styled.div`
+const StyledChart = styled.div<{ isWide: boolean }>`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-  }
+  flex-direction: ${({ isWide }) => (isWide ? 'row' : 'column')};
+  gap: ${({ isWide }) =>
+    isWide ? themeCssVariables.spacing[6] : themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[5]};
 `;
 
 const StyledRing = styled.div`
@@ -49,7 +48,8 @@ const StyledCentre = styled.div`
 
 const StyledCentreValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
+  font-size: 1.9rem;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   font-weight: ${themeCssVariables.font.weight.semiBold};
   line-height: 1;
@@ -85,11 +85,12 @@ const StyledLegendRow = styled.button<{ isSelected: boolean }>`
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: grid;
+  transition: background ${themeCssVariables.animation.duration.fast} ease;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: 10px 1fr auto auto;
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  grid-template-columns: 10px 1fr auto 2.6rem;
+  padding: ${themeCssVariables.spacing[2]};
   text-align: left;
   width: 100%;
 
@@ -134,6 +135,8 @@ type DashboardDonutProps = {
   selectedKey: string | null;
   onSelect: (key: string | null) => void;
   centreLabel: string;
+  // A card with room to spare puts the key beside the ring rather than under it.
+  isWide?: boolean;
 };
 
 /**
@@ -148,6 +151,7 @@ export const DashboardDonut = ({
   selectedKey,
   onSelect,
   centreLabel,
+  isWide = false,
 }: DashboardDonutProps) => {
   const total = segments.reduce((sum, segment) => sum + segment.count, 0);
   const selected = segments.find((segment) => segment.key === selectedKey);
@@ -155,12 +159,12 @@ export const DashboardDonut = ({
   let travelled = 0;
 
   return (
-    <StyledChart>
+    <StyledChart isWide={isWide}>
       <StyledRing>
-        <StyledSvg width={140} height={140} viewBox="0 0 140 140">
+        <StyledSvg width={176} height={176} viewBox="0 0 176 176">
           <circle
-            cx={70}
-            cy={70}
+            cx={88}
+            cy={88}
             r={RADIUS}
             fill="none"
             stroke={themeCssVariables.background.secondary}
@@ -176,8 +180,8 @@ export const DashboardDonut = ({
             return (
               <StyledArc
                 key={segment.key}
-                cx={70}
-                cy={70}
+                cx={88}
+                cy={88}
                 r={RADIUS}
                 fill="none"
                 stroke={segment.tone}
