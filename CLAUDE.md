@@ -21,6 +21,25 @@ Where this repo differs from your defaults:
 
 Longer-form guides remain in `.cursor/rules/` (from the Cursor era).
 
+## Design (this fork only)
+
+This fork is the CRM inside the capital.works platform, and every interface there follows one
+design system: `design-system/capital-works/MASTER.md` in the platform repository, published as
+CSS custom properties at `https://id.capital.works/brand/tokens.css`. The point is that somebody
+moving from mail to the calendar to the CRM cannot tell where one ends and the next begins.
+
+The house look is Apple's: one blue (`#0071e3`), three greys, hairlines rather than boxes, pill
+buttons, the system font stack.
+
+Twenty's accent is its blue scale, so the brand colour lives in
+`packages/twenty-ui/design-tokens/color/blue.ts`. Every step keeps the lightness it had upstream
+and only the hue moves, so the interface stays exactly as readable; `blue9`, the step the buttons
+and links sit on, is the brand blue itself. After changing that file run
+`npx nx generateTokens twenty-ui` and commit what it writes. Never edit `ThemeLight.ts`,
+`ThemeDark.ts` or `theme-*.css` by hand: they are generated, and their headers say so.
+
+This section is ours and will conflict when upstream touches this file. Keep it.
+
 ## Commands
 
 ```bash
