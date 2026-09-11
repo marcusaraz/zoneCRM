@@ -85,13 +85,13 @@ const StyledLegendRow = styled.button<{ isSelected: boolean }>`
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: grid;
-  transition: background ${themeCssVariables.animation.duration.fast} ease;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: 10px 1fr auto 2.6rem;
   padding: ${themeCssVariables.spacing[2]};
   text-align: left;
+  transition: background ${themeCssVariables.animation.duration.fast} ease;
   width: 100%;
 
   &:hover {
