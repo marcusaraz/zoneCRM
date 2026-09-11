@@ -49,9 +49,9 @@ const StyledCentre = styled.div`
 const StyledCentreValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: 1.9rem;
-  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.02em;
   line-height: 1;
 `;
 

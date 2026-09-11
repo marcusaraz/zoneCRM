@@ -9,7 +9,6 @@ const StyledChart = styled.div`
 `;
 
 const StyledRow = styled.button<{ isSelected: boolean; isEmpty: boolean }>`
-  opacity: ${({ isEmpty }) => (isEmpty ? 0.55 : 1)};
   align-items: center;
   background: ${({ isSelected }) =>
     isSelected ? themeCssVariables.background.tertiary : 'transparent'};
@@ -20,6 +19,7 @@ const StyledRow = styled.button<{ isSelected: boolean; isEmpty: boolean }>`
   font-family: ${themeCssVariables.font.family};
   gap: ${themeCssVariables.spacing[3]};
   grid-template-columns: minmax(7rem, 11rem) 1fr 3rem;
+  opacity: ${({ isEmpty }) => (isEmpty ? 0.55 : 1)};
   padding: ${themeCssVariables.spacing[2]};
   text-align: left;
   transition: background ${themeCssVariables.animation.duration.fast} ease;
