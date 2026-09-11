@@ -58,7 +58,7 @@ const StyledInput = styled.input`
  */
 export const NavigationDrawerSearchInput = () => {
   const { t } = useLingui();
-  const query = useAtomStateValue(sidePanelSearchState);
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { search } = useOpenSearchResultsInSidePanel();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +75,7 @@ export const NavigationDrawerSearchInput = () => {
         type="text"
         autoComplete="off"
         spellCheck={false}
-        value={query}
+        value={sidePanelSearch}
         placeholder={t`Search`}
         aria-label={t`Search`}
         onChange={handleChange}
