@@ -7,6 +7,7 @@ import {
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
+import { NavigationDrawerModeButtons } from '@/navigation/components/NavigationDrawerModeButtons';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
@@ -176,6 +177,9 @@ export const PageCardHeader = ({
         data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
       >
         {actionButton}
+        {/* Zone CRM: the assistant and the settings belong in the corner of the
+            screen, not in the drawer, where they read as part of the menu. */}
+        <NavigationDrawerModeButtons />
       </StyledRight>
     </StyledHeader>
   );
