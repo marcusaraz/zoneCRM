@@ -29,10 +29,10 @@ export const useDashboardOwners = () => {
   // Read the model rather than demand it: this runs on the first screen after
   // signing in, when the metadata has often not arrived yet, and the hook that
   // insists on it throws rather than waiting.
-  const objectMetadataItems = useAtomStateValue(
+  const objectMetadataItemsWithFields = useAtomStateValue(
     objectMetadataItemsWithFieldsSelector,
   );
-  const objectMetadataItem = objectMetadataItems.find(
+  const objectMetadataItem = objectMetadataItemsWithFields.find(
     (item) => item.nameSingular === 'person',
   );
 
