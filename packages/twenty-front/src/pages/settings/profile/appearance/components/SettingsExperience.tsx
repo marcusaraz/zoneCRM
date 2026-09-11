@@ -5,12 +5,10 @@ import { FormatPreferencesSettings } from '@/settings/experience/components/Form
 import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
 import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
-import { ColorSchemePicker } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
@@ -22,7 +20,6 @@ const StyledInterfaceControls = styled.div`
 `;
 
 export const SettingsExperience = () => {
-  const { colorScheme, setColorScheme } = useColorScheme();
   const { t } = useLingui();
 
   return (
@@ -37,17 +34,6 @@ export const SettingsExperience = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title={t`Appearance`} />
-          <ColorSchemePicker
-            value={colorScheme}
-            onChange={setColorScheme}
-            lightLabel={t`Light`}
-            darkLabel={t`Dark`}
-            systemLabel={t`System settings`}
-          />
-        </Section>
-
         <Section>
           <H2Title
             title={t`Interface`}

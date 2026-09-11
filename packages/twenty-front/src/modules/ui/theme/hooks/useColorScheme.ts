@@ -16,13 +16,14 @@ import {
 } from 'twenty-ui/icon';
 
 export const useColorScheme = () => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const store = useStore();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
+  // Zone CRM follows the system. There is nowhere left to choose otherwise, and
+  // a member who chose light or dark before would otherwise be stuck with it.
+  const colorScheme: ColorScheme = 'System';
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {

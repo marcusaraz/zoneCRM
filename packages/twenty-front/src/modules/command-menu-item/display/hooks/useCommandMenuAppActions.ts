@@ -3,7 +3,6 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
@@ -25,7 +24,6 @@ export const useCommandMenuAppActions = () => {
     isNavigationDrawerExpanded,
   );
   const { copyToClipboard } = useCopyToClipboard();
-  const { colorScheme, setColorScheme, colorSchemeList } = useColorScheme();
 
   const themeLabels: Record<ColorScheme, string> = {
     Light: t`Change theme to light`,
@@ -48,13 +46,6 @@ export const useCommandMenuAppActions = () => {
         copyToClipboard(window.location.href, t`Link copied to clipboard`),
       isAvailable: true,
     },
-    ...colorSchemeList.map((theme) => ({
-      id: `change-theme-${theme.id.toLowerCase()}`,
-      label: themeLabels[theme.id],
-      Icon: theme.icon,
-      onClick: () => setColorScheme(theme.id),
-      isAvailable: theme.id !== colorScheme,
-    })),
   ];
 
   const normalizedSearch = normalizeSearchText(sidePanelSearch.trim());

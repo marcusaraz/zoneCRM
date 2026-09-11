@@ -9,7 +9,6 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -18,9 +17,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
-import { OPEN_RECORD_IN_OPTIONS } from '@/ui/navigation/navigation-drawer/constants/OpenRecordInOptions';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -63,7 +60,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
-  const { colorScheme, colorSchemeList } = useColorScheme();
   const supportChat = useAtomStateValue(supportChatState);
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
@@ -73,11 +69,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     multiWorkspaceDropdownState,
   );
 
-  const { openRecordInPreference } = useOpenRecordInPreference();
   const navigateSettings = useNavigateSettings();
 
   const isMobile = useIsMobile();
-  const canDisplaySidePanel = !isMobile;
 
   const handleSettings = () => {
     closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
@@ -204,24 +198,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             LeftIcon={IconSettings}
             text={t`Settings`}
             onClick={handleSettings}
-          />
-        )}
-        <MenuItem
-          LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
-          text={t`Theme`}
-          contextualText={colorScheme}
-          hasSubMenu={true}
-          onClick={() => setMultiWorkspaceDropdown('themes')}
-        />
-        {canDisplaySidePanel && (
-          <MenuItem
-            LeftIcon={OPEN_RECORD_IN_OPTIONS[openRecordInPreference].Icon}
-            text={t`Open in`}
-            contextualText={t(
-              OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
-            )}
-            hasSubMenu={true}
-            onClick={() => setMultiWorkspaceDropdown('open-record-in')}
           />
         )}
         <UndecoratedLink
