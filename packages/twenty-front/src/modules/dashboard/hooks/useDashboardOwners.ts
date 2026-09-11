@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { type DashboardChartSegment } from '@/dashboard/components/DashboardBarChart';
 import { DASHBOARD_QUERIES } from '@/dashboard/graphql/dashboardQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 // The ladder is read top down, so the colour weakens as the numbers do.
@@ -25,9 +26,15 @@ const TONES = [
  */
 export const useDashboardOwners = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: 'person',
-  });
+  // Read the model rather than demand it: this runs on the first screen after
+  // signing in, when the metadata has often not arrived yet, and the hook that
+  // insists on it throws rather than waiting.
+  const objectMetadataItems = useAtomStateValue(
+    objectMetadataItemsWithFieldsSelector,
+  );
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  );
 
   const [segments, setSegments] = useState<DashboardChartSegment[]>([]);
 

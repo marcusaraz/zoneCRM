@@ -136,8 +136,11 @@ export const NavigationDrawer = ({
           <NavigationDrawerHeader
             showCollapseButton={isMobile || !isSettingsDrawer}
           />
-          {/* Zone CRM: search starts here, not on a page of its own. */}
-          {!isSettingsDrawer && isExpanded && <NavigationDrawerSearchInput />}
+          {/* Zone CRM: search starts here, not on a page of its own. A phone
+              has the search in its bottom bar instead. */}
+          {!isMobile && !isSettingsDrawer && isExpanded && (
+            <NavigationDrawerSearchInput />
+          )}
           <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
