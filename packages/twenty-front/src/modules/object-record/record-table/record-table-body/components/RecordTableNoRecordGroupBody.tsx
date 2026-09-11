@@ -6,7 +6,6 @@ import { RecordTableBody } from '@/object-record/record-table/record-table-body/
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyNoRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyNoRecordGroupDragDropContextProvider';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
-import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { RecordTableVirtualizedJunctionDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedJunctionDataChangedEffect';
@@ -35,9 +34,6 @@ export const RecordTableNoRecordGroupBody = () => {
           <RecordTableNoRecordGroupRows />
           <RecordTableCellPortals />
         </RecordTableBody>
-        {!isRecordTableInitialLoading && recordTableHasRecords && (
-          <RecordTableAggregateFooter />
-        )}
         <RecordTableVirtualizedRowTreadmillEffect />
         <RecordTableVirtualizedDataChangedEffect />
         <RecordTableVirtualizedJunctionDataChangedEffect />
