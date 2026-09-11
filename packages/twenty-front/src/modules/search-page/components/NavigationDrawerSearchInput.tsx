@@ -18,6 +18,7 @@ const StyledField = styled.label`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[3]};
+  margin-right: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
   &:focus-within {

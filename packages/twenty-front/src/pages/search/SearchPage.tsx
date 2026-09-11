@@ -21,8 +21,6 @@ const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[5]};
-  margin: 0 auto;
-  max-width: 720px;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[10]};
   width: 100%;
