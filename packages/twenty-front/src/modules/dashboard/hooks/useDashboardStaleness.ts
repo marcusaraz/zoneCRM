@@ -7,14 +7,13 @@ import { DASHBOARD_STALENESS_BUCKETS } from '@/dashboard/constants/DashboardStal
 import { DASHBOARD_QUERIES } from '@/dashboard/graphql/dashboardQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 
-const isoAge = (days: number) =>
-  new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+const isoAge = (until: string, days: number) =>
+  new Date(Date.parse(until) - days * 24 * 60 * 60 * 1000).toISOString();
 
-const useOlderThan = (days: number | null): number => {
+const useOlderThan = (threshold: string): number => {
   const apolloCoreClient = useApolloCoreClient();
   const { data } = useQuery(DASHBOARD_QUERIES.people, {
-    variables:
-      days === null ? {} : { filter: { updatedAt: { lt: isoAge(days) } } },
+    variables: { filter: { updatedAt: { lt: threshold } } },
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
   });
@@ -33,13 +32,32 @@ const useOlderThan = (days: number | null): number => {
  * between them, which is one query per line on the chart and no arithmetic on
  * the server.
  */
-export const useDashboardStaleness = (total: number | null) => {
+export const useDashboardStaleness = ({
+  total,
+  until,
+}: {
+  total: number | null;
+  until: string;
+}) => {
   const { t } = useLingui();
 
-  const olderThanWeek = useOlderThan(7);
-  const olderThanMonth = useOlderThan(30);
-  const olderThanQuarter = useOlderThan(90);
-  const olderThanYear = useOlderThan(365);
+  // One moment for the whole page. Reading the clock during a render gives
+  // every render a different threshold, and a query whose variables never
+  // settle refetches for as long as the page is open.
+  const ages = useMemo(
+    () => ({
+      week: isoAge(until, 7),
+      month: isoAge(until, 30),
+      quarter: isoAge(until, 90),
+      year: isoAge(until, 365),
+    }),
+    [until],
+  );
+
+  const olderThanWeek = useOlderThan(ages.week);
+  const olderThanMonth = useOlderThan(ages.month);
+  const olderThanQuarter = useOlderThan(ages.quarter);
+  const olderThanYear = useOlderThan(ages.year);
 
   const labels: Record<string, string> = useMemo(
     () => ({
@@ -91,9 +109,11 @@ export const useDashboardStaleness = (total: number | null) => {
     const newerThan =
       previous === undefined
         ? null
-        : { updatedAt: { lt: isoAge(previous.days as number) } };
+        : { updatedAt: { lt: isoAge(until, previous.days as number) } };
     const olderThan =
-      bucket.days === null ? null : { updatedAt: { gte: isoAge(bucket.days) } };
+      bucket.days === null
+        ? null
+        : { updatedAt: { gte: isoAge(until, bucket.days) } };
 
     const clauses = [newerThan, olderThan].filter((clause) => clause !== null);
 

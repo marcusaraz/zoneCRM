@@ -98,7 +98,10 @@ export const DashboardPage = () => {
 
   const kpis = useDashboardKpis(period);
   const series = useDashboardCallSeries({ since: period.since, days });
-  const staleness = useDashboardStaleness(kpis.peopleTotal);
+  const staleness = useDashboardStaleness({
+    total: kpis.peopleTotal,
+    until: period.until,
+  });
   const callOutcomes = useDashboardCallOutcomes(period.since);
   const pipeline = useDashboardPipeline();
   const owners = useDashboardOwners();

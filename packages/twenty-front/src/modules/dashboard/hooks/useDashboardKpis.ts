@@ -36,25 +36,25 @@ const callsBetween = (from: string, to: string) => ({
 export const useDashboardKpis = ({
   since,
   previousSince,
+  until,
 }: {
   since: string;
   previousSince: string;
+  until: string;
 }) => {
-  const now = new Date().toISOString();
-
   const peopleTotal = useCount('people', {});
   const companiesTotal = useCount('companies', {});
 
-  const peopleAdded = useCount('people', between(since, now));
+  const peopleAdded = useCount('people', between(since, until));
   const peopleAddedBefore = useCount('people', between(previousSince, since));
 
-  const calls = useCount('phoneCalls', callsBetween(since, now));
+  const calls = useCount('phoneCalls', callsBetween(since, until));
   const callsBefore = useCount(
     'phoneCalls',
     callsBetween(previousSince, since),
   );
 
-  const notes = useCount('notes', between(since, now));
+  const notes = useCount('notes', between(since, until));
   const notesBefore = useCount('notes', between(previousSince, since));
 
   return {

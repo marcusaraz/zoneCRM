@@ -19,6 +19,10 @@ export const useDashboardPeriod = () => {
 
     return {
       days,
+      // Fixed when the page opens. Reading the clock during a render makes
+      // every render ask a different question, and a query whose variables
+      // never settle refetches for as long as the page is open.
+      until: new Date(now).toISOString(),
       since: new Date(now - days * DAY_IN_MS).toISOString(),
       previousSince: new Date(now - 2 * days * DAY_IN_MS).toISOString(),
       lastDay: new Date(now - DAY_IN_MS).toISOString(),
