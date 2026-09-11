@@ -6,6 +6,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DashboardActivityChart } from '@/dashboard/components/DashboardActivityChart';
 import { DashboardBarChart } from '@/dashboard/components/DashboardBarChart';
+import { DashboardCardBoundary } from '@/dashboard/components/DashboardCardBoundary';
 import { DashboardDonut } from '@/dashboard/components/DashboardDonut';
 import { DashboardHeader } from '@/dashboard/components/DashboardHeader';
 import { DashboardKpiCard } from '@/dashboard/components/DashboardKpiCard';
@@ -168,88 +169,98 @@ export const DashboardPage = () => {
           </StyledKpis>
 
           <StyledSplit>
-            <StyledCard>
-              <StyledCardHeading>{t`The phone, day by day`}</StyledCardHeading>
-              <DashboardActivityChart days={series} />
-            </StyledCard>
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`The phone, day by day`}</StyledCardHeading>
+                <DashboardActivityChart days={series} />
+              </StyledCard>
+            </DashboardCardBoundary>
 
-            <StyledCard>
-              <StyledCardHeading>{t`How calls ended`}</StyledCardHeading>
-              <DashboardDonut
-                segments={callOutcomes.segments}
-                selectedKey={openCallOutcome}
-                onSelect={setOpenCallOutcome}
-                centreLabel={t`calls`}
-              />
-              {openCallOutcome !== null && (
-                <StyledDrilldown>
-                  <DashboardList
-                    heading={t`Most recent first`}
-                    rows={callRows}
-                    emptyText={t`No calls ended this way.`}
-                  />
-                </StyledDrilldown>
-              )}
-            </StyledCard>
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`How calls ended`}</StyledCardHeading>
+                <DashboardDonut
+                  segments={callOutcomes.segments}
+                  selectedKey={openCallOutcome}
+                  onSelect={setOpenCallOutcome}
+                  centreLabel={t`calls`}
+                />
+                {openCallOutcome !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Most recent first`}
+                      rows={callRows}
+                      emptyText={t`No calls ended this way.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
           </StyledSplit>
 
           <StyledSplit>
-            <StyledCard>
-              <StyledCardHeading>{t`Where everyone stands`}</StyledCardHeading>
-              <DashboardDonut
-                segments={pipeline.segments}
-                selectedKey={openStage}
-                onSelect={setOpenStage}
-                centreLabel={t`with a stage`}
-                isWide
-              />
-              {openStage !== null && (
-                <StyledDrilldown>
-                  <DashboardList
-                    heading={t`Longest untouched first`}
-                    rows={stageRows}
-                    emptyText={t`Nobody is at this stage.`}
-                  />
-                </StyledDrilldown>
-              )}
-            </StyledCard>
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`Where everyone stands`}</StyledCardHeading>
+                <DashboardDonut
+                  segments={pipeline.segments}
+                  selectedKey={openStage}
+                  onSelect={setOpenStage}
+                  centreLabel={t`with a stage`}
+                  isWide
+                />
+                {openStage !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Longest untouched first`}
+                      rows={stageRows}
+                      emptyText={t`Nobody is at this stage.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
 
-            <StyledCard>
-              <StyledCardHeading>{t`How long since anyone touched them`}</StyledCardHeading>
-              <DashboardBarChart
-                segments={staleness.segments}
-                selectedKey={openStalenessBucket}
-                onSelect={setOpenStalenessBucket}
-              />
-              {openStalenessBucket !== null && (
-                <StyledDrilldown>
-                  <DashboardList
-                    heading={t`Longest untouched first`}
-                    rows={peopleRows}
-                    emptyText={t`Nobody falls in this band.`}
-                  />
-                </StyledDrilldown>
-              )}
-            </StyledCard>
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`How long since anyone touched them`}</StyledCardHeading>
+                <DashboardBarChart
+                  segments={staleness.segments}
+                  selectedKey={openStalenessBucket}
+                  onSelect={setOpenStalenessBucket}
+                />
+                {openStalenessBucket !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Longest untouched first`}
+                      rows={peopleRows}
+                      emptyText={t`Nobody falls in this band.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
           </StyledSplit>
 
-          <StyledCard>
-            <StyledCardHeading>{t`Who is carrying the book`}</StyledCardHeading>
-            <DashboardBarChart
-              segments={owners.segments}
-              selectedKey={openOwner}
-              onSelect={setOpenOwner}
-            />
-            {openOwner !== null && (
-              <StyledDrilldown>
-                <DashboardList
-                  heading={t`Longest untouched first`}
-                  rows={ownerRows}
-                  emptyText={t`Nobody is assigned to them.`}
-                />
-              </StyledDrilldown>
-            )}
-          </StyledCard>
+          <DashboardCardBoundary>
+            <StyledCard>
+              <StyledCardHeading>{t`Who is carrying the book`}</StyledCardHeading>
+              <DashboardBarChart
+                segments={owners.segments}
+                selectedKey={openOwner}
+                onSelect={setOpenOwner}
+              />
+              {openOwner !== null && (
+                <StyledDrilldown>
+                  <DashboardList
+                    heading={t`Longest untouched first`}
+                    rows={ownerRows}
+                    emptyText={t`Nobody is assigned to them.`}
+                  />
+                </StyledDrilldown>
+              )}
+            </StyledCard>
+          </DashboardCardBoundary>
         </StyledContent>
       </StyledScroll>
     </PageCardLayout>
