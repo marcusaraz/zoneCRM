@@ -18,7 +18,7 @@ const StyledRow = styled.button<{ isSelected: boolean }>`
   display: grid;
   font-family: ${themeCssVariables.font.family};
   gap: ${themeCssVariables.spacing[3]};
-  grid-template-columns: 8rem 1fr 3rem;
+  grid-template-columns: minmax(7rem, 11rem) 1fr 3rem;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   text-align: left;
   width: 100%;

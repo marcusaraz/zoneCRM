@@ -14,6 +14,7 @@ import { useDashboardCallOutcomes } from '@/dashboard/hooks/useDashboardCallOutc
 import { useDashboardCallSeries } from '@/dashboard/hooks/useDashboardCallSeries';
 import { useDashboardDrilldown } from '@/dashboard/hooks/useDashboardDrilldown';
 import { useDashboardKpis } from '@/dashboard/hooks/useDashboardKpis';
+import { useDashboardOwners } from '@/dashboard/hooks/useDashboardOwners';
 import { useDashboardPeriod } from '@/dashboard/hooks/useDashboardPeriod';
 import { useDashboardPipeline } from '@/dashboard/hooks/useDashboardPipeline';
 import { useDashboardStaleness } from '@/dashboard/hooks/useDashboardStaleness';
@@ -106,6 +107,7 @@ export const DashboardPage = () => {
   const staleness = useDashboardStaleness(kpis.peopleTotal);
   const callOutcomes = useDashboardCallOutcomes(period.since);
   const pipeline = useDashboardPipeline();
+  const owners = useDashboardOwners();
 
   const [openStalenessBucket, setOpenStalenessBucket] = useState<string | null>(
     null,
@@ -114,16 +116,21 @@ export const DashboardPage = () => {
     'NO_ANSWER',
   );
   const [openStage, setOpenStage] = useState<string | null>(null);
+  const [openOwner, setOpenOwner] = useState<string | null>(null);
 
   const { peopleRows, callRows } = useDashboardDrilldown({
     peopleFilter: staleness.filterForBucket(openStalenessBucket),
     callFilter: callOutcomes.filterForOutcome(openCallOutcome),
   });
 
-  // The pipeline has a list of its own, so it does not compete with the band
-  // that is open on the other chart.
+  // Each chart opens its own list, so one being open does not close another.
   const { peopleRows: stageRows } = useDashboardDrilldown({
     peopleFilter: pipeline.filterForStage(openStage),
+    callFilter: null,
+  });
+
+  const { peopleRows: ownerRows } = useDashboardDrilldown({
+    peopleFilter: owners.filterForOwner(openOwner),
     callFilter: null,
   });
 
@@ -231,6 +238,24 @@ export const DashboardPage = () => {
               )}
             </StyledCard>
           </StyledPair>
+
+          <StyledCard>
+            <StyledCardHeading>{t`Who is carrying the book`}</StyledCardHeading>
+            <DashboardBarChart
+              segments={owners.segments}
+              selectedKey={openOwner}
+              onSelect={setOpenOwner}
+            />
+            {openOwner !== null && (
+              <StyledDrilldown>
+                <DashboardList
+                  heading={t`Longest untouched first`}
+                  rows={ownerRows}
+                  emptyText={t`Nobody is assigned to them.`}
+                />
+              </StyledDrilldown>
+            )}
+          </StyledCard>
         </StyledContent>
       </StyledScroll>
     </PageCardLayout>
