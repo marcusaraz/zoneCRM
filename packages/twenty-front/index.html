@@ -12,22 +12,43 @@
     <link rel="apple-touch-icon" href="/images/icons/ios/192.png" />
     <link rel="manifest" href="/manifest.json" />
 
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="A modern open-source CRM" />
+    <!-- The colour behind the status bar, so the top of the screen belongs to
+         the app rather than to the browser. -->
     <meta
-      property="og:image"
-      content="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/social-card.png"
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ffffff"
     />
-    <meta property="og:description" content="A modern open-source CRM" />
-    <meta property="og:title" content="Twenty" />
-    <meta name="twitter:card" content="summary_large_image" />
     <meta
-      name="twitter:image"
-      content="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/social-card.png"
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#000000"
     />
 
-    <meta name="twitter:description" content="A modern open-source CRM" />
-    <meta name="twitter:title" content="Twenty" />
+    <!-- Added to the home screen, it opens without browser furniture and keeps
+         its own name under the icon. -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Zone CRM" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <meta
+      name="description"
+      content="Zone CRM: phone, chat, mail, calendar and files around one customer record."
+    />
+    <meta property="og:title" content="Zone CRM" />
+    <meta
+      property="og:description"
+      content="Phone, chat, mail, calendar and files around one customer record."
+    />
+    <meta property="og:image" content="https://zonecrm.io/assets/img/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Zone CRM" />
+    <meta
+      name="twitter:description"
+      content="Phone, chat, mail, calendar and files around one customer record."
+    />
+    <meta name="twitter:image" content="https://zonecrm.io/assets/img/og.png" />
     <title>Zone CRM</title>
     <!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
