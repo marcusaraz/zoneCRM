@@ -128,3 +128,22 @@ export const DASHBOARD_CALL_LIST = gql`
     }
   }
 `;
+
+export const DASHBOARD_CALL_SERIES = gql`
+  query ZoneDashboardCallSeries($filter: PhoneCallFilterInput) {
+    phoneCalls(
+      filter: $filter
+      first: 500
+      orderBy: { occurredAt: DescNullsLast }
+    ) {
+      edges {
+        node {
+          id
+          occurredAt
+          direction
+          status
+        }
+      }
+    }
+  }
+`;
