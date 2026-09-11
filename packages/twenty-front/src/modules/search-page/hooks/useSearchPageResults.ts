@@ -5,6 +5,7 @@ import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReada
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SEARCH_PAGE_DEBOUNCE_MS } from '@/search-page/constants/SearchPageDebounceMs';
 import { SEARCH_PAGE_RESULT_LIMIT } from '@/search-page/constants/SearchPageResultLimit';
+import { sortByPreferredObjectOrder } from '@/search-page/utils/sortByPreferredObjectOrder';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -128,7 +129,7 @@ export const useSearchPageResults = ({
       });
     }
 
-    return [...byObject.values()];
+    return sortByPreferredObjectOrder([...byObject.values()]);
   }, [everyRecord, labelPluralOf]);
 
   const groups: SearchPageGroup[] = useMemo(() => {
@@ -156,7 +157,7 @@ export const useSearchPageResults = ({
       });
     }
 
-    return [...byObject.values()];
+    return sortByPreferredObjectOrder([...byObject.values()]);
   }, [
     everyRecord,
     recordsOfOneType,

@@ -10,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SearchPageEmptyState } from '@/search-page/components/SearchPageEmptyState';
 import { SearchPageFilters } from '@/search-page/components/SearchPageFilters';
 import { SearchPageInput } from '@/search-page/components/SearchPageInput';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { SearchPageResults } from '@/search-page/components/SearchPageResults';
 import { SearchPageSkeleton } from '@/search-page/components/SearchPageSkeleton';
 import { useSearchPageResults } from '@/search-page/hooks/useSearchPageResults';
@@ -53,6 +54,9 @@ const StyledControls = styled.div`
 export const SearchPage = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
+  // The drawer carries the box on a wide screen. On a narrow one the drawer is
+  // away, so the page carries it instead.
+  const isMobile = useIsMobile();
   const { query, objectNameSingular, setQuery, setObjectNameSingular } =
     useSearchPageState();
 
@@ -103,6 +107,32 @@ export const SearchPage = () => {
     }
   };
 
+  // The box lives in the drawer, so the keys that walk the results are listened
+  // for on the page rather than on the input: the caret stays where the words
+  // are while the arrows move through what was found.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        moveHighlight(1);
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        moveHighlight(-1);
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        openHighlighted();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
   const showSkeleton = hasQuery && loading && results.length === 0;
   const showResults = results.length > 0;
 
@@ -116,12 +146,14 @@ export const SearchPage = () => {
       <StyledScroll>
         <StyledContent>
           <StyledControls>
-            <SearchPageInput
-              value={query}
-              onChange={setQuery}
-              onMoveHighlight={moveHighlight}
-              onOpenHighlighted={openHighlighted}
-            />
+            {isMobile && (
+              <SearchPageInput
+                value={query}
+                onChange={setQuery}
+                onMoveHighlight={moveHighlight}
+                onOpenHighlighted={openHighlighted}
+              />
+            )}
             {hasQuery && (
               <SearchPageFilters
                 counts={counts}

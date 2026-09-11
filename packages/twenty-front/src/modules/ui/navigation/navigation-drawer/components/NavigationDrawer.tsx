@@ -20,6 +20,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { NavigationDrawerSearchInput } from '@/search-page/components/NavigationDrawerSearchInput';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
@@ -135,6 +136,8 @@ export const NavigationDrawer = ({
           <NavigationDrawerHeader
             showCollapseButton={isMobile || !isSettingsDrawer}
           />
+          {/* Zone CRM: search starts here, not on a page of its own. */}
+          {!isSettingsDrawer && isExpanded && <NavigationDrawerSearchInput />}
           <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
