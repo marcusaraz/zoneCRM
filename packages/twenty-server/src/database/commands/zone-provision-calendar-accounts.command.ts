@@ -28,9 +28,11 @@ type ZoneCalendarMember = WorkspaceMemberWorkspaceEntity & {
  * pointed at their own calendar home. They arrange a meeting and the invitation
  * goes out under their own name, having connected nothing and typed no password.
  *
- * It needs to know where the calendar server is and who the CRM is there:
- *   ZONE_CALDAV_BASE_URL     https://calendar.capital.works/SOGo/dav
- *   ZONE_CALDAV_SERVICE_USER zone-crm
+ * It needs to know where a colleague's calendars live and who the CRM is on that
+ * server. The address is a template rather than a base, because where a server
+ * keeps someone's calendars is the server's business, not this command's:
+ *   ZONE_CALDAV_HOME_TEMPLATE  https://calendar.example/dav/{username}/Calendar/
+ *   ZONE_CALDAV_SERVICE_USER   zone-crm
  *   ZONE_CALDAV_SERVICE_SECRET
  *
  * A colleague is skipped when their record does not say what the directory calls
@@ -59,16 +61,17 @@ export class ZoneProvisionCalendarAccountsCommand extends ProvisionedWorkspaceCo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const baseUrl = (process.env.ZONE_CALDAV_BASE_URL ?? '').replace(
-      /\/+$/,
-      '',
-    );
+    const homeTemplate = process.env.ZONE_CALDAV_HOME_TEMPLATE ?? '';
     const serviceUser = process.env.ZONE_CALDAV_SERVICE_USER ?? '';
     const serviceSecret = process.env.ZONE_CALDAV_SERVICE_SECRET ?? '';
 
-    if (baseUrl === '' || serviceUser === '' || serviceSecret === '') {
+    if (
+      !homeTemplate.includes('{username}') ||
+      serviceUser === '' ||
+      serviceSecret === ''
+    ) {
       this.logger.log(
-        'ZONE_CALDAV_BASE_URL, ZONE_CALDAV_SERVICE_USER and ZONE_CALDAV_SERVICE_SECRET are not all set; nothing to do',
+        'ZONE_CALDAV_HOME_TEMPLATE (containing {username}), ZONE_CALDAV_SERVICE_USER and ZONE_CALDAV_SERVICE_SECRET are not all set; nothing to do',
       );
 
       return;
@@ -121,7 +124,7 @@ export class ZoneProvisionCalendarAccountsCommand extends ProvisionedWorkspaceCo
         continue;
       }
 
-      const host = `${baseUrl}/${directoryUsername}/`;
+      const host = homeTemplate.replace('{username}', directoryUsername);
 
       if (options.dryRun === true) {
         this.logger.log(`${handle}: would be pointed at ${host}`);
