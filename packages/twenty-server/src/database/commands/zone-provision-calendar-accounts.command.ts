@@ -59,7 +59,10 @@ export class ZoneProvisionCalendarAccountsCommand extends ProvisionedWorkspaceCo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const baseUrl = (process.env.ZONE_CALDAV_BASE_URL ?? '').replace(/\/+$/, '');
+    const baseUrl = (process.env.ZONE_CALDAV_BASE_URL ?? '').replace(
+      /\/+$/,
+      '',
+    );
     const serviceUser = process.env.ZONE_CALDAV_SERVICE_USER ?? '';
     const serviceSecret = process.env.ZONE_CALDAV_SERVICE_SECRET ?? '';
 
