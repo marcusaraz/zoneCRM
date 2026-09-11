@@ -6,6 +6,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DashboardActivityChart } from '@/dashboard/components/DashboardActivityChart';
 import { DashboardBarChart } from '@/dashboard/components/DashboardBarChart';
+import { DashboardDonut } from '@/dashboard/components/DashboardDonut';
 import { DashboardHeader } from '@/dashboard/components/DashboardHeader';
 import { DashboardKpiCard } from '@/dashboard/components/DashboardKpiCard';
 import { DashboardList } from '@/dashboard/components/DashboardList';
@@ -14,6 +15,7 @@ import { useDashboardCallSeries } from '@/dashboard/hooks/useDashboardCallSeries
 import { useDashboardDrilldown } from '@/dashboard/hooks/useDashboardDrilldown';
 import { useDashboardKpis } from '@/dashboard/hooks/useDashboardKpis';
 import { useDashboardPeriod } from '@/dashboard/hooks/useDashboardPeriod';
+import { useDashboardPipeline } from '@/dashboard/hooks/useDashboardPipeline';
 import { useDashboardStaleness } from '@/dashboard/hooks/useDashboardStaleness';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
@@ -103,6 +105,7 @@ export const DashboardPage = () => {
   const series = useDashboardCallSeries({ since: period.since, days });
   const staleness = useDashboardStaleness(kpis.peopleTotal);
   const callOutcomes = useDashboardCallOutcomes(period.since);
+  const pipeline = useDashboardPipeline();
 
   const [openStalenessBucket, setOpenStalenessBucket] = useState<string | null>(
     null,
@@ -110,10 +113,18 @@ export const DashboardPage = () => {
   const [openCallOutcome, setOpenCallOutcome] = useState<string | null>(
     'NO_ANSWER',
   );
+  const [openStage, setOpenStage] = useState<string | null>(null);
 
   const { peopleRows, callRows } = useDashboardDrilldown({
     peopleFilter: staleness.filterForBucket(openStalenessBucket),
     callFilter: callOutcomes.filterForOutcome(openCallOutcome),
+  });
+
+  // The pipeline has a list of its own, so it does not compete with the band
+  // that is open on the other chart.
+  const { peopleRows: stageRows } = useDashboardDrilldown({
+    peopleFilter: pipeline.filterForStage(openStage),
+    callFilter: null,
   });
 
   return (
@@ -164,10 +175,11 @@ export const DashboardPage = () => {
 
             <StyledCard>
               <StyledCardHeading>{t`How calls ended`}</StyledCardHeading>
-              <DashboardBarChart
+              <DashboardDonut
                 segments={callOutcomes.segments}
                 selectedKey={openCallOutcome}
                 onSelect={setOpenCallOutcome}
+                centreLabel={t`calls`}
               />
               {openCallOutcome !== null && (
                 <StyledDrilldown>
@@ -182,6 +194,25 @@ export const DashboardPage = () => {
           </StyledSplit>
 
           <StyledPair>
+            <StyledCard>
+              <StyledCardHeading>{t`Where everyone stands`}</StyledCardHeading>
+              <DashboardDonut
+                segments={pipeline.segments}
+                selectedKey={openStage}
+                onSelect={setOpenStage}
+                centreLabel={t`with a stage`}
+              />
+              {openStage !== null && (
+                <StyledDrilldown>
+                  <DashboardList
+                    heading={t`Longest untouched first`}
+                    rows={stageRows}
+                    emptyText={t`Nobody is at this stage.`}
+                  />
+                </StyledDrilldown>
+              )}
+            </StyledCard>
+
             <StyledCard>
               <StyledCardHeading>{t`How long since anyone touched them`}</StyledCardHeading>
               <DashboardBarChart
