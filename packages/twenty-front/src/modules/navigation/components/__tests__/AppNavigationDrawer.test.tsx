@@ -11,12 +11,6 @@ jest.mock('@/navigation/components/MainNavigationDrawerContent', () => ({
   MainNavigationDrawerContent: () => <div>Main content</div>,
 }));
 
-jest.mock('@/navigation/components/MainNavigationDrawerModeSwitcher', () => ({
-  MainNavigationDrawerModeSwitcher: () => (
-    <button type="button">Navigation modes</button>
-  ),
-}));
-
 jest.mock('@/navigation/components/SettingsNavigationDrawerContent', () => ({
   SettingsNavigationDrawerContent: () => <div>Settings content</div>,
 }));
@@ -45,11 +39,8 @@ describe('AppNavigationDrawer', () => {
     jest.mocked(useIsSettingsDrawer).mockReturnValue(false);
   });
 
-  it('keeps the mode switcher mounted when the drawer content changes', () => {
+  it('swaps the content when the drawer changes what it is showing', () => {
     const { rerender } = render(<AppNavigationDrawer />);
-    const modeSwitcher = screen.getByRole('button', {
-      name: 'Navigation modes',
-    });
 
     expect(screen.getByText('Main content')).toBeInTheDocument();
 
@@ -57,20 +48,5 @@ describe('AppNavigationDrawer', () => {
     rerender(<AppNavigationDrawer />);
 
     expect(screen.getByText('Settings content')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Navigation modes' })).toBe(
-      modeSwitcher,
-    );
-  });
-
-  it('leaves mode switching to the navigation bar on mobile', () => {
-    jest.mocked(useIsMobile).mockReturnValue(true);
-    jest.mocked(useIsSettingsDrawer).mockReturnValue(true);
-
-    render(<AppNavigationDrawer />);
-
-    expect(screen.getByText('Settings content')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Navigation modes' }),
-    ).not.toBeInTheDocument();
   });
 });

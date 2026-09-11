@@ -32,7 +32,6 @@ import {
   IconPlus,
   IconSettings,
   IconSwitchHorizontal,
-  IconUserPlus,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
@@ -200,14 +199,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             onClick={handleSettings}
           />
         )}
-        <UndecoratedLink
-          to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
-          onClick={() => {
-            closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-          }}
-        >
-          <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
-        </UndecoratedLink>
         {isSupportChatConfigured && (
           <MenuItem
             LeftIcon={IconMessage}

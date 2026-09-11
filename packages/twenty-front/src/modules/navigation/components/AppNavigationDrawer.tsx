@@ -1,7 +1,6 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
-import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { SettingsNavigationDrawerContent } from '@/navigation/components/SettingsNavigationDrawerContent';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
@@ -27,9 +26,7 @@ export const AppNavigationDrawer = ({
       {/* Mobile switches modes from the navigation bar at the bottom of the
           screen, so a second switcher inside the drawer only repeats it. */}
       {!isMobile && (
-        <NavigationDrawerFixedContent>
-          <MainNavigationDrawerModeSwitcher />
-        </NavigationDrawerFixedContent>
+        <NavigationDrawerFixedContent></NavigationDrawerFixedContent>
       )}
 
       {isSettingsDrawer ? (

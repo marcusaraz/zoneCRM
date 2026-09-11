@@ -10,9 +10,21 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { Avatar } from 'twenty-ui/data-display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+
+// The mark is a way home, the way a mark usually is. The name and the chevron
+// beside it still open the workspace menu, so nothing is lost by giving the
+// mark a job of its own.
+const StyledHomeLink = styled(Link)`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+`;
 
 type MultiWorkspaceDropdownClickableComponentProps = {
   disabled?: boolean;
@@ -33,12 +45,18 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       disabled={disabled}
     >
-      <Avatar
-        placeholder={currentWorkspace?.displayName || ''}
-        avatarUrl={getAbsoluteImageUrl(
-          currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
-        )}
-      />
+      <StyledHomeLink
+        to={AppPath.DashboardPage}
+        aria-label={currentWorkspace?.displayName ?? ''}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <Avatar
+          placeholder={currentWorkspace?.displayName || ''}
+          avatarUrl={getAbsoluteImageUrl(
+            currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+          )}
+        />
+      </StyledHomeLink>
       {!shouldHideLabel && (
         <>
           <StyledLabelWrapper>

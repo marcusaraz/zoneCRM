@@ -1,11 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import {
-  type IconComponent,
-  IconComment,
-  IconHome,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { type IconComponent, IconComment, IconSettings } from 'twenty-ui/icon';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
@@ -36,12 +31,9 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
     return [];
   }
 
+  // Zone CRM: home is the mark at the top of the drawer, so it is not also a
+  // tab. What is left are the two places that are not the menu itself.
   return [
-    {
-      Icon: IconHome,
-      label: t`Home`,
-      mode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-    },
     ...(hasAiPermission
       ? [
           {
