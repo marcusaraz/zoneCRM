@@ -80,3 +80,51 @@ export const DASHBOARD_CALLS_TO_RETURN = gql`
     }
   }
 `;
+
+export const DASHBOARD_PEOPLE_LIST = gql`
+  query ZoneDashboardPeopleList($filter: PersonFilterInput) {
+    people(filter: $filter, first: 10, orderBy: { updatedAt: AscNullsLast }) {
+      edges {
+        node {
+          id
+          slug
+          updatedAt
+          name {
+            firstName
+            lastName
+          }
+          company {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const DASHBOARD_CALL_LIST = gql`
+  query ZoneDashboardCallList($filter: PhoneCallFilterInput) {
+    phoneCalls(
+      filter: $filter
+      first: 10
+      orderBy: { occurredAt: DescNullsLast }
+    ) {
+      edges {
+        node {
+          id
+          occurredAt
+          phoneNumber
+          direction
+          person {
+            id
+            slug
+            name {
+              firstName
+              lastName
+            }
+          }
+        }
+      }
+    }
+  }
+`;

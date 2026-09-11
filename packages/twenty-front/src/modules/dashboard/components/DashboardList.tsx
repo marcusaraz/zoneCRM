@@ -3,22 +3,21 @@ import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+// The list always sits inside a card, so it brings no frame of its own.
 const StyledSection = styled.section`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 `;
 
-const StyledHeading = styled.h2`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
+const StyledHeading = styled.h3`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: 0.04em;
   margin: 0;
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[1]};
+  text-transform: uppercase;
 `;
 
 const StyledRow = styled(Link)`

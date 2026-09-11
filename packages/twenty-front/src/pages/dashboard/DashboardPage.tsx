@@ -1,12 +1,16 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { IconLayoutDashboard } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { DashboardBarChart } from '@/dashboard/components/DashboardBarChart';
 import { DashboardList } from '@/dashboard/components/DashboardList';
 import { DashboardMetricTile } from '@/dashboard/components/DashboardMetricTile';
-import { useDashboardLists } from '@/dashboard/hooks/useDashboardLists';
+import { useDashboardCallOutcomes } from '@/dashboard/hooks/useDashboardCallOutcomes';
+import { useDashboardDrilldown } from '@/dashboard/hooks/useDashboardDrilldown';
 import { useDashboardMetrics } from '@/dashboard/hooks/useDashboardMetrics';
+import { useDashboardStaleness } from '@/dashboard/hooks/useDashboardStaleness';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -33,7 +37,8 @@ const StyledTiles = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 `;
 
-const StyledLists = styled.div`
+const StyledCharts = styled.div`
+  align-items: start;
   display: grid;
   gap: ${themeCssVariables.spacing[4]};
   grid-template-columns: 1fr 1fr;
@@ -43,18 +48,52 @@ const StyledLists = styled.div`
   }
 `;
 
+const StyledCard = styled.section`
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const StyledCardHeading = styled.h2`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0;
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+`;
+
+const StyledDrilldown = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+`;
+
 /**
  * What the CRM opens on.
  *
  * It used to open on the contact list, which answers no question anyone arrives
  * with. This answers the ones they do: how big the book is, what moved in it,
- * what the phone did, and who is still waiting to be called back.
+ * what the phone did, who has been left alone too long, and who called and went
+ * unanswered. The bars are for seeing the shape; opening one is for doing
+ * something about it.
  */
 export const DashboardPage = () => {
   const { t } = useLingui();
   const metrics = useDashboardMetrics();
-  const { recentlyTouched, callsToReturn } = useDashboardLists({
-    since: metrics.since,
+
+  const [openStalenessBucket, setOpenStalenessBucket] = useState<string | null>(
+    null,
+  );
+  const [openCallOutcome, setOpenCallOutcome] = useState<string | null>(null);
+
+  const staleness = useDashboardStaleness(metrics.peopleTotal);
+  const callOutcomes = useDashboardCallOutcomes(metrics.since.week);
+
+  const { peopleRows, callRows } = useDashboardDrilldown({
+    peopleFilter: staleness.filterForBucket(openStalenessBucket),
+    callFilter: callOutcomes.filterForOutcome(openCallOutcome),
   });
 
   return (
@@ -95,18 +134,43 @@ export const DashboardPage = () => {
             />
           </StyledTiles>
 
-          <StyledLists>
-            <DashboardList
-              heading={t`Waiting for a call back`}
-              rows={callsToReturn}
-              emptyText={t`Nobody called and went unanswered this week.`}
-            />
-            <DashboardList
-              heading={t`Recently worked on`}
-              rows={recentlyTouched}
-              emptyText={t`No customer records changed this week.`}
-            />
-          </StyledLists>
+          <StyledCharts>
+            <StyledCard>
+              <StyledCardHeading>{t`How long since anyone touched them`}</StyledCardHeading>
+              <DashboardBarChart
+                segments={staleness.segments}
+                selectedKey={openStalenessBucket}
+                onSelect={setOpenStalenessBucket}
+              />
+              {openStalenessBucket !== null && (
+                <StyledDrilldown>
+                  <DashboardList
+                    heading={t`Longest untouched first`}
+                    rows={peopleRows}
+                    emptyText={t`Nobody falls in this band.`}
+                  />
+                </StyledDrilldown>
+              )}
+            </StyledCard>
+
+            <StyledCard>
+              <StyledCardHeading>{t`Calls this week`}</StyledCardHeading>
+              <DashboardBarChart
+                segments={callOutcomes.segments}
+                selectedKey={openCallOutcome}
+                onSelect={setOpenCallOutcome}
+              />
+              {openCallOutcome !== null && (
+                <StyledDrilldown>
+                  <DashboardList
+                    heading={t`Most recent first`}
+                    rows={callRows}
+                    emptyText={t`No calls ended this way.`}
+                  />
+                </StyledDrilldown>
+              )}
+            </StyledCard>
+          </StyledCharts>
         </StyledContent>
       </StyledScroll>
     </PageCardLayout>
