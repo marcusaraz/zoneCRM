@@ -17,6 +17,12 @@ const WorkflowCoreIndexPage = lazy(() =>
   })),
 );
 
+const DashboardPage = lazy(() =>
+  import('~/pages/dashboard/DashboardPage').then((module) => ({
+    default: module.DashboardPage,
+  })),
+);
+
 const SearchPage = lazy(() =>
   import('~/pages/search/SearchPage').then((module) => ({
     default: module.SearchPage,
@@ -122,6 +128,14 @@ export const createWorkspaceRouteObjects = ({
         </LazyRoute>
       ),
       handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+    },
+    {
+      path: AppPath.DashboardPage,
+      element: (
+        <LazyRoute>
+          <DashboardPage />
+        </LazyRoute>
+      ),
     },
     {
       path: AppPath.SearchPage,
