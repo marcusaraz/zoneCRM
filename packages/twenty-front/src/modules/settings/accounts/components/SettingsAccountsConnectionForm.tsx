@@ -337,7 +337,7 @@ export const SettingsAccountsConnectionForm = ({
               <SettingsTextInput
                 instanceId="caldav-host-connection-form"
                 label={t`CalDAV Server`}
-                placeholder={t`caldav.example.com`}
+                placeholder={t`https://caldav.example.com`}
                 value={field.value || ''}
                 onChange={field.onChange}
                 error={fieldState.error?.message}
