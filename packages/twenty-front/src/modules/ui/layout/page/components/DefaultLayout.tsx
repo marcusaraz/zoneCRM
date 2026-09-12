@@ -15,11 +15,19 @@ import { Outlet } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
   background: ${themeCssVariables.grayScale.gray3};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: calc(100dvh / var(--t-zoom, 1));
   overflow: hidden;
   position: relative;
+
+  /* Installed on a desktop there is no browser above the page, so the card's
+     top edge lands against the window frame. A few pixels give it somewhere
+     to sit. */
+  @media (display-mode: standalone), (display-mode: window-controls-overlay) {
+    padding-top: 6px;
+  }
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
