@@ -69,6 +69,23 @@ const StyledCard = styled.div`
       0 0 0 1px ${themeCssVariables.border.color.medium};
   }
 
+  /* Installed on a desktop there is no browser above the page, so the outline's
+     top edge became a rule that started halfway across the window, where the
+     drawer ends. The card keeps the hairline that separates it from the drawer
+     and loses the one along the top: against the grey ground its own surface is
+     edge enough. */
+  @media (display-mode: standalone), (display-mode: window-controls-overlay) {
+    box-shadow:
+      -4px 0 4px 0 rgba(0, 0, 0, 0.006),
+      -1px 0 0 0 ${themeCssVariables.border.color.medium};
+
+    .dark & {
+      box-shadow:
+        -4px 0 4px 0 rgba(0, 0, 0, 0.03),
+        -1px 0 0 0 ${themeCssVariables.border.color.medium};
+    }
+  }
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;
     box-shadow: none;
