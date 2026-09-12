@@ -15,10 +15,12 @@ import { useDashboardCallOutcomes } from '@/dashboard/hooks/useDashboardCallOutc
 import { useDashboardCallSeries } from '@/dashboard/hooks/useDashboardCallSeries';
 import { useDashboardDrilldown } from '@/dashboard/hooks/useDashboardDrilldown';
 import { useDashboardKpis } from '@/dashboard/hooks/useDashboardKpis';
+import { useDashboardOpportunities } from '@/dashboard/hooks/useDashboardOpportunities';
 import { useDashboardOwners } from '@/dashboard/hooks/useDashboardOwners';
 import { useDashboardPeriod } from '@/dashboard/hooks/useDashboardPeriod';
 import { useDashboardPipeline } from '@/dashboard/hooks/useDashboardPipeline';
 import { useDashboardStaleness } from '@/dashboard/hooks/useDashboardStaleness';
+import { formatMoney } from '@/dashboard/utils/formatMoney';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -105,6 +107,7 @@ export const DashboardPage = () => {
   const callOutcomes = useDashboardCallOutcomes(period.since);
   const pipeline = useDashboardPipeline();
   const owners = useDashboardOwners();
+  const deals = useDashboardOpportunities({ since: period.since });
 
   const [openStalenessBucket, setOpenStalenessBucket] = useState<string | null>(
     null,
@@ -114,6 +117,7 @@ export const DashboardPage = () => {
   );
   const [openStage, setOpenStage] = useState<string | null>(null);
   const [openOwner, setOpenOwner] = useState<string | null>(null);
+  const [openDealStage, setOpenDealStage] = useState<string | null>(null);
 
   const { peopleRows, callRows } = useDashboardDrilldown({
     peopleFilter: staleness.filterForBucket(openStalenessBucket),
@@ -158,19 +162,105 @@ export const DashboardPage = () => {
               hint={t`against the ${days} days before`}
             />
             <DashboardKpiCard
-              label={t`Calls`}
-              value={kpis.calls}
-              delta={kpis.callsDelta}
-              hint={t`against the ${days} days before`}
+              label={t`Open pipeline`}
+              value={Math.round(deals.openValue)}
+              display={formatMoney(deals.openValue)}
+              hint={t`${deals.openCount} deals still running`}
             />
             <DashboardKpiCard
-              label={t`Notes written`}
-              value={kpis.notes}
-              delta={kpis.notesDelta}
-              hint={t`against the ${days} days before`}
+              label={t`Completed`}
+              value={Math.round(deals.closedValueInPeriod)}
+              display={formatMoney(deals.closedValueInPeriod)}
+              hint={t`in the last ${days} days`}
             />
           </StyledKpis>
 
+          <StyledSplit>
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`The pipeline, by what it is worth`}</StyledCardHeading>
+                <DashboardBarChart
+                  segments={deals.segments}
+                  selectedKey={openDealStage}
+                  onSelect={setOpenDealStage}
+                />
+                {openDealStage !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Largest first`}
+                      rows={deals.listForStage(openDealStage)}
+                      emptyText={t`No deal sits at this stage.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
+
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`Where everyone stands`}</StyledCardHeading>
+                <DashboardDonut
+                  segments={pipeline.segments}
+                  selectedKey={openStage}
+                  onSelect={setOpenStage}
+                  centreLabel={t`with a stage`}
+                />
+                {openStage !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Longest untouched first`}
+                      rows={stageRows}
+                      emptyText={t`Nobody is at this stage.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
+          </StyledSplit>
+
+          <StyledSplit>
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`Who is carrying the book`}</StyledCardHeading>
+                <DashboardBarChart
+                  segments={owners.segments}
+                  selectedKey={openOwner}
+                  onSelect={setOpenOwner}
+                />
+                {openOwner !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Longest untouched first`}
+                      rows={ownerRows}
+                      emptyText={t`Nobody is assigned to them.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
+
+            <DashboardCardBoundary>
+              <StyledCard>
+                <StyledCardHeading>{t`How long since anyone touched them`}</StyledCardHeading>
+                <DashboardBarChart
+                  segments={staleness.segments}
+                  selectedKey={openStalenessBucket}
+                  onSelect={setOpenStalenessBucket}
+                />
+                {openStalenessBucket !== null && (
+                  <StyledDrilldown>
+                    <DashboardList
+                      heading={t`Longest untouched first`}
+                      rows={peopleRows}
+                      emptyText={t`Nobody falls in this band.`}
+                    />
+                  </StyledDrilldown>
+                )}
+              </StyledCard>
+            </DashboardCardBoundary>
+          </StyledSplit>
+
+          {/* The phone is worth a glance, not the top of the page. */}
           <StyledSplit>
             <DashboardCardBoundary>
               <StyledCard>
@@ -200,70 +290,6 @@ export const DashboardPage = () => {
               </StyledCard>
             </DashboardCardBoundary>
           </StyledSplit>
-
-          <StyledSplit>
-            <DashboardCardBoundary>
-              <StyledCard>
-                <StyledCardHeading>{t`Where everyone stands`}</StyledCardHeading>
-                <DashboardDonut
-                  segments={pipeline.segments}
-                  selectedKey={openStage}
-                  onSelect={setOpenStage}
-                  centreLabel={t`with a stage`}
-                  isWide
-                />
-                {openStage !== null && (
-                  <StyledDrilldown>
-                    <DashboardList
-                      heading={t`Longest untouched first`}
-                      rows={stageRows}
-                      emptyText={t`Nobody is at this stage.`}
-                    />
-                  </StyledDrilldown>
-                )}
-              </StyledCard>
-            </DashboardCardBoundary>
-
-            <DashboardCardBoundary>
-              <StyledCard>
-                <StyledCardHeading>{t`How long since anyone touched them`}</StyledCardHeading>
-                <DashboardBarChart
-                  segments={staleness.segments}
-                  selectedKey={openStalenessBucket}
-                  onSelect={setOpenStalenessBucket}
-                />
-                {openStalenessBucket !== null && (
-                  <StyledDrilldown>
-                    <DashboardList
-                      heading={t`Longest untouched first`}
-                      rows={peopleRows}
-                      emptyText={t`Nobody falls in this band.`}
-                    />
-                  </StyledDrilldown>
-                )}
-              </StyledCard>
-            </DashboardCardBoundary>
-          </StyledSplit>
-
-          <DashboardCardBoundary>
-            <StyledCard>
-              <StyledCardHeading>{t`Who is carrying the book`}</StyledCardHeading>
-              <DashboardBarChart
-                segments={owners.segments}
-                selectedKey={openOwner}
-                onSelect={setOpenOwner}
-              />
-              {openOwner !== null && (
-                <StyledDrilldown>
-                  <DashboardList
-                    heading={t`Longest untouched first`}
-                    rows={ownerRows}
-                    emptyText={t`Nobody is assigned to them.`}
-                  />
-                </StyledDrilldown>
-              )}
-            </StyledCard>
-          </DashboardCardBoundary>
         </StyledContent>
       </StyledScroll>
     </PageCardLayout>

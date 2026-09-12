@@ -74,6 +74,8 @@ export type DashboardChartSegment = {
   label: string;
   count: number;
   tone: string;
+  // What to print at the end of the bar, when the number is not a plain count.
+  display?: string;
 };
 
 type DashboardBarChartProps = {
@@ -111,7 +113,9 @@ export const DashboardBarChart = ({
               tone={segment.tone}
             />
           </StyledTrack>
-          <StyledCount>{segment.count.toLocaleString()}</StyledCount>
+          <StyledCount>
+            {segment.display ?? segment.count.toLocaleString()}
+          </StyledCount>
         </StyledRow>
       ))}
     </StyledChart>

@@ -57,6 +57,8 @@ const StyledHint = styled.span`
 type DashboardKpiCardProps = {
   label: string;
   value: number | null;
+  // What to print instead of the raw number, for a figure that is money.
+  display?: string;
   delta?: DashboardDelta | null;
   hint?: string;
 };
@@ -66,13 +68,16 @@ type DashboardKpiCardProps = {
 export const DashboardKpiCard = ({
   label,
   value,
+  display,
   delta,
   hint,
 }: DashboardKpiCardProps) => (
   <StyledCard>
     <StyledLabel>{label}</StyledLabel>
     <StyledFigure>
-      <StyledValue>{value === null ? '—' : value.toLocaleString()}</StyledValue>
+      <StyledValue>
+        {value === null ? '—' : (display ?? value.toLocaleString())}
+      </StyledValue>
       {delta && (
         <StyledDelta direction={delta.direction}>
           {delta.direction === 'up' && <IconArrowUp size={12} />}

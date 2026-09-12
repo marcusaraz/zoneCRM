@@ -147,3 +147,23 @@ export const DASHBOARD_CALL_SERIES = gql`
     }
   }
 `;
+
+export const DASHBOARD_OPPORTUNITIES = gql`
+  query ZoneDashboardOpportunities {
+    opportunities(first: 400, orderBy: { createdAt: DescNullsLast }) {
+      edges {
+        node {
+          id
+          name
+          stage
+          createdAt
+          closeDate
+          amount {
+            amountMicros
+            currencyCode
+          }
+        }
+      }
+    }
+  }
+`;
