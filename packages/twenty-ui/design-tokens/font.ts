@@ -25,5 +25,11 @@ export const FONT_TOKENS = {
     medium: token('500', { unit: 'number' }),
     semiBold: token('600', { unit: 'number' }),
   },
-  family: token('Inter, sans-serif'),
+  // The house font is the one the operating system already draws: a colleague
+  // moving from the mail to the calendar to the CRM should not be able to tell
+  // where one ends and the next begins. design-system/capital-works/MASTER.md.
+  family: token(
+    '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
+  ),
+
 };

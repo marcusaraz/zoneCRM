@@ -190,7 +190,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       medium: 500,
       semiBold: 600,
     },
-    family: 'Inter, sans-serif',
+    family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
   },
   name: 'dark',
   snackBar: {
