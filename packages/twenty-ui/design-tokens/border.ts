@@ -7,9 +7,12 @@ const MD_RADIUS = token('8px');
 
 export const BORDER_TOKENS = {
   color: {
-    strong: GRAY_SCALE_TOKENS.gray6,
-    medium: GRAY_SCALE_TOKENS.gray5,
-    light: GRAY_SCALE_TOKENS.gray4,
+    // A hairline or a change of ground, never a box. MASTER.md carries two of
+    // these and not three, so the softer two both take the soft separator
+    // rather than inventing a grey nobody chose.
+    strong: token({ light: '#d2d2d7', dark: '#424245' }),
+    medium: token({ light: '#e8e8ed', dark: '#333336' }),
+    light: token({ light: '#e8e8ed', dark: '#333336' }),
     secondaryInverted: GRAY_SCALE_TOKENS.gray11,
     inverted: GRAY_SCALE_TOKENS.gray12,
     danger: COLOR_TOKENS.red5,

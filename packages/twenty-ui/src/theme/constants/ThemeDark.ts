@@ -98,9 +98,9 @@ export const THEME_DARK: typeof THEME_LIGHT = {
   },
   background: {
     noisy: 'var(--t-background-noisy)',
-    primary: 'color(display-p3 0.09 0.09 0.09)',
-    secondary: 'color(display-p3 0.106 0.106 0.106)',
-    tertiary: 'color(display-p3 0.114 0.114 0.114)',
+    primary: '#1d1d1f',
+    secondary: '#232325',
+    tertiary: '#161617',
     quaternary: 'color(display-p3 0.133 0.133 0.133)',
     invertedPrimary: 'color(display-p3 0.922 0.922 0.922)',
     invertedSecondary: 'color(display-p3 0.702 0.702 0.702)',
@@ -113,7 +113,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       light: 'color(display-p3 1 1 1 / 0.059)',
       lighter: 'color(display-p3 1 1 1 / 0.031)',
       danger: '#ff173f2d',
-      blue: '#0471e357',
+      blue: '#3566ff57',
       orange: '#ff590039',
       success: '#11ff992d',
     },
@@ -134,9 +134,9 @@ export const THEME_DARK: typeof THEME_LIGHT = {
   },
   border: {
     color: {
-      strong: 'color(display-p3 0.282 0.282 0.282)',
-      medium: 'color(display-p3 0.133 0.133 0.133)',
-      light: 'color(display-p3 0.114 0.114 0.114)',
+      strong: '#424245',
+      medium: '#333336',
+      light: '#333336',
       secondaryInverted: 'color(display-p3 0.702 0.702 0.702)',
       inverted: 'color(display-p3 0.922 0.922 0.922)',
       danger: 'color(display-p3 0.348 0.11 0.142)',
@@ -190,7 +190,8 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       medium: 500,
       semiBold: 600,
     },
-    family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
+    family:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
   },
   name: 'dark',
   snackBar: {
@@ -208,7 +209,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
     },
     info: {
       color: 'color(display-p3 0.187 0.436 0.86)',
-      backgroundColor: '#0471e357',
+      backgroundColor: '#3566ff57',
     },
     default: {
       color: 'color(display-p3 0.922 0.922 0.922)',
@@ -295,11 +296,11 @@ export const THEME_DARK: typeof THEME_LIGHT = {
   },
   IllustrationIcon: {
     color: {
-      blue: 'color(display-p3 0.262 0.464 0.865)',
+      blue: 'color(display-p3 0.354 0.445 0.866)',
       gray: 'color(display-p3 0.4 0.4 0.4)',
     },
     fill: {
-      blue: 'color(display-p3 0.86 0.881 0.961)',
+      blue: 'color(display-p3 0.848 0.881 0.99)',
       gray: 'color(display-p3 0.133 0.133 0.133)',
     },
   },

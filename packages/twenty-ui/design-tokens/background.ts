@@ -10,9 +10,13 @@ export const BACKGROUND_TOKENS = {
     },
     { jsValue: 'cssVariable' },
   ),
-  primary: GRAY_SCALE_TOKENS.gray1,
-  secondary: GRAY_SCALE_TOKENS.gray2,
-  tertiary: GRAY_SCALE_TOKENS.gray4,
+  // --surface and --ground from design-system/capital-works/MASTER.md. Twenty
+  // derives these from its own grey scale; the house table is the source here,
+  // so a card is the same white and the page behind it the same grey as in the
+  // mail and the calendar.
+  primary: token({ light: '#ffffff', dark: '#1d1d1f' }),
+  secondary: token({ light: '#fbfbfd', dark: '#232325' }),
+  tertiary: token({ light: '#f5f5f7', dark: '#161617' }),
   quaternary: GRAY_SCALE_TOKENS.gray5,
   invertedPrimary: GRAY_SCALE_TOKENS.gray12,
   invertedSecondary: GRAY_SCALE_TOKENS.gray11,

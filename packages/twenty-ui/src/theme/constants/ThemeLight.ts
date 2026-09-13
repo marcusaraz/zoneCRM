@@ -97,9 +97,9 @@ export const THEME_LIGHT = {
   },
   background: {
     noisy: 'var(--t-background-noisy)',
-    primary: 'color(display-p3 1 1 1)',
-    secondary: 'color(display-p3 0.988 0.988 0.988)',
-    tertiary: 'color(display-p3 0.945 0.945 0.945)',
+    primary: '#ffffff',
+    secondary: '#fbfbfd',
+    tertiary: '#f5f5f7',
     quaternary: 'color(display-p3 0.922 0.922 0.922)',
     invertedPrimary: 'color(display-p3 0.2 0.2 0.2)',
     invertedSecondary: 'color(display-p3 0.4 0.4 0.4)',
@@ -112,7 +112,7 @@ export const THEME_LIGHT = {
       light: 'color(display-p3 0 0 0 / 0.039)',
       lighter: 'color(display-p3 0 0 0 / 0.02)',
       danger: '#f3000d14',
-      blue: '#005ab812',
+      blue: '#0047f112',
       orange: '#ff9c0029',
       success: '#00a43319',
     },
@@ -133,9 +133,9 @@ export const THEME_LIGHT = {
   },
   border: {
     color: {
-      strong: 'color(display-p3 0.839 0.839 0.839)',
-      medium: 'color(display-p3 0.922 0.922 0.922)',
-      light: 'color(display-p3 0.945 0.945 0.945)',
+      strong: '#d2d2d7',
+      medium: '#e8e8ed',
+      light: '#e8e8ed',
       secondaryInverted: 'color(display-p3 0.4 0.4 0.4)',
       inverted: 'color(display-p3 0.2 0.2 0.2)',
       danger: 'color(display-p3 0.984 0.812 0.811)',
@@ -189,7 +189,8 @@ export const THEME_LIGHT = {
       medium: 500,
       semiBold: 600,
     },
-    family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
+    family:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
   },
   name: 'light',
   snackBar: {
@@ -207,7 +208,7 @@ export const THEME_LIGHT = {
     },
     info: {
       color: 'color(display-p3 0.187 0.436 0.86)',
-      backgroundColor: '#005ab812',
+      backgroundColor: '#0047f112',
     },
     default: {
       color: 'color(display-p3 0.2 0.2 0.2)',
@@ -294,11 +295,11 @@ export const THEME_LIGHT = {
   },
   IllustrationIcon: {
     color: {
-      blue: 'color(display-p3 0.561 0.644 0.899)',
+      blue: 'color(display-p3 0.569 0.639 0.916)',
       gray: 'color(display-p3 0.6 0.6 0.6)',
     },
     fill: {
-      blue: 'color(display-p3 0.848 0.87 0.958)',
+      blue: 'color(display-p3 0.831 0.87 1)',
       gray: 'color(display-p3 0.922 0.922 0.922)',
     },
   },
