@@ -30,7 +30,9 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
   align-items: center;
   background: var(--btn-bg, transparent);
   border-color: var(--btn-border-color, transparent);
-  border-radius: var(--btn-radius, var(--t-border-radius-md));
+  // Apple's buttons are pills, not rounded rectangles, and it is the single
+  // most recognisable thing about them. design-system/capital-works/MASTER.md.
+  border-radius: var(--btn-radius, var(--t-border-radius-pill));
   border-style: solid;
   border-width: var(--btn-border-width, 1px 1px 1px 1px);
   box-shadow: var(--btn-box-shadow, none);
@@ -89,7 +91,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 // '1px 1px' override for primary/danger is omitted: it computes to the same
 // 1px on every side as the default.
 .button[data-position='left'] {
-  --btn-radius: var(--t-border-radius-md) 0px 0px var(--t-border-radius-md);
+  --btn-radius: var(--t-border-radius-pill) 0px 0px var(--t-border-radius-pill);
   --btn-border-width: 1px 0px 1px 1px;
 }
 
@@ -99,7 +101,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 }
 
 .button[data-position='right'] {
-  --btn-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md) 0px;
+  --btn-radius: 0px var(--t-border-radius-pill) var(--t-border-radius-pill) 0px;
   --btn-border-width: 1px 1px 1px 0px;
 }
 
