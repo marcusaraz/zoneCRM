@@ -21,7 +21,10 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { NavigationDrawerSearchInput } from '@/search-page/components/NavigationDrawerSearchInput';
-import { NavigationDrawerHeader } from './NavigationDrawerHeader';
+import {
+  NavigationDrawerHeader,
+  NavigationDrawerWorkspaceFooter,
+} from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;
@@ -135,6 +138,7 @@ export const NavigationDrawer = ({
         <StyledContainer isExpanded={isExpanded}>
           <NavigationDrawerHeader
             showCollapseButton={isMobile || !isSettingsDrawer}
+            showWorkspace={isSettingsDrawer}
           />
           {/* Zone CRM: search starts here, not on a page of its own. A phone
               has the search in its bottom bar instead. */}
@@ -142,6 +146,9 @@ export const NavigationDrawer = ({
             <NavigationDrawerSearchInput />
           )}
           <StyledContent>{children}</StyledContent>
+          {!isSettingsDrawer && isExpanded && (
+            <NavigationDrawerWorkspaceFooter />
+          )}
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (

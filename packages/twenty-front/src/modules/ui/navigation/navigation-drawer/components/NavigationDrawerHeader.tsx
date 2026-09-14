@@ -51,6 +51,22 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
   }
 `;
 
+const StyledFooter = styled.div`
+  align-items: center;
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  user-select: none;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${themeCssVariables.spacing[5]};
+    padding-right: ${themeCssVariables.spacing[5]};
+  }
+`;
+
 const StyledWorkspaceDropdownContainer = styled.div`
   align-items: center;
   display: flex;
@@ -61,18 +77,28 @@ const StyledWorkspaceDropdownContainer = styled.div`
 
 type NavigationDrawerHeaderProps = {
   showCollapseButton: boolean;
+  // Zone CRM: the workspace sits at the foot of the sidebar, as it does on the
+  // Stitch screens and as it does in the applications this is meant to feel
+  // like. What belongs at the top is what people came for, which is the first
+  // navigation item, not the name of the company they already know they work
+  // for. The collapse button stays at the top, where the thing it collapses
+  // begins.
+  showWorkspace?: boolean;
 };
 
 export const NavigationDrawerHeader = ({
   showCollapseButton,
+  showWorkspace = true,
 }: NavigationDrawerHeaderProps) => {
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
   return (
     <StyledContainer isExpanded={isExpanded}>
-      <StyledWorkspaceDropdownContainer>
-        <MultiWorkspaceDropdownButton />
-      </StyledWorkspaceDropdownContainer>
+      {showWorkspace && (
+        <StyledWorkspaceDropdownContainer>
+          <MultiWorkspaceDropdownButton />
+        </StyledWorkspaceDropdownContainer>
+      )}
       <StyledRightActions isExpanded={isExpanded}>
         {isExpanded && showCollapseButton && (
           <StyledNavigationDrawerCollapseButtonContainer>
@@ -83,3 +109,13 @@ export const NavigationDrawerHeader = ({
     </StyledContainer>
   );
 };
+
+// The same button, at the foot of the drawer. A second workspace under one
+// account becomes a choice here rather than a badge at the top.
+export const NavigationDrawerWorkspaceFooter = () => (
+  <StyledFooter>
+    <StyledWorkspaceDropdownContainer>
+      <MultiWorkspaceDropdownButton />
+    </StyledWorkspaceDropdownContainer>
+  </StyledFooter>
+);
