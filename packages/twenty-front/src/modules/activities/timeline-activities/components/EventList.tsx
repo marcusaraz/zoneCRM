@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactElement } from 'react';
 
 import { EventsGroup } from '@/activities/timeline-activities/components/EventsGroup';
+import { TimelineQuickNote } from '@/activities/timeline-activities/components/TimelineQuickNote';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
@@ -80,6 +81,7 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
 
   return (
     <StyledTimelineContainer>
+      <TimelineQuickNote targetableObject={targetableObject} />
       {groupedEvents.map((group, index) => (
         <EventsGroup
           mainObjectMetadataItem={mainObjectMetadataItem}

@@ -26,12 +26,26 @@ const StyledField = styled.label<{ pill?: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${({ pill }) => (pill ? '0' : themeCssVariables.spacing[3])};
   margin-right: ${({ pill }) => (pill ? '0' : themeCssVariables.spacing[2])};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  // The pill is 32 tall with the shortcut at its right end, measured off the
+  // Stitch screens (h-[32px], and the shortcut in the sidebar's search).
+  box-sizing: border-box;
+  height: ${({ pill }) => (pill ? '32px' : 'auto')};
+  padding: ${({ pill }) =>
+    pill
+      ? '0 12px'
+      : `${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
 
   &:focus-within {
     background: ${themeCssVariables.background.primary};
     border-color: ${themeCssVariables.border.color.blue};
   }
+`;
+
+const StyledShortcut = styled.kbd`
+  color: ${themeCssVariables.font.color.light};
+  font-family: inherit;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledIcon = styled.span`
@@ -92,6 +106,7 @@ export const NavigationDrawerSearchInput = ({
         aria-label={t`Search`}
         onChange={handleChange}
       />
+      {variant === 'pill' && <StyledShortcut>⌘K</StyledShortcut>}
     </StyledField>
   );
 };

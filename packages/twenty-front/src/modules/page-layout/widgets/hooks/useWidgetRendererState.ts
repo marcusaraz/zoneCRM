@@ -53,6 +53,12 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     widget.type === WidgetType.EMAIL_THREAD ||
     widget.type === WidgetType.MESSAGE_CAMPAIGN_BODY ||
     widget.type === WidgetType.MESSAGE_CAMPAIGN_DETAILS ||
+    // Zone CRM, the person record checklist: the Stitch card has no "Actions"
+    // and no "Fields" heading; the row of pills and the list of fields stand
+    // on their own. A front component and the fields list carry no heading
+    // in view mode. The Tasks panel and the relation panels keep theirs.
+    widget.type === WidgetType.FRONT_COMPONENT ||
+    widget.type === WidgetType.FIELDS ||
     widget.type === WidgetType.WORKFLOW ||
     widget.type === WidgetType.WORKFLOW_VERSION ||
     widget.type === WidgetType.WORKFLOW_RUN;
