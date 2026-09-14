@@ -34,12 +34,18 @@ export const useOpenRecordInSidePanel = () => {
       objectNameSingular,
       tab,
       isNewRecord = false,
+      // A new record normally opens with its title in edit mode, which is right
+      // for a company or a person: the name is the first thing anybody types.
+      // A note is the other way round. Whoever opens one has something to write
+      // down, and the title is optional, so the caller can decline the cursor.
+      shouldOpenTitleCell = true,
       resetNavigationStack = false,
     }: {
       recordId: string;
       objectNameSingular: string;
       tab?: string;
       isNewRecord?: boolean;
+      shouldOpenTitleCell?: boolean;
       resetNavigationStack?: boolean;
     }) => {
       if (isMobile) {
@@ -65,7 +71,11 @@ export const useOpenRecordInSidePanel = () => {
           ? getLabelIdentifierFieldMetadataItem(objectMetadataItemForRecordPage)
           : undefined;
 
-        if (isNewRecord && isDefined(labelIdentifierField)) {
+        if (
+          isNewRecord &&
+          shouldOpenTitleCell &&
+          isDefined(labelIdentifierField)
+        ) {
           store.set(newRecordTitleCellToOpenState.atom, {
             recordId,
             fieldName: labelIdentifierField.name,
@@ -149,7 +159,7 @@ export const useOpenRecordInSidePanel = () => {
         });
       }
 
-      if (isNewRecord) {
+      if (isNewRecord && shouldOpenTitleCell) {
         const labelIdentifierField =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 

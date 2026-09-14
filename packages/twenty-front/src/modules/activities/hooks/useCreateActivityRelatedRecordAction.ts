@@ -27,7 +27,7 @@ export const useCreateActivityRelatedRecordAction = ({
   return {
     action: {
       id: isTask ? 'create-task' : 'create-note',
-      label: isTask ? t`Create task` : t`Create note`,
+      label: isTask ? t`Add task` : t`Add note`,
       Icon: isTask ? IconCheckbox : IconNotes,
       isVisible: canCreateActivity,
       disabled: false,

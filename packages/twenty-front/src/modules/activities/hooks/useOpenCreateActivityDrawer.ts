@@ -107,6 +107,7 @@ export const useOpenCreateActivityDrawer = ({
       recordId: activity.id,
       objectNameSingular: activityObjectNameSingular,
       isNewRecord: true,
+      shouldOpenTitleCell: false,
     });
 
     setIsUpsertingActivityInDB(false);
