@@ -31,6 +31,12 @@ const StyledBody = styled.div<{ expanded: boolean; clickable: boolean }>`
   position: relative;
   width: 100%;
 
+  // The timeline sets nowrap on its rows, which is right for a row and wrong
+  // for a note: it inherits all the way down here and sends a long sentence
+  // out through the side of the card. This is the horizontal scrollbar Marcus
+  // saw; hiding the scrollbar only hid the evidence. The note wraps.
+  white-space: normal;
+
   // The renderer is shared with the AI panel, where a wide answer is allowed to
   // scroll sideways. A note on a record is not: the card has a width, the text
   // wraps inside it, and a horizontal scrollbar under somebody's note is a
@@ -46,9 +52,12 @@ const StyledBody = styled.div<{ expanded: boolean; clickable: boolean }>`
   }
 `;
 
-const StyledFade = styled.div<{ ground: string }>`
-  background: ${({ ground }) =>
-    `linear-gradient(to bottom, ${themeCssVariables.background.transparent.lighter}, ${ground})`};
+const StyledFade = styled.div`
+  background: linear-gradient(
+    to bottom,
+    ${themeCssVariables.background.transparent.lighter},
+    ${themeCssVariables.background.secondary}
+  );
   bottom: 0;
   height: ${LINE_HEIGHT}em;
   left: 0;
@@ -77,33 +86,40 @@ const StyledWrapper = styled.div`
 
 type ActivityBodyProps = {
   markdown: string;
-  // What the last line fades into, which is whatever the card is painted with.
-  ground?: string;
 };
 
-export const ActivityBody = ({
-  markdown,
-  ground = themeCssVariables.background.secondary,
-}: ActivityBodyProps) => {
+export const ActivityBody = ({ markdown }: ActivityBodyProps) => {
   const [expanded, setExpanded] = useState(false);
   const [isLong, setIsLong] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Whether there is more to show is a question about the rendered height, so
   // it is asked of the element rather than guessed from the number of
   // characters. Markdown arrives asynchronously, so it is asked again when the
-  // element changes size.
+  // text changes size.
+  //
+  // The text is measured and not the box around it. The box is the one with
+  // the six-line ceiling on it, so it stops growing the moment there is
+  // anything to notice, the observer never fires again, and "Read more" never
+  // appears on the long notes that are the only reason it exists. The text
+  // inside grows freely, and that is what is watched.
   useEffect(() => {
-    const element = bodyRef.current;
+    const element = contentRef.current;
+    const box = bodyRef.current;
 
-    if (!isDefined(element) || typeof ResizeObserver === 'undefined') {
+    if (
+      !isDefined(element) ||
+      !isDefined(box) ||
+      typeof ResizeObserver === 'undefined'
+    ) {
       return;
     }
 
     const measure = () => {
       const lineHeight =
-        parseFloat(getComputedStyle(element).lineHeight) ||
-        LINE_HEIGHT * parseFloat(getComputedStyle(element).fontSize);
+        parseFloat(getComputedStyle(box).lineHeight) ||
+        LINE_HEIGHT * parseFloat(getComputedStyle(box).fontSize);
 
       setIsLong(element.scrollHeight > lineHeight * COLLAPSED_LINES + 2);
     };
@@ -145,8 +161,10 @@ export const ActivityBody = ({
           setExpanded(true);
         }}
       >
-        <LazyMarkdownRenderer text={markdown} />
-        {!expanded && isLong && <StyledFade ground={ground} />}
+        <div ref={contentRef}>
+          <LazyMarkdownRenderer text={markdown} />
+        </div>
+        {!expanded && isLong && <StyledFade />}
       </StyledBody>
       {isLong && (
         <StyledMore
