@@ -28,7 +28,10 @@ const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   font-size: ${themeCssVariables.font.size.lg};
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  min-height: ${PAGE_BAR_MIN_HEIGHT}px;
+  // 56 tall including its padding, which is the Stitch top bar (h-14).
+  // The bar was content-box and came to 50.
+  box-sizing: border-box;
+  min-height: 56px;
   padding-bottom: ${themeCssVariables.spacing[3]};
   padding-left: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[3] : themeCssVariables.spacing[4]};
