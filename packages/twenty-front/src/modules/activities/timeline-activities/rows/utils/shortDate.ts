@@ -7,10 +7,7 @@ import { t } from '@lingui/core/macro';
 // half: the exact time is a hover away, and what a timeline is read by is the
 // day. Today and Yesterday by name, then the date.
 
-export const shortDate = (
-  happensAt: string,
-  localeCatalog?: string,
-): string => {
+export const shortDate = (happensAt: string): string => {
   const when = new Date(happensAt);
 
   if (Number.isNaN(when.getTime())) {
@@ -32,10 +29,11 @@ export const shortDate = (
     return t`Yesterday`;
   }
 
-  const locale = localeCatalog ?? undefined;
-
+  // The reader's own locale, which is what the browser already knows. Today and
+  // Yesterday come from the catalogue; a date needs no catalogue.
+  //
   // The year is only worth its width once it stops being obvious.
-  return when.toLocaleDateString(locale, {
+  return when.toLocaleDateString(undefined, {
     day: 'numeric',
     month: 'short',
     ...(when.getFullYear() === midnight.getFullYear()

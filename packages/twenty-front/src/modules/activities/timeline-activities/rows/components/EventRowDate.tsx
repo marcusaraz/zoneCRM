@@ -43,7 +43,7 @@ export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
 
   // "about 5 hours ago" does not fit in 88px and does not need to: the hour is
   // in the tooltip and the day is what a timeline is read by.
-  const relativeHappensAt = shortDate(happensAt, localeCatalog);
+  const relativeHappensAt = shortDate(happensAt);
   const exactHappensAt = formatDateTimeString({
     value: happensAt,
     timeZone,
