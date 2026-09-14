@@ -78,7 +78,11 @@ const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   }
 `;
 
+// The whole right column stands on the grey ground, the tab strip included.
+// Putting the ground on the panel alone would have left the strip above it on
+// white and made a seam where there had not been one.
 const StyledTabsAndDashboardContainer = styled.div`
+  background: ${themeCssVariables.background.tertiary};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -101,15 +105,13 @@ const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
-// The right column is the same ground as the left, not a card of its own.
-// Marcus asked for that on 14 September 2026: one white card holding another
-// made the page read as a box inside a box, and the tabs strip above it sat on
-// grey while the panel under it sat on white. The ground is the grey, and what
-// is a card here says so for itself, exactly as the left column does.
+// The panel itself is a card no longer. Marcus asked for that on 14 September
+// 2026: a white card holding other white cards made the page read as a box
+// inside a box. It keeps the 24 of air so nothing touches the column edge, and
+// what is a card in here says so for itself, exactly as the left column does.
 const StyledScrollWrapperContainer = styled.div`
   --record-card-background-color: ${themeCssVariables.background.primary};
 
-  background: ${themeCssVariables.background.tertiary};
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
