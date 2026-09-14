@@ -170,9 +170,6 @@ export const EventRowGenericLinked = ({
     <StyledEventRow>
       <StyledEventRowContainer>
         <StyledEventRowContent>
-          {canOpen && (
-            <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
-          )}
           {showAuthor && !isPhoneCall && (
             <EventRowItem>{displayedAuthor}</EventRowItem>
           )}
@@ -210,6 +207,13 @@ export const EventRowGenericLinked = ({
           )}
         </StyledEventRowContent>
         <EventRowDate happensAt={happensAt} />
+        {/* The chevron ends the row instead of starting it. In front of the
+            words it pushed them 28px to the right, so a row that could be
+            opened and a row that could not began at different places down the
+            page. It is also where the other renderer already puts it. */}
+        {canOpen && (
+          <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+        )}
       </StyledEventRowContainer>
       {canOpen && (
         <EventCard isOpen={isOpen} isFullWidth={isActivity}>

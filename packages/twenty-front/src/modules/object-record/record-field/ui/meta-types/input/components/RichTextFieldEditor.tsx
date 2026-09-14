@@ -42,6 +42,7 @@ type RichTextFieldEditorProps = {
   editorRef?: React.MutableRefObject<
     typeof BLOCK_SCHEMA.BlockNoteEditor | null
   >;
+  shouldSizeToContent?: boolean;
 };
 
 export const RichTextFieldEditor = ({
@@ -52,6 +53,7 @@ export const RichTextFieldEditor = ({
   onFocus: onFocusOverride,
   onBlur: onBlurOverride,
   editorRef,
+  shouldSizeToContent,
 }: RichTextFieldEditorProps) => {
   const store = useStore();
   const [recordInStore] = useAtom(recordStoreFamilyState.atomFamily(recordId));
@@ -307,6 +309,7 @@ export const RichTextFieldEditor = ({
       onChange={handleEditorChange}
       editor={editor}
       readonly={isRecordFieldReadOnly}
+      shouldSizeToContent={shouldSizeToContent}
     />
   );
 };

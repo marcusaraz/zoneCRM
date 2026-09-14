@@ -51,7 +51,11 @@ const StyledMainCardWrapper = styled.div`
 // oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.lg} 0 0 0;
+  // The frame beside the search met the sidebar with a rounded top left
+  // corner, which left a notch of grey above the first row of the page.
+  // Marcus asked for it square on 14 September 2026: the frame runs to the
+  // top of the window and the seam is one straight line.
+  border-radius: 0;
   box-shadow:
     -4px 0 4px 0 rgba(0, 0, 0, 0.006),
     0 0 0 1px ${themeCssVariables.border.color.medium};

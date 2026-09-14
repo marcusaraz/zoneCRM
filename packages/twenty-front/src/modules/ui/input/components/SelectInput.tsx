@@ -17,6 +17,10 @@ import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
+// Eight rows is about as much as the eye takes in at once. At or under that a
+// list is read, not searched.
+const SEARCHABLE_OPTION_COUNT = 8;
+
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
   options: SelectOption[];
@@ -55,20 +59,26 @@ export const SelectInput = ({
     SelectOption | undefined
   >(defaultOption);
 
-  const optionsToSelect = useMemo(() => {
+  // Marcus, 14 September 2026, on the task Reminder list: the options are to
+  // read in the order they were written, shortest wait to longest. They did
+  // not, because whatever was already chosen was lifted to the top, so opening
+  // the list with "1 day before" set put the longest wait first and the rest
+  // out of order behind it. The option stays where it belongs and the tick
+  // says which one it is.
+  const optionsInDropDown = useMemo(() => {
     const searchTerm = normalizeSearchText(searchFilter);
-    return options.filter((option) => {
-      return (
-        option.value !== selectedOption?.value &&
-        normalizeSearchText(option.label).includes(searchTerm)
-      );
-    });
-  }, [options, searchFilter, selectedOption?.value]);
 
-  const optionsInDropDown = useMemo(
+    return options.filter((option) =>
+      normalizeSearchText(option.label).includes(searchTerm),
+    );
+  }, [options, searchFilter]);
+
+  const optionsToSelect = useMemo(
     () =>
-      selectedOption ? [selectedOption, ...optionsToSelect] : optionsToSelect,
-    [optionsToSelect, selectedOption],
+      optionsInDropDown.filter(
+        (option) => option.value !== selectedOption?.value,
+      ),
+    [optionsInDropDown, selectedOption?.value],
   );
 
   const handleOptionChange = (option: SelectOption) => {
@@ -101,14 +111,29 @@ export const SelectInput = ({
     listenerId: 'select-input',
   });
 
+  // A search box over five rows is furniture. Marcus asked for it off the task
+  // Reminder list on 14 September 2026, and the same is true of every short
+  // list: Status, Priority, Type. Past the threshold a list stops being
+  // scannable and the box earns its place, so it comes back.
+  //
+  // Typing a name that matches nothing is also how an administrator adds an
+  // option without leaving the record, so on a short list that way in goes
+  // with the box. Settings is where a field's options are kept, and a short
+  // list is one that is read at a glance, which is what was asked for.
+  const shouldShowSearchInput = options.length > SEARCHABLE_OPTION_COUNT;
+
   return (
     <DropdownContent ref={containerRef} selectDisabled>
-      <DropdownMenuSearchInput
-        value={searchFilter}
-        onChange={(e) => setSearchFilter(e.target.value)}
-        autoFocus
-      />
-      <DropdownMenuSeparator />
+      {shouldShowSearchInput && (
+        <>
+          <DropdownMenuSearchInput
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            autoFocus
+          />
+          <DropdownMenuSeparator />
+        </>
+      )}
       <DropdownMenuItemsContainer hasMaxHeight>
         {onClear && clearLabel && (
           <SelectableListItem

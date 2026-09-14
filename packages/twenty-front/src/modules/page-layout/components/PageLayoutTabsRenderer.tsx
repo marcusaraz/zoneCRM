@@ -101,16 +101,25 @@ const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
-// The right column is a card like the left one: white, 12px, no border, no
-// shadow, 24 inside. Measured off the Stitch person record (the timeline card
-// is `bg-white rounded-[12px] p-6`).
+// The right column is the same ground as the left, not a card of its own.
+// Marcus asked for that on 14 September 2026: one white card holding another
+// made the page read as a box inside a box, and the tabs strip above it sat on
+// grey while the panel under it sat on white. The ground is the grey, and what
+// is a card here says so for itself, exactly as the left column does.
 const StyledScrollWrapperContainer = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-radius: 12px;
+  --record-card-background-color: ${themeCssVariables.background.primary};
+
+  background: ${themeCssVariables.background.tertiary};
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
   padding: ${themeCssVariables.spacing[6]};
+
+  // 12px on a card, MASTER.md, the same rule the left column carries.
+  .widget {
+    background: var(--record-card-background-color);
+    border-radius: 12px;
+  }
 
   .page-layout-scroll-wrapper {
     container-name: tab-viewport;

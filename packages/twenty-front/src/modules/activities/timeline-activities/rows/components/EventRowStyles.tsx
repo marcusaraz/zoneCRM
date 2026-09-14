@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
+import { TIMELINE_ROW_LINE_HEIGHT } from '@/activities/timeline-activities/constants/TimelineRowLineHeight';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledEventRow = styled.div`
@@ -11,20 +11,27 @@ export const StyledEventRow = styled.div`
 `;
 
 // 14px above and below each entry, measured off the Stitch person record
-// (pm/briefs/zone-crm-desktop/person-record.html); the hairline between
-// entries falls halfway.
+// (pm/briefs/zone-crm-desktop/person-record.html); the hairline between entries
+// falls halfway. That padding is on the row's outer container now, not here:
+// with it in both places the entry carried 22px of air at the top and the disc,
+// which is beside the outer container, could not be lined up with the text
+// inside this one. One place for the rhythm, one stated line height, and the
+// disc has something to be centred on.
 export const StyledEventRowContainer = styled.div`
   align-items: baseline;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
-  min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
-  padding: 14px 0;
+  line-height: ${TIMELINE_ROW_LINE_HEIGHT}px;
 `;
 
+// Takes the room left between the date column and whatever ends the row, so
+// that a row which ends in a chevron and a row which does not both start their
+// text in the same place.
 export const StyledEventRowContent = styled.div`
   align-items: center;
   display: flex;
+  flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;

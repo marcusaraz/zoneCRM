@@ -71,8 +71,26 @@ export const SelectFieldInput = () => {
   });
 
   const fieldLabel = fieldDefinition.label;
+  const clearOptionLabel = t`No ${fieldLabel}`;
+
+  // Marcus, 14 September 2026, on the task Reminder list: one "No reminder",
+  // not two. The field carries its own "No reminder" option and Twenty adds a
+  // "No Reminder" row above it for clearing, so the list opened with the same
+  // sentence twice and no way to tell which one did what. Where the field has
+  // already written that row itself, the added one goes. A field that has not,
+  // Priority with its "None" or a field with no such option at all, still gets
+  // the row: nothing there says the same thing.
+  const hasOwnEmptyOption = selectOptions.some(
+    (option) =>
+      option.label.trim().toLowerCase() ===
+      clearOptionLabel.trim().toLowerCase(),
+  );
+
+  const canClearField =
+    fieldDefinition.metadata.isNullable && canSelectEmpty && !hasOwnEmptyOption;
+
   const optionIds = [
-    t`No ${fieldLabel}`,
+    ...(canClearField ? [clearOptionLabel] : []),
     ...filteredOptions.map((option) => option.value),
   ];
 
@@ -96,11 +114,7 @@ export const SelectFieldInput = () => {
       onCancel={onCancel}
       defaultOption={selectedOption}
       onFilterChange={setFilteredOptions}
-      onClear={
-        fieldDefinition.metadata.isNullable && canSelectEmpty
-          ? handleClearField
-          : undefined
-      }
+      onClear={canClearField ? handleClearField : undefined}
       clearLabel={fieldDefinition.label}
       onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
     />

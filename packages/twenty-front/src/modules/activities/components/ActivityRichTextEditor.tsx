@@ -25,11 +25,13 @@ type ActivityRichTextEditorProps = {
   activityObjectNameSingular:
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
+  shouldSizeToContent?: boolean;
 };
 
 export const ActivityRichTextEditor = ({
   activityId,
   activityObjectNameSingular,
+  shouldSizeToContent,
 }: ActivityRichTextEditorProps) => {
   const store = useStore();
 
@@ -132,6 +134,7 @@ export const ActivityRichTextEditor = ({
       onFocus={handleFocus}
       onBlur={handleBlur}
       editorRef={editorRef}
+      shouldSizeToContent={shouldSizeToContent}
     />
   );
 };

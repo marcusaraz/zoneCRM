@@ -4,7 +4,7 @@ import { useContext } from 'react';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
-import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
+import { TIMELINE_ROW_LINE_HEIGHT } from '@/activities/timeline-activities/constants/TimelineRowLineHeight';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { getStandardTimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/StandardTimelineActivityRenderer';
 import { type TimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/TimelineActivityRenderer';
@@ -36,17 +36,31 @@ import { isDefined } from 'twenty-shared/utils';
 // the left is gone; the disc stayed, because the eye finds a call in a page of
 // entries by its colour long before it reads a word. MASTER.md "Tints".
 const StyledTimelineItemContainer = styled.div`
+  align-items: flex-start;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
   overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]} 0;
+  padding: 14px 0;
   white-space: nowrap;
 
   & + & {
     border-top: 1px solid ${themeCssVariables.border.color.light};
   }
+`;
+
+// The disc is 28px and the line of text beside it is 20, so one cannot simply
+// be told to match the other. The slot is the line: the disc is centred in it
+// and hangs 4px past it top and bottom, which is symmetrical, so its centre and
+// the centre of the first line are the same to a quarter of a pixel. Measured,
+// not guessed.
+const StyledDiscSlot = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 0 0 28px;
+  height: ${TIMELINE_ROW_LINE_HEIGHT}px;
+  justify-content: center;
 `;
 
 // 28px, the smaller end of what MASTER.md allows, because a timeline row is a
@@ -71,7 +85,6 @@ const StyledItemContainer = styled.div`
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
   min-width: 0;
   overflow: hidden;
 `;
@@ -195,12 +208,14 @@ export const EventRow = ({ event, mainObjectMetadataItem }: EventRowProps) => {
   return (
     <>
       <StyledTimelineItemContainer>
-        <StyledDisc tint={tint.disc} glyph={tint.glyph}>
-          <EventIconDynamicComponent
-            eventIcon={timelineActivityType?.icon ?? null}
-            linkedObjectMetadataItem={linkedObjectMetadataItem}
-          />
-        </StyledDisc>
+        <StyledDiscSlot>
+          <StyledDisc tint={tint.disc} glyph={tint.glyph}>
+            <EventIconDynamicComponent
+              eventIcon={timelineActivityType?.icon ?? null}
+              linkedObjectMetadataItem={linkedObjectMetadataItem}
+            />
+          </StyledDisc>
+        </StyledDiscSlot>
         <StyledItemContainer>
           <EventRowDynamicComponent
             authorFullName={authorFullName}

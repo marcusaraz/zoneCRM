@@ -26,10 +26,18 @@ interface BlockEditorProps {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
+  shouldSizeToContent?: boolean;
 }
 
+// A page whose whole job is the body opens a tall field, because a short box on
+// an empty page invites a short note. Inside something else, that floor is
+// wrong: Marcus opened Edit on a task in the timeline on 14 September 2026 and
+// got a card several hundred pixels tall around two lines of writing. Where the
+// editor is one part of a box, the box is as tall as what is in it.
+const EDITOR_MIN_HEIGHT = 400;
+
 // oxlint-disable-next-line twenty/no-hardcoded-colors
-const StyledEditor = styled.div`
+const StyledEditor = styled.div<{ shouldSizeToContent: boolean }>`
   max-width: 100%;
   min-width: 0;
   width: 100%;
@@ -38,7 +46,8 @@ const StyledEditor = styled.div`
     background: transparent;
     color: ${themeCssVariables.font.color.primary};
     font-size: 13px;
-    min-height: 400px;
+    min-height: ${({ shouldSizeToContent }) =>
+      shouldSizeToContent ? '0' : `${EDITOR_MIN_HEIGHT}px`};
   }
   & .editor [class^='_inlineContent']:before {
     color: ${themeCssVariables.font.color.tertiary};
@@ -164,6 +173,7 @@ export const BlockEditor = ({
   onChange,
   onPaste,
   readonly,
+  shouldSizeToContent = false,
 }: BlockEditorProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { t } = useLingui();
@@ -207,7 +217,7 @@ export const BlockEditor = ({
   };
 
   return (
-    <StyledEditor>
+    <StyledEditor shouldSizeToContent={shouldSizeToContent}>
       <BlockNoteView
         onFocus={handleFocus}
         onBlur={handleBlur}

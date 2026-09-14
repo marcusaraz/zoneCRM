@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -31,6 +31,7 @@ const TASK_FIELDS = [
   'assignee',
 ];
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 // Zone CRM: a note or a task shown in the timeline as itself, the first lines
@@ -132,8 +133,10 @@ const PRIORITIES: Record<string, string> = {
   HIGH: 'High',
 };
 
+// A field nobody has set says so in words. The house rule is no em dashes in
+// anything a colleague reads, and a dash in a value column is a puzzle anyway.
 const labelOf = (words: Record<string, string>, value?: string | null) =>
-  (isDefined(value) ? words[value] : undefined) ?? '—';
+  (isDefined(value) ? words[value] : undefined) ?? 'Not set';
 
 /// The due date as the brief writes it: the day and the time, because a task
 /// due "today" and a task due "today at 08:00" are different promises.
@@ -204,6 +207,23 @@ export const EventRowActivityCard = ({
         : {}),
     },
   });
+
+  // The card fetches the task for itself, and the cells that edit it read the
+  // record store, which is a different place. Everything the timeline had
+  // already loaded was in the store and showed; the assignee was not, because
+  // the timeline never asks for it, so Edit opened with Assignee empty and the
+  // person picked did not appear until Edit was closed and the card read the
+  // task again. What this card fetched goes into the store, so the cells and
+  // the card are looking at one task and not two.
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+  useEffect(() => {
+    if (!isDefined(record)) {
+      return;
+    }
+
+    upsertRecordsInStore({ partialRecords: [record] });
+  }, [record, upsertRecordsInStore]);
 
   // Deleted from this card: the timeline row that pointed at it is Twenty's
   // and stays, but the card it opened has nothing left to show.
@@ -303,7 +323,7 @@ export const EventRowActivityCard = ({
           </StyledField>
           <StyledField>
             <StyledFieldLabel>Assigned to</StyledFieldLabel>
-            <StyledFieldValue>{assignee || '—'}</StyledFieldValue>
+            <StyledFieldValue>{assignee || 'Nobody'}</StyledFieldValue>
           </StyledField>
         </StyledFields>
       )}
@@ -312,6 +332,7 @@ export const EventRowActivityCard = ({
           <ActivityRichTextEditor
             activityId={recordId}
             activityObjectNameSingular={editorObjectName}
+            shouldSizeToContent
           />
         </Suspense>
       ) : (
