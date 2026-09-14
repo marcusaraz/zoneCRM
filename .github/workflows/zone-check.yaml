@@ -30,11 +30,16 @@ jobs:
         run: npx nx run twenty-server:lint
       # Decision 12 asked for a test of each refusal. A test that is only
       # typechecked is not a test, and typecheck and lint were all this job ran,
-      # so the fork's own unit tests are named here and actually run. Scoped to
-      # the fork's files: upstream's suite is long and is not what this gate is
-      # for.
+      # so the fork's own unit tests are named here and actually run.
+      #
+      # jest directly rather than through nx: "nx run twenty-server:test --"
+      # does not scope anything, it runs all 1139 suites, of which two fail in
+      # this fork for reasons that predate it (standard-metadata-label-catalog
+      # and get-auth-providers-by-workspace). Those are upstream's to answer
+      # for and are not what this gate is about.
       - name: Zone CRM server tests
-        run: npx nx run twenty-server:test -- --testPathPattern='imap-smtp-caldav'
+        working-directory: packages/twenty-server
+        run: npx jest --config ./jest.config.mjs --ci --runInBand --testPathPattern=imap-smtp-caldav
 
   front:
     timeout-minutes: 40
