@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { getActivityCardText } from '@/activities/utils/getActivityCardText';
-import { getActivityPreview } from '@/activities/utils/getActivityPreview';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -12,7 +11,10 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 // Zone CRM: a note or a task shown in the timeline as itself (title and the
 // first lines of the body) instead of a "linked a related note" line.
 
-const PREVIEW_LINES = 6;
+// Zone CRM: a hundred pixels is about four lines of a note, which is enough to
+// know whether this is the one you are looking for and not enough to push the
+// next entry off the screen.
+const COLLAPSED_HEIGHT = 100;
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -35,14 +37,31 @@ const StyledTitle = styled.div`
   white-space: normal;
 `;
 
+// Cut by height rather than by line count: a note is headings and lists as well
+// as sentences, and six of those lines is not six of these.
 const StyledBody = styled.div<{ expanded: boolean }>`
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: ${({ expanded }) => (expanded ? 'unset' : PREVIEW_LINES)};
   color: ${themeCssVariables.font.color.secondary};
-  display: -webkit-box;
   line-break: anywhere;
+  max-height: ${({ expanded }) => (expanded ? 'none' : `${COLLAPSED_HEIGHT}px`)};
   overflow: hidden;
-  white-space: pre-line;
+  position: relative;
+  width: 100%;
+`;
+
+// The last line fades into the card rather than stopping mid-letter, which is
+// how a reader knows there is more without being told.
+const StyledFade = styled.div`
+  background: linear-gradient(
+    to bottom,
+    ${themeCssVariables.background.transparent.lighter},
+    ${themeCssVariables.background.secondary}
+  );
+  bottom: 0;
+  height: 32px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
 `;
 
 const StyledMeta = styled.div`
@@ -77,6 +96,31 @@ export const EventRowActivityCard = ({
 }) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const [expanded, setExpanded] = useState(false);
+  const [isLong, setIsLong] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  // Whether there is more to show is a question about the rendered height, so
+  // it is asked of the element rather than guessed from the number of
+  // characters. Markdown arrives asynchronously, so it is asked again when the
+  // element changes size.
+  useEffect(() => {
+    const element = bodyRef.current;
+
+    if (!isDefined(element) || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const measure = () => {
+      setIsLong(element.scrollHeight > COLLAPSED_HEIGHT + 8);
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
 
   const { record } = useFindOneRecord<ActivityRecord>({
     objectNameSingular,
@@ -94,15 +138,8 @@ export const EventRowActivityCard = ({
     return null;
   }
 
-  const blocknote = record.bodyV2?.blocknote ?? null;
-  const { title, body } = getActivityCardText({
-    title: record.title,
-    body: isDefined(blocknote)
-      ? getActivityPreview(blocknote)
-      : (record.bodyV2?.markdown ?? ''),
-    author: record.createdBy?.name,
-  });
-  const isLong = body.split('\n').length > PREVIEW_LINES || body.length > 600;
+  const title = (record.title ?? '').trim();
+  const body = (record.bodyV2?.markdown ?? '').trim();
 
   const meta =
     objectNameSingular === 'task'
@@ -119,7 +156,19 @@ export const EventRowActivityCard = ({
     >
       {title !== '' && <StyledTitle>{title}</StyledTitle>}
       {meta !== '' && <StyledMeta>{meta}</StyledMeta>}
-      {body !== '' && <StyledBody expanded={expanded}>{body}</StyledBody>}
+      {body !== '' && (
+        <StyledBody
+          expanded={expanded}
+          ref={bodyRef}
+          // A link in the note is a link. Opening the record as well because
+          // the click also reached the card would take the reader somewhere
+          // they did not ask to go.
+          onClick={(clickEvent) => clickEvent.stopPropagation()}
+        >
+          <LazyMarkdownRenderer text={body} />
+          {!expanded && isLong && <StyledFade />}
+        </StyledBody>
+      )}
       {isLong && (
         <StyledMore
           onClick={(clickEvent) => {
@@ -127,7 +176,7 @@ export const EventRowActivityCard = ({
             setExpanded(!expanded);
           }}
         >
-          {expanded ? 'Show less' : 'Show more'}
+          {expanded ? 'Show less' : 'Read more'}
         </StyledMore>
       )}
     </StyledCard>

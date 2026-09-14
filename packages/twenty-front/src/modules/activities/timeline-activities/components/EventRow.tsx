@@ -5,7 +5,6 @@ import { useContext } from 'react';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
 import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
-import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { getStandardTimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/StandardTimelineActivityRenderer';
 import { type TimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/TimelineActivityRenderer';
@@ -30,50 +29,30 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
 import { isDefined } from 'twenty-shared/utils';
 
+// Zone CRM: an entry is a date and what happened, side by side, with a hairline
+// between one and the next. The icon rail and its vertical line that used to
+// run down the left are gone: the words already say whether it was a call, a
+// note or a task, and the rail was holding the place where the date belongs.
 const StyledTimelineItemContainer = styled.div`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: space-between;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: flex-start;
   overflow: hidden;
+  padding: ${themeCssVariables.spacing[2]} 0;
   white-space: nowrap;
+
+  & + & {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+  }
 `;
 
-const StyledLeftContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  width: ${TIMELINE_ICON_SLOT_SIZE}px;
-`;
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  height: ${TIMELINE_ICON_SLOT_SIZE}px;
-  justify-content: center;
-  user-select: none;
-  width: 100%;
-  z-index: 2;
-`;
-
-const StyledVerticalLine = styled.div`
-  background: ${themeCssVariables.border.color.light};
-  flex: 1;
-  width: 2px;
-  z-index: 2;
-`;
-
-const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
+const StyledItemContainer = styled.div`
   align-items: flex-start;
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  margin-bottom: ${({ isMarginBottom }) =>
-    isMarginBottom ? themeCssVariables.spacing[3] : '0'};
   min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
   min-width: 0;
   overflow: hidden;
@@ -81,6 +60,8 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
 
 type EventRowProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
+  // Kept because the list still passes it. Nothing reads it since the rail it
+  // used to end went: the hairline sits between rows, not under the last one.
   isLastEvent?: boolean;
   event: TimelineActivity;
 };
@@ -104,7 +85,6 @@ const getTimelineActivityRenderer = ({
 };
 
 export const EventRow = ({
-  isLastEvent,
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
@@ -198,16 +178,7 @@ export const EventRow = ({
   return (
     <>
       <StyledTimelineItemContainer>
-        <StyledLeftContainer>
-          <StyledIconContainer>
-            <EventIconDynamicComponent
-              eventIcon={timelineActivityType?.icon ?? null}
-              linkedObjectMetadataItem={linkedObjectMetadataItem}
-            />
-          </StyledIconContainer>
-          {!isLastEvent && <StyledVerticalLine />}
-        </StyledLeftContainer>
-        <StyledItemContainer isMarginBottom={!isLastEvent}>
+        <StyledItemContainer>
           <EventRowDynamicComponent
             authorFullName={authorFullName}
             labelIdentifierValue={labelIdentifier.name}

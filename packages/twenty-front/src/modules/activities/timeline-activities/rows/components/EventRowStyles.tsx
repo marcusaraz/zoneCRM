@@ -11,10 +11,10 @@ export const StyledEventRow = styled.div`
 `;
 
 export const StyledEventRowContainer = styled.div`
-  align-items: center;
+  align-items: baseline;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: flex-start;
   min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
 `;
 
