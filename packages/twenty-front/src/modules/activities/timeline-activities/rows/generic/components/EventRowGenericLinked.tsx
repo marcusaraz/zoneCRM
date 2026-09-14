@@ -4,6 +4,7 @@ import { type KeyboardEvent, useState } from 'react';
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowActivityCard } from '@/activities/timeline-activities/rows/generic/components/EventRowActivityCard';
+import { EventRowPhoneCallCard } from '@/activities/timeline-activities/rows/generic/components/EventRowPhoneCallCard';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -76,6 +77,9 @@ export const EventRowGenericLinked = ({
         status?: string | null;
         talkTimeInSeconds?: number | null;
         phoneNumber?: string | null;
+        handledBy?: {
+          name?: { firstName?: string | null; lastName?: string | null } | null;
+        } | null;
       }
     >({
       objectNameSingular: 'phoneCall',
@@ -86,6 +90,7 @@ export const EventRowGenericLinked = ({
         status: true,
         talkTimeInSeconds: true,
         phoneNumber: true,
+        handledBy: true,
       },
       skip: !isPhoneCall,
     });
@@ -124,10 +129,16 @@ export const EventRowGenericLinked = ({
         }
       : undefined;
 
+  // Zone CRM: a note or task is drawn as a card by its record id, and the name
+  // is only ever used for the clickable label beside the row, which an activity
+  // does not get. Requiring one meant a note with no title had no card at all:
+  // the line read "You added a note" and the note itself was nowhere on the
+  // page. Notes open on their body rather than their title now, so an untitled
+  // note is the ordinary case and not the odd one.
   const canOpen =
     hasRenderer !== true &&
     isDefined(linkedRecord) &&
-    isDefined(linkedRecordName);
+    (isActivity || isDefined(linkedRecordName));
 
   const handleOpen = () => {
     if (!isDefined(linkedRecord)) {
@@ -160,7 +171,15 @@ export const EventRowGenericLinked = ({
           )}
           <EventRowItem variant="action">
             {isPhoneCall
-              ? getPhoneCallEventText(phoneCallRecord ?? {})
+              ? getPhoneCallEventText({
+                  ...(phoneCallRecord ?? {}),
+                  handledByName: [
+                    phoneCallRecord?.handledBy?.name?.firstName,
+                    phoneCallRecord?.handledBy?.name?.lastName,
+                  ]
+                    .filter(isDefined)
+                    .join(' '),
+                })
               : isActivity
                 ? activityObjectName === 'note'
                   ? t`added a note`
@@ -190,6 +209,8 @@ export const EventRowGenericLinked = ({
               objectNameSingular={activityObjectName}
               recordId={linkedRecord.id}
             />
+          ) : isPhoneCall ? (
+            <EventRowPhoneCallCard recordId={linkedRecord.id} />
           ) : (
             <SidePanelSearchRecordPreviewCard
               objectNameSingular={linkedRecord.objectNameSingular}
