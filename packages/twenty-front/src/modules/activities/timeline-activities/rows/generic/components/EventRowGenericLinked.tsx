@@ -215,7 +215,10 @@ export const EventRowGenericLinked = ({
             <SidePanelSearchRecordPreviewCard
               objectNameSingular={linkedRecord.objectNameSingular}
               recordId={linkedRecord.id}
-              label={linkedRecordName}
+              // Reaching here means canOpen held without being an activity or a
+              // call, which is the branch that still requires a name. The
+              // compiler cannot see that through the chain of ternaries.
+              label={linkedRecordName ?? ''}
             />
           )}
         </EventCard>
