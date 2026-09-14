@@ -26,8 +26,8 @@ const StyledVerticalListContainer = styled.div<{
 }>`
   // The pinned tab is the record's left column, and MASTER.md draws that as
   // white cards on a ground rather than one sheet: the column itself paints
-  // nothing, so the #f5f5f7 behind it shows between the cards, and each card
-  // is white. Everywhere else keeps Twenty's single surface.
+  // nothing, so the panel's tertiary ground shows between the cards, and each
+  // card is white. Everywhere else keeps Twenty's single surface.
   --record-card-background-color: ${({
     shouldUseWhiteBackground,
     isInPinnedTab,
