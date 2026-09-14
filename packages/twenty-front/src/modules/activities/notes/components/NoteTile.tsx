@@ -1,8 +1,17 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { lazy, Suspense, useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { ActivityBody } from '@/activities/components/ActivityBody';
+import { ActivityCardActions } from '@/activities/components/ActivityCardActions';
 import { type Note } from '@/activities/types/Note';
+
+const ActivityRichTextEditor = lazy(() =>
+  import('@/activities/components/ActivityRichTextEditor').then((module) => ({
+    default: module.ActivityRichTextEditor,
+  })),
+);
 import { getActivityCardText } from '@/activities/utils/getActivityCardText';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -59,6 +68,14 @@ const StyledNoteDate = styled.div`
   white-space: nowrap;
 `;
 
+// The date and the two words share the right end of the head line.
+const StyledNoteEnd = styled.div`
+  align-items: baseline;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledNoteTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -71,6 +88,9 @@ export const NoteTile = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isGone, setIsGone] = useState(false);
+
   const author = note.createdBy?.name ?? '';
   // C29: the note is shown as it was written, so the body is the markdown and
   // not the flattened preview. The preview is still what decides whether the
@@ -88,6 +108,10 @@ export const NoteTile = ({
     author,
   });
 
+  if (isGone) {
+    return null;
+  }
+
   return (
     <StyledCard isSingleNote={isSingleNote}>
       {/* C33 and C29: no side panel. The reader is already looking at the
@@ -98,12 +122,32 @@ export const NoteTile = ({
             <StyledNoteAuthorLabel>{t`Note`}</StyledNoteAuthorLabel>
             {author !== '' ? ` ${t`by`} ${author}` : ''}
           </StyledNoteAuthor>
-          <StyledNoteDate>
-            {beautifyExactDateTime(note.createdAt)}
-          </StyledNoteDate>
+          <StyledNoteEnd>
+            <StyledNoteDate>
+              {beautifyExactDateTime(note.createdAt)}
+            </StyledNoteDate>
+            <ActivityCardActions
+              objectNameSingular="note"
+              recordId={note.id}
+              isEditing={isEditing}
+              onToggleEdit={() => setIsEditing(!isEditing)}
+              onDeleted={() => setIsGone(true)}
+            />
+          </StyledNoteEnd>
         </StyledNoteHead>
-        {title !== '' && <StyledNoteTitle>{title}</StyledNoteTitle>}
-        {body.trim() !== '' && <ActivityBody markdown={body} />}
+        {!isEditing && title !== '' && (
+          <StyledNoteTitle>{title}</StyledNoteTitle>
+        )}
+        {isEditing ? (
+          <Suspense fallback={null}>
+            <ActivityRichTextEditor
+              activityId={note.id}
+              activityObjectNameSingular={CoreObjectNameSingular.Note}
+            />
+          </Suspense>
+        ) : (
+          body.trim() !== '' && <ActivityBody markdown={body} />
+        )}
       </StyledCardDetailsContainer>
     </StyledCard>
   );
