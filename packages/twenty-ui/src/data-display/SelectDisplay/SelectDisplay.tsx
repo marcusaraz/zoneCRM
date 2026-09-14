@@ -7,6 +7,9 @@ type SelectDisplayProps = {
   label: string;
   Icon?: IconComponent;
   preventPadding?: boolean;
+  // Decision 14's one exception, Owner, asks for it by name. Everything else
+  // draws the same quiet pill whatever colour its option was given.
+  shouldKeepColor?: boolean;
 };
 
 export const SelectDisplay = ({
@@ -14,6 +17,7 @@ export const SelectDisplay = ({
   label,
   Icon,
   preventPadding,
+  shouldKeepColor,
 }: SelectDisplayProps) => (
   <Tag
     preventShrink
@@ -21,5 +25,6 @@ export const SelectDisplay = ({
     text={label}
     Icon={Icon}
     preventPadding={preventPadding}
+    shouldKeepColor={shouldKeepColor}
   />
 );

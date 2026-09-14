@@ -13,6 +13,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 // not is added here by its name; nothing else about it changes.
 const STATUS_FIELD_NAMES = ['leadStatus', 'stage'];
 
+// The revision he made the same day, and the only one: Owner keeps the colour
+// its option was given. Who a record belongs to is read by scanning a column
+// rather than by reading it, and a colour per person is what makes that work.
+const COLOURED_FIELD_NAMES = ['owner'];
+
 const StyledPlainValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
   overflow: hidden;
@@ -31,17 +36,21 @@ export const SelectFieldDisplay = () => {
     return <></>;
   }
 
-  const isStatus = STATUS_FIELD_NAMES.includes(
-    fieldDefinition.metadata.fieldName,
-  );
+  const fieldName = fieldDefinition.metadata.fieldName;
+  const isStatus = STATUS_FIELD_NAMES.includes(fieldName);
+  const shouldKeepColor = COLOURED_FIELD_NAMES.includes(fieldName);
 
-  if (!isStatus) {
+  if (!isStatus && !shouldKeepColor) {
     return <StyledPlainValue>{selectedOption.label}</StyledPlainValue>;
   }
 
-  // The colour asked for here is ignored by Tag, which draws every pill the
-  // same quiet way. It is passed because the type asks for one.
+  // A status passes its colour and Tag ignores it, drawing the same quiet pill
+  // for every one. Owner asks to keep it, and is the only field that does.
   return (
-    <SelectDisplay color={selectedOption.color} label={selectedOption.label} />
+    <SelectDisplay
+      color={selectedOption.color}
+      label={selectedOption.label}
+      shouldKeepColor={shouldKeepColor}
+    />
   );
 };
