@@ -33,14 +33,19 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-// Decision 11, Marcus on 14 September 2026, having seen the two side by side:
-// the label sits above its value and is set in the same size as the value.
-// Not the drawing's Label type, not the row I built before it: a line of
-// supporting text, then the thing itself.
+// Decision 11 as revised on 14 September 2026, after Marcus saw it stacked:
+// two columns again, the label on the left and its value beside it on the
+// same line. The label keeps the type the decision gave it, which is the size
+// of the value and the wording of the field:
 //
-//     Email
-//     elena.rostova@apexmobility.io
+//     Email            elena.rostova@apexmobility.io
+//     Lead status      Qualified
 //
+// The label holds a column so the values line up down the card, and it never
+// shrinks: a label that wrapped would push its own value onto a second line
+// and break the row it is supposed to share.
+const LABEL_COLUMN_WIDTH = 116;
+
 const StyledLabelAndIconContainer = styled.div<{ stacked?: boolean }>`
   align-items: center;
   align-self: flex-start;
@@ -49,6 +54,8 @@ const StyledLabelAndIconContainer = styled.div<{ stacked?: boolean }>`
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   height: ${({ stacked }) => (stacked ? 'auto' : '24px')};
+  min-height: ${({ stacked }) => (stacked ? '22px' : 'auto')};
+  width: ${({ stacked }) => (stacked ? `${LABEL_COLUMN_WIDTH}px` : 'auto')};
 `;
 
 const StyledValueContainer = styled.div<{
@@ -74,7 +81,7 @@ const StyledLabelContainer = styled.div<{ width?: number; stacked?: boolean }>`
   font-size: ${({ stacked }) =>
     stacked ? '1.15rem' : themeCssVariables.font.size.sm};
   width: ${({ width, stacked }) =>
-    stacked ? 'auto' : width !== undefined ? `${width}px` : 'auto'};
+    stacked ? '100%' : width !== undefined ? `${width}px` : 'auto'};
 
   // Decision 11: the same size as the value, normal weight, written the way
   // the field is written. No uppercase and no tracking: the field is called
@@ -88,12 +95,13 @@ const StyledInlineCellBaseContainer = styled.div<{
   readonly: boolean;
   stacked?: boolean;
 }>`
-  align-items: ${({ stacked }) => (stacked ? 'stretch' : 'center')};
+  align-items: center;
   box-sizing: border-box;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
-  flex-direction: ${({ stacked }) => (stacked ? 'column' : 'row')};
-  gap: ${({ stacked }) => (stacked ? '2px' : themeCssVariables.spacing[1])};
+  flex-direction: row;
+  gap: ${({ stacked }) =>
+    stacked ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
   height: fit-content;
   user-select: none;
   width: 100%;

@@ -56,13 +56,13 @@ const StyledAnimatedContainer = styled.div<{
 
 // The header takes a tighter gap than the sections below it so that the mode
 // switcher row starts where the page card header ends in the next column.
-// The sidebar sits on the page ground with a hairline on its right, as the
-// Stitch screens draw it (`bg-page-bg border-r border-hairline-section`).
+// The sidebar sits on the page ground, as the Stitch screens draw it. The
+// hairline on its right is drawn by what it sits against; adding one here put
+// two lines side by side at the seam, which Marcus saw on 14 September 2026.
 const StyledContainer = styled.div<{
   isExpanded?: boolean;
 }>`
   background: ${themeCssVariables.background.tertiary};
-  border-right: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
