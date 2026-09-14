@@ -23,7 +23,10 @@ const StyledContainer = styled(StyledWidgetContentFrame)<{
   // everything beside it, so the rectangle is a box drawn around a row of
   // controls for no reason. MASTER.md: a secondary control is a control, not a
   // box. On a dashboard, where a widget really is a card, it stays.
-  border: ${({ isFlush }) => (isFlush ? 'none' : undefined)};
+  // border-style rather than border: an interpolation has to resolve to a
+  // value both ways, and the frame it inherits already carries the width and
+  // the colour.
+  border-style: ${({ isFlush }) => (isFlush ? 'none' : 'solid')};
   height: var(--widget-height, 100%);
   overflow: var(
     --widget-scroll-overflow,
