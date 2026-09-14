@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/hooks/useObjectMorphJunctionConfigOrThrow';
+import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getTitleFromActivityBody } from '@/activities/utils/getTitleFromActivityBody';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
