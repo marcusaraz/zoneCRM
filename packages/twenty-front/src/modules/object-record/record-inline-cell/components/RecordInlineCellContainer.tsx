@@ -33,15 +33,14 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-// C23, measured off the Stitch person record Marcus sent on 14 September 2026.
-// The label sits against the left edge and its value against the right one,
-// with the gap between them doing the work a column rule would otherwise do:
+// Decision 11, Marcus on 14 September 2026, having seen the two side by side:
+// the label sits above its value and is set in the same size as the value.
+// Not the drawing's Label type, not the row I built before it: a line of
+// supporting text, then the thing itself.
 //
-//     PHONE                              +1 (415) 890-2341
-//     EMAIL            elena.rostova@apexmobility.io
+//     Email
+//     elena.rostova@apexmobility.io
 //
-// So the label takes only the width of its own word and never shrinks, and
-// the value takes everything left over and is pushed to the far end of it.
 const StyledLabelAndIconContainer = styled.div<{ stacked?: boolean }>`
   align-items: center;
   align-self: flex-start;
@@ -50,7 +49,6 @@ const StyledLabelAndIconContainer = styled.div<{ stacked?: boolean }>`
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   height: ${({ stacked }) => (stacked ? 'auto' : '24px')};
-  min-height: ${({ stacked }) => (stacked ? '24px' : 'auto')};
 `;
 
 const StyledValueContainer = styled.div<{
@@ -58,44 +56,44 @@ const StyledValueContainer = styled.div<{
   stacked?: boolean;
 }>`
   display: flex;
-  justify-content: ${({ stacked }) => (stacked ? 'flex-end' : 'flex-start')};
   min-width: 0;
   position: relative;
-  text-align: ${({ stacked }) => (stacked ? 'right' : 'left')};
   user-select: text;
   width: 100%;
 
-  // Body type, MASTER.md: 15px on a 13px root. The drawing sets the value
-  // larger than its label, which is the question Marcus had open: it is the
-  // shape of the label, not its size, that tells the two apart.
+  // Body type, MASTER.md: 15px on a 13px root, and decision 11 sets the label
+  // to the same, so what tells them apart is the colour and the order.
   font-size: ${({ stacked }) => (stacked ? '1.15rem' : 'inherit')};
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number; stacked?: boolean }>`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
+  color: ${({ stacked }) =>
+    stacked
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.tertiary};
+  font-size: ${({ stacked }) =>
+    stacked ? '1.15rem' : themeCssVariables.font.size.sm};
   width: ${({ width, stacked }) =>
     stacked ? 'auto' : width !== undefined ? `${width}px` : 'auto'};
 
-  // Label type, MASTER.md: 12px, 600, uppercase, 0.04em, which is what the
-  // drawing sets. The label shares a line with its value, so it is told apart
-  // by its shape rather than by sitting somewhere else.
-  font-weight: ${({ stacked }) => (stacked ? '600' : 'inherit')};
-  letter-spacing: ${({ stacked }) => (stacked ? '0.04em' : 'normal')};
-  text-transform: ${({ stacked }) => (stacked ? 'uppercase' : 'none')};
+  // Decision 11: the same size as the value, normal weight, written the way
+  // the field is written. No uppercase and no tracking: the field is called
+  // Lead status, so that is what the card says.
+  font-weight: ${({ stacked }) => (stacked ? '400' : 'inherit')};
+  letter-spacing: normal;
+  text-transform: none;
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{
   readonly: boolean;
   stacked?: boolean;
 }>`
-  align-items: center;
+  align-items: ${({ stacked }) => (stacked ? 'stretch' : 'center')};
   box-sizing: border-box;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
-  flex-direction: row;
-  gap: ${({ stacked }) =>
-    stacked ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
+  flex-direction: ${({ stacked }) => (stacked ? 'column' : 'row')};
+  gap: ${({ stacked }) => (stacked ? '2px' : themeCssVariables.spacing[1])};
   height: fit-content;
   user-select: none;
   width: 100%;

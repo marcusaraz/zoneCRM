@@ -17,7 +17,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     RecordInlineCellContextProps,
     'isDisplayModeFixHeight' | 'disableHoverEffect' | 'readonly'
-  > & { isHovered?: boolean; stacked?: boolean }
+  > & { isHovered?: boolean }
 >`
   align-items: center;
   background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
@@ -30,11 +30,6 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   display: flex;
   height: ${({ isDisplayModeFixHeight }) =>
     isDisplayModeFixHeight ? '16px' : 'auto'};
-  // C23, the Stitch person record: the value sits against the right edge of
-  // the card. There is a full-width wrapper between this box and the field's
-  // own container, so a flex-end on the container never reached it; an auto
-  // margin pushes the box to the far end of whatever it is in.
-  margin-left: ${({ stacked }) => (stacked ? 'auto' : '0')};
   min-height: 16px;
   outline: 1px solid
     ${({ isHovered, readonly }) =>
@@ -119,7 +114,6 @@ export const RecordInlineCellDisplayMode = ({
       <StyledRecordInlineCellNormalModeOuterContainer
         isHovered={isHovered}
         readonly={readonly}
-        stacked={isStacked}
         onClick={onClick}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
