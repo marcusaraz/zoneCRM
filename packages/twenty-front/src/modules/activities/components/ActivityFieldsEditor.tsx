@@ -60,7 +60,7 @@ export const ActivityFieldsEditor = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setHoverPosition = useSetAtomComponentState(
+  const setRecordFieldListHoverPosition = useSetAtomComponentState(
     recordFieldListHoverPositionComponentState,
     instanceId,
   );
@@ -97,7 +97,7 @@ export const ActivityFieldsEditor = ({
                 useUpdateRecord={useUpdateOneObjectRecordMutation}
                 recordLoading={false}
                 instanceId={instanceId}
-                onMouseEnter={() => setHoverPosition(index)}
+                onMouseEnter={() => setRecordFieldListHoverPosition(index)}
                 isStacked={false}
               />
             ))}
