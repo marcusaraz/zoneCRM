@@ -1,11 +1,10 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { ActivityBody } from '@/activities/components/ActivityBody';
 import { type Note } from '@/activities/types/Note';
 import { getActivityCardText } from '@/activities/utils/getActivityCardText';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 
@@ -24,7 +23,6 @@ const StyledCardDetailsContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   box-sizing: border-box;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
@@ -66,19 +64,6 @@ const StyledNoteTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledCardContent = styled.div`
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 8;
-  align-self: stretch;
-  color: ${themeCssVariables.font.color.secondary};
-  display: -webkit-box;
-  line-break: anywhere;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: pre-line;
-  width: 100%;
-`;
-
 export const NoteTile = ({
   note,
   isSingleNote,
@@ -86,25 +71,28 @@ export const NoteTile = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-
   const author = note.createdBy?.name ?? '';
-  const { title, body } = getActivityCardText({
+  // C29: the note is shown as it was written, so the body is the markdown and
+  // not the flattened preview. The preview is still what decides whether the
+  // title repeats the first line, because that comparison is about words and
+  // not about formatting.
+  const written = note.bodyV2?.markdown ?? '';
+  const { title } = getActivityCardText({
     title: note.title,
     body: getActivityPreview(note?.bodyV2?.blocknote ?? null),
+    author,
+  });
+  const { body } = getActivityCardText({
+    title: note.title,
+    body: written,
     author,
   });
 
   return (
     <StyledCard isSingleNote={isSingleNote}>
-      <StyledCardDetailsContainer
-        onClick={() =>
-          openRecordInSidePanel({
-            recordId: note.id,
-            objectNameSingular: CoreObjectNameSingular.Note,
-          })
-        }
-      >
+      {/* C33 and C29: no side panel. The reader is already looking at the
+          note, and a panel puts a second copy of it somewhere else. */}
+      <StyledCardDetailsContainer>
         <StyledNoteHead>
           <StyledNoteAuthor>
             <StyledNoteAuthorLabel>{t`Note`}</StyledNoteAuthorLabel>
@@ -115,7 +103,7 @@ export const NoteTile = ({
           </StyledNoteDate>
         </StyledNoteHead>
         {title !== '' && <StyledNoteTitle>{title}</StyledNoteTitle>}
-        <StyledCardContent>{body}</StyledCardContent>
+        {body.trim() !== '' && <ActivityBody markdown={body} />}
       </StyledCardDetailsContainer>
     </StyledCard>
   );

@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { ActivityBody } from '@/activities/components/ActivityBody';
 import { getActivityCardText } from '@/activities/utils/getActivityCardText';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -11,14 +10,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 // Zone CRM: a note or a task shown in the timeline as itself, the first lines
 // of what was written, instead of a "linked a related note" line. The name is
 // on the row above and is not repeated here.
-
-// C29, Marcus 14 September 2026: six lines of the note, not a hundred pixels.
-// Six is enough to know whether this is the one you are looking for and few
-// enough that the next entry is still on the screen. Lines rather than pixels
-// because a line is what a reader counts.
-const COLLAPSED_LINES = 6;
-const LINE_HEIGHT = 1.5;
-const COLLAPSED_HEIGHT_EM = COLLAPSED_LINES * LINE_HEIGHT;
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -31,52 +22,6 @@ const StyledCard = styled.div`
   min-width: 0;
   padding: ${themeCssVariables.spacing[3]};
   width: 100%;
-`;
-
-// Six lines of body text. A heading or a list item is taller than a sentence,
-// so a note that opens with one shows fewer of them; six lines of prose is the
-// promise, and prose is what nearly every note is.
-const StyledBody = styled.div<{ expanded: boolean; clickable: boolean }>`
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'auto')};
-  line-break: anywhere;
-  line-height: ${LINE_HEIGHT};
-  max-height: ${({ expanded }) =>
-    expanded ? 'none' : `${COLLAPSED_HEIGHT_EM}em`};
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-
-  // The renderer is shared with the AI panel, where a wide answer is allowed to
-  // scroll sideways. A note on a record is not: the card has a width, the text
-  // wraps inside it, and a horizontal scrollbar under somebody's note is a
-  // piece of furniture nobody asked for. A long unbroken address is broken
-  // rather than allowed to push the card.
-  .markdown-section {
-    overflow-x: hidden;
-  }
-
-  .markdown-section * {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-`;
-
-// The last line fades into the card rather than stopping mid-letter, which is
-// how a reader knows there is more without being told. C29: over the last line,
-// so the line above it is read and not guessed at.
-const StyledFade = styled.div`
-  background: linear-gradient(
-    to bottom,
-    ${themeCssVariables.background.transparent.lighter},
-    ${themeCssVariables.background.secondary}
-  );
-  bottom: 0;
-  height: ${LINE_HEIGHT}em;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
 `;
 
 // A date that has passed on a task nobody finished. MASTER.md keeps red for
@@ -117,16 +62,6 @@ const StyledFieldLabel = styled.span`
 
 const StyledFieldValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
-`;
-
-const StyledMore = styled.button`
-  align-self: flex-start;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: 0;
 `;
 
 // The words the select fields carry, so a card does not print SIXTY_MINUTES at
@@ -210,37 +145,6 @@ export const EventRowActivityCard = ({
   objectNameSingular: 'note' | 'task';
   recordId: string;
 }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [isLong, setIsLong] = useState(false);
-  const bodyRef = useRef<HTMLDivElement>(null);
-
-  // Whether there is more to show is a question about the rendered height, so
-  // it is asked of the element rather than guessed from the number of
-  // characters. Markdown arrives asynchronously, so it is asked again when the
-  // element changes size.
-  useEffect(() => {
-    const element = bodyRef.current;
-
-    if (!isDefined(element) || typeof ResizeObserver === 'undefined') {
-      return;
-    }
-
-    const measure = () => {
-      const lineHeight =
-        parseFloat(getComputedStyle(element).lineHeight) ||
-        LINE_HEIGHT * parseFloat(getComputedStyle(element).fontSize);
-
-      setIsLong(element.scrollHeight > lineHeight * COLLAPSED_LINES + 2);
-    };
-
-    measure();
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
   const { record } = useFindOneRecord<ActivityRecord>({
     objectNameSingular,
     objectRecordId: recordId,
@@ -339,48 +243,7 @@ export const EventRowActivityCard = ({
           </StyledField>
         </StyledFields>
       )}
-      {body !== '' && (
-        <StyledBody
-          expanded={expanded}
-          clickable={isLong && !expanded}
-          ref={bodyRef}
-          // C29: the note opens where it is, by clicking it or by the words
-          // under it. A link in the note is still a link, and text somebody is
-          // half way through selecting is not a click, so neither opens it.
-          onClick={(clickEvent) => {
-            clickEvent.stopPropagation();
-
-            if (!isLong || expanded) {
-              return;
-            }
-
-            const target = clickEvent.target as HTMLElement;
-
-            if (target.closest('a') !== null) {
-              return;
-            }
-
-            if ((window.getSelection()?.toString() ?? '') !== '') {
-              return;
-            }
-
-            setExpanded(true);
-          }}
-        >
-          <LazyMarkdownRenderer text={body} />
-          {!expanded && isLong && <StyledFade />}
-        </StyledBody>
-      )}
-      {isLong && (
-        <StyledMore
-          onClick={(clickEvent) => {
-            clickEvent.stopPropagation();
-            setExpanded(!expanded);
-          }}
-        >
-          {expanded ? 'Show less' : 'Read more'}
-        </StyledMore>
-      )}
+      {body !== '' && <ActivityBody markdown={body} />}
     </StyledCard>
   );
 };
