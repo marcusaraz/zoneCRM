@@ -53,11 +53,11 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
 
 const StyledFooter = styled.div`
   align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
   border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
   margin-top: auto;
   padding-right: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
