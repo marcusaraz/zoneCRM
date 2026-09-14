@@ -79,9 +79,44 @@ const StyledFade = styled.div`
   right: 0;
 `;
 
-const StyledMeta = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
+// A date that has passed on a task nobody finished. MASTER.md keeps red for
+// errors, and a promise already broken is the one thing on a record that
+// qualifies.
+const StyledDue = styled.div<{ overdue: boolean }>`
+  color: ${({ overdue }) =>
+    overdue
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
+`;
+
+// One row of small fields, label above value, wrapping when the card is narrow.
+const StyledFields = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[1]};
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+`;
+
+const StyledFieldLabel = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+const StyledFieldValue = styled.span`
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledMore = styled.button`
@@ -94,12 +129,78 @@ const StyledMore = styled.button`
   padding: 0;
 `;
 
+// The words the select fields carry, so a card does not print SIXTY_MINUTES at
+// somebody. They are the labels the Zone Core app gives those options; if a
+// label changes there it changes here, which is a copy, but a copy of five
+// words rather than a query per row of a timeline.
+const REMINDERS: Record<string, string> = {
+  NONE: 'No reminder',
+  AT_TIME: 'At the time',
+  FIFTEEN_MINUTES: '15 minutes before',
+  ONE_HOUR: '1 hour before',
+  ONE_DAY: '1 day before',
+};
+
+const STAGES: Record<string, string> = {
+  TODO: 'Not started',
+  IN_PROGRESS: 'In progress',
+  DONE: 'Done',
+};
+
+const TYPES: Record<string, string> = {
+  TODO: 'To-do',
+  CALL: 'Call',
+  EMAIL: 'Email',
+  MEETING: 'Meeting',
+};
+
+const PRIORITIES: Record<string, string> = {
+  NONE: 'None',
+  LOW: 'Low',
+  MEDIUM: 'Medium',
+  HIGH: 'High',
+};
+
+const labelOf = (words: Record<string, string>, value?: string | null) =>
+  (isDefined(value) ? words[value] : undefined) ?? '—';
+
+/// The due date as the brief writes it: the day and the time, because a task
+/// due "today" and a task due "today at 08:00" are different promises.
+const readDueDate = (dueAt?: string | null) => {
+  if (!isDefined(dueAt) || dueAt === '') {
+    return null;
+  }
+
+  const when = new Date(dueAt);
+
+  if (Number.isNaN(when.getTime())) {
+    return null;
+  }
+
+  return {
+    text: when.toLocaleString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+    isOverdue: when.getTime() < Date.now(),
+  };
+};
+
 type ActivityRecord = ObjectRecord & {
   createdBy?: { name?: string | null } | null;
   title?: string | null;
   bodyV2?: { blocknote?: string | null; markdown?: string | null } | null;
   status?: string | null;
   dueAt?: string | null;
+  reminder?: string | null;
+  taskType?: string | null;
+  priority?: string | null;
+  assignee?: {
+    name?: { firstName?: string | null; lastName?: string | null } | null;
+  } | null;
 };
 
 export const EventRowActivityCard = ({
@@ -145,7 +246,16 @@ export const EventRowActivityCard = ({
       title: true,
       bodyV2: true,
       createdBy: true,
-      ...(objectNameSingular === 'task' ? { status: true, dueAt: true } : {}),
+      ...(objectNameSingular === 'task'
+        ? {
+            status: true,
+            dueAt: true,
+            reminder: true,
+            taskType: true,
+            priority: true,
+            assignee: true,
+          }
+        : {}),
     },
   });
 
@@ -156,12 +266,14 @@ export const EventRowActivityCard = ({
   const title = (record.title ?? '').trim();
   const body = (record.bodyV2?.markdown ?? '').trim();
 
-  const meta =
-    objectNameSingular === 'task'
-      ? [record.status, record.dueAt ? record.dueAt.slice(0, 10) : null]
-          .filter(isDefined)
-          .join(' · ')
-      : '';
+  const isTask = objectNameSingular === 'task';
+  const due = readDueDate(record.dueAt);
+  const assignee = [
+    record.assignee?.name?.firstName,
+    record.assignee?.name?.lastName,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <StyledCard
@@ -170,7 +282,51 @@ export const EventRowActivityCard = ({
       }
     >
       {title !== '' && <StyledTitle>{title}</StyledTitle>}
-      {meta !== '' && <StyledMeta>{meta}</StyledMeta>}
+
+      {/* pm/briefs/task-model-hubspot.md: the due date and its time first,
+          then the reminder, then a hairline, then the four small fields. A
+          date that has passed on a task nobody has finished is the one thing
+          on this card that is allowed to be red. */}
+      {isTask && isDefined(due) && (
+        <StyledDue overdue={due.isOverdue && record.status !== 'DONE'}>
+          {due.isOverdue && record.status !== 'DONE'
+            ? `Overdue: ${due.text}`
+            : due.text}
+        </StyledDue>
+      )}
+
+      {isTask && (
+        <StyledFields>
+          <StyledField>
+            <StyledFieldLabel>Reminder</StyledFieldLabel>
+            <StyledFieldValue>
+              {labelOf(REMINDERS, record.reminder)}
+            </StyledFieldValue>
+          </StyledField>
+          <StyledField>
+            <StyledFieldLabel>Stage</StyledFieldLabel>
+            <StyledFieldValue>
+              {labelOf(STAGES, record.status)}
+            </StyledFieldValue>
+          </StyledField>
+          <StyledField>
+            <StyledFieldLabel>Type</StyledFieldLabel>
+            <StyledFieldValue>
+              {labelOf(TYPES, record.taskType)}
+            </StyledFieldValue>
+          </StyledField>
+          <StyledField>
+            <StyledFieldLabel>Priority</StyledFieldLabel>
+            <StyledFieldValue>
+              {labelOf(PRIORITIES, record.priority)}
+            </StyledFieldValue>
+          </StyledField>
+          <StyledField>
+            <StyledFieldLabel>Assigned to</StyledFieldLabel>
+            <StyledFieldValue>{assignee || '—'}</StyledFieldValue>
+          </StyledField>
+        </StyledFields>
+      )}
       {body !== '' && (
         <StyledBody
           expanded={expanded}
