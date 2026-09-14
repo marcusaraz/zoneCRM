@@ -42,10 +42,7 @@ const StyledRoot = styled.div`
   }
 `;
 
-// 32 between the two columns, measured off the Stitch person record
-// (`gap-8` on the two-column row).
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
-  column-gap: 32px;
   display: grid;
   flex: 1;
   grid-template-columns: ${({ hasPinnedTab }) =>
@@ -101,16 +98,9 @@ const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
-// The right column is a card like the left one: white, 12px, no border, no
-// shadow, 24 inside. Measured off the Stitch person record (the timeline card
-// is `bg-white rounded-[12px] p-6`).
 const StyledScrollWrapperContainer = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-radius: 12px;
-  box-sizing: border-box;
   flex: 1;
   min-height: 0;
-  padding: ${themeCssVariables.spacing[6]};
 
   .page-layout-scroll-wrapper {
     container-name: tab-viewport;

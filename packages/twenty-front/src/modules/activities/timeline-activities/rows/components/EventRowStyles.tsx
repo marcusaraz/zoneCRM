@@ -10,16 +10,12 @@ export const StyledEventRow = styled.div`
   width: 100%;
 `;
 
-// 14px above and below each entry, measured off the Stitch person record
-// (pm/briefs/zone-crm-desktop/person-record.html); the hairline between
-// entries falls halfway.
 export const StyledEventRowContainer = styled.div`
   align-items: baseline;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
   min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
-  padding: 14px 0;
 `;
 
 export const StyledEventRowContent = styled.div`
