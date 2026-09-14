@@ -76,6 +76,11 @@ const StyledContainer = styled.div<{
 
   box-sizing: border-box;
   display: flex;
+  // Body type, MASTER.md: 15px on a 13px root. Measured off the Stitch person
+  // record (pm/briefs/zone-crm-desktop/person-record.html, text-[15px] on
+  // every tab). Set on the record page's strip only, because this list is
+  // shared with places the drawing does not cover.
+  font-size: 1.15rem;
   height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE});
   justify-content: ${({ centerTabs }) =>
     centerTabs ? 'center' : 'flex-start'};
