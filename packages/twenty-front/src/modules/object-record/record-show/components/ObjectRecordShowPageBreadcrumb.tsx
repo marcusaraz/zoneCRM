@@ -32,9 +32,15 @@ const StyledEditableTitleContainer = styled.div`
 // C36: one search, and this is it. It is exactly as wide as the column of cards
 // under it, so the two left edges and the two right edges line up and the bar
 // reads as the top of that column rather than as a strip of its own.
+// As wide as the column of cards under it, and no wider. It may shrink: at
+// 1280 with the sidebar open there is not room for a 380 pill, the record's
+// name and the action cluster on one line, and when the pill refused to give
+// way the cluster was painted over "Send Email". Seen on 14 September 2026 in
+// the 1280 pass. The pill yields first, down to a width that still reads as
+// a search box; the actions never overlap anything.
 const StyledSearchContainer = styled.div`
-  flex: 0 0 ${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px;
-  min-width: 0;
+  flex: 0 1 ${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px;
+  min-width: 220px;
 `;
 
 const StyledTitle = styled.div<{ isEmphasized: boolean }>`
