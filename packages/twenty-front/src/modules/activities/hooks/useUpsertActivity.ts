@@ -1,4 +1,5 @@
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
+import { getTitleFromActivityBody } from '@/activities/utils/getTitleFromActivityBody';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
@@ -46,11 +47,28 @@ export const useUpsertActivity = ({
     activity: Task | Note;
     input: Partial<Task | Note>;
   }) => {
+    // Zone CRM: name it after its first line when nobody named it. Every save
+    // goes through here, so this is the one place that has both the body and
+    // the title in hand. A title somebody typed is never touched.
+    const titleAfterInput = (
+      'title' in input ? (input.title ?? '') : (activity.title ?? '')
+    ).trim();
+    const bodyAfterInput = 'bodyV2' in input ? input.bodyV2 : activity.bodyV2;
+    const derivedTitle =
+      titleAfterInput === ''
+        ? getTitleFromActivityBody(
+            bodyAfterInput?.blocknote,
+            bodyAfterInput?.markdown,
+          )
+        : '';
+    const inputWithTitle: Partial<Task | Note> =
+      derivedTitle === '' ? input : { ...input, title: derivedTitle };
+
     setIsUpsertingActivityInDB(true);
     if (isActivityInCreateMode) {
       const activityToCreate: Partial<Task | Note> = {
         ...activity,
-        ...input,
+        ...inputWithTitle,
       };
 
       if (isDefined(objectShowPageTargetableObject)) {
@@ -62,7 +80,7 @@ export const useUpsertActivity = ({
       await updateOneActivity?.({
         objectNameSingular: activityObjectNameSingular,
         idToUpdate: activity.id,
-        updateOneRecordInput: input,
+        updateOneRecordInput: inputWithTitle,
       });
     }
 
