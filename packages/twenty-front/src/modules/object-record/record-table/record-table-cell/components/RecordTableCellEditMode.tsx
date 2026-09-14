@@ -14,6 +14,7 @@ import {
   autoUpdate,
   flip,
   offset,
+  shift,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
@@ -73,14 +74,19 @@ export const RecordTableCellEditMode = ({
     },
   };
 
+  // Offset first, then flip, then shift, which is the order floating-ui
+  // documents. Without shift an editor opened on the last column had nothing
+  // stopping it running off the right of the window, which is how a date
+  // picker loses half its calendar.
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     middleware: [
-      flip(),
       offset({
         mainAxis: -33,
         crossAxis: -3,
       }),
+      flip(),
+      shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],
 

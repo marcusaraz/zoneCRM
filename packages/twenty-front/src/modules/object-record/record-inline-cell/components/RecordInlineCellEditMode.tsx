@@ -68,10 +68,18 @@ export const RecordInlineCellEditMode = ({
     recordFieldInputIsFieldInErrorComponentState,
   );
 
+  // Fixed rather than absolute, and offset before flip, which is the order
+  // floating-ui documents. The editor is drawn into the body, so with the
+  // absolute strategy its coordinates run through whatever offset parent the
+  // body happens to have; on a wide screen the date picker of a task opened in
+  // the right panel came out past the edge of the window with its last three
+  // weekdays cut off, and shift could not pull it back because it was clamping
+  // in a different coordinate space. Fixed takes the offset parent out of the
+  // sum: the numbers are the viewport's, which is what shift measures against.
   const { refs, floatingStyles } = useFloating({
+    strategy: 'fixed',
     placement: isCentered ? 'bottom' : 'bottom-start',
     middleware: [
-      flip(),
       offset(
         isCentered
           ? {
@@ -83,6 +91,7 @@ export const RecordInlineCellEditMode = ({
               crossAxis: -5,
             },
       ),
+      flip(),
       shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],
