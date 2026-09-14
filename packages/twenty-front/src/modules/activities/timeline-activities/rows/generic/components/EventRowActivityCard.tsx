@@ -47,6 +47,20 @@ const StyledBody = styled.div<{ expanded: boolean }>`
   overflow: hidden;
   position: relative;
   width: 100%;
+
+  // The renderer is shared with the AI panel, where a wide answer is allowed to
+  // scroll sideways. A note on a record is not: the card has a width, the text
+  // wraps inside it, and a horizontal scrollbar under somebody's note is a
+  // piece of furniture nobody asked for. A long unbroken address is broken
+  // rather than allowed to push the card.
+  .markdown-section {
+    overflow-x: hidden;
+  }
+
+  .markdown-section * {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 `;
 
 // The last line fades into the card rather than stopping mid-letter, which is

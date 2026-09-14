@@ -1,16 +1,12 @@
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
-import { useRecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/hooks/useRecordShowPageGroupByBreadcrumbInfo';
-import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
-import { getRecordShowPageBreadcrumbPaginationLabel } from '@/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
+import { NavigationDrawerSearchInput } from '@/search-page/components/NavigationDrawerSearchInput';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -32,19 +28,10 @@ const StyledEditableTitleContainer = styled.div`
   width: 100%;
 `;
 
-const StyledEditableTitlePrefix = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledBreadcrumbPrefixObjectIcon = styled.div`
-  display: flex;
+const StyledSearchContainer = styled.div`
   flex-shrink: 0;
-  opacity: 0.64;
+  margin-right: ${themeCssVariables.spacing[3]};
+  width: 220px;
 `;
 
 const StyledTitle = styled.div<{ isEmphasized: boolean }>`
@@ -68,19 +55,15 @@ const StyledAvatarContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledPaginationInformation = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
 export const ObjectRecordShowPageBreadcrumb = ({
   objectNameSingular,
   objectRecordId,
-  objectLabel,
   labelIdentifierFieldMetadataItem,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
-  objectLabel: string;
+  // Still passed by the page; nothing reads it since the prefix went.
+  objectLabel?: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -121,26 +104,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
     fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
   });
 
-  const { navigateToIndexView, rankInView, totalCount } =
-    useRecordShowPagePagination(objectNameSingular, objectRecordId);
-
-  const { viewName, groupValueLabel, isGroupByActive, isGroupValueLoading } =
-    useRecordShowPageGroupByBreadcrumbInfo({
-      objectNameSingular,
-      objectRecordId,
-    });
-
-  const { formatNumber } = useNumberFormat();
-
-  const paginationInformation = getRecordShowPageBreadcrumbPaginationLabel({
-    rank: formatNumber(rankInView + 1),
-    total: formatNumber(totalCount),
-    isGroupByActive,
-    viewName,
-    isGroupValueLoading,
-    groupValueLabel,
-  });
-
   if (!loading && isInitialLoad) {
     setIsInitialLoad(false);
   }
@@ -164,17 +127,14 @@ export const ObjectRecordShowPageBreadcrumb = ({
           </StyledAvatarContainer>
         )
       ) : (
-        <StyledEditableTitlePrefix
-          onClick={() => {
-            navigateToIndexView();
-          }}
-        >
-          <StyledBreadcrumbPrefixObjectIcon>
-            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-          </StyledBreadcrumbPrefixObjectIcon>
-          {objectLabel}
-          <span>{' / '}</span>
-        </StyledEditableTitlePrefix>
+        // Zone CRM, C35: the search box stands where the breadcrumb did.
+        // "People / Oğuzhan Aydın (2 of 4,095)" told a reader three things they
+        // already knew and gave them nothing to do; the search is the thing
+        // reached for most from a record, and it is now the width of a hand
+        // away rather than in the sidebar.
+        <StyledSearchContainer>
+          <NavigationDrawerSearchInput variant="pill" />
+        </StyledSearchContainer>
       )}
       <StyledTitle isEmphasized={isMobile}>
         <FieldContext.Provider
@@ -206,11 +166,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
           />
         </FieldContext.Provider>
       </StyledTitle>
-      {!isMobile && (
-        <StyledPaginationInformation>
-          {paginationInformation}
-        </StyledPaginationInformation>
-      )}
     </StyledEditableTitleContainer>
   );
 };

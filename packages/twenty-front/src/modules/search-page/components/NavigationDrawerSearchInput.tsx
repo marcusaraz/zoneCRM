@@ -9,16 +9,23 @@ import { useOpenSearchResultsInSidePanel } from '@/search-page/hooks/useOpenSear
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledField = styled.label`
+const StyledField = styled.label<{ pill?: boolean }>`
   align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  background: ${({ pill }) =>
+    pill
+      ? themeCssVariables.background.tertiary
+      : themeCssVariables.background.transparent.light};
+  border: ${({ pill }) =>
+    pill ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+  // A pill in the record's top bar, a box in the sidebar: the bar is a row of
+  // controls and MASTER.md makes every control there a pill.
+  border-radius: ${({ pill }) =>
+    pill ? '999px' : themeCssVariables.border.radius.sm};
   cursor: text;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[3]};
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${({ pill }) => (pill ? '0' : themeCssVariables.spacing[3])};
+  margin-right: ${({ pill }) => (pill ? '0' : themeCssVariables.spacing[2])};
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
   &:focus-within {
@@ -57,7 +64,11 @@ const StyledInput = styled.input`
  * someone up costs nothing: the record being read stays where it is, and an
  * empty box puts the panel away again.
  */
-export const NavigationDrawerSearchInput = () => {
+export const NavigationDrawerSearchInput = ({
+  variant,
+}: {
+  variant?: 'pill';
+} = {}) => {
   const { t } = useLingui();
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { search } = useOpenSearchResultsInSidePanel();
@@ -67,7 +78,7 @@ export const NavigationDrawerSearchInput = () => {
   };
 
   return (
-    <StyledField>
+    <StyledField pill={variant === 'pill'}>
       <StyledIcon>
         <IconSearch size={16} />
       </StyledIcon>
