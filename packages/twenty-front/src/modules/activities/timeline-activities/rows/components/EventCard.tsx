@@ -24,19 +24,28 @@ const StyledCardContainer = styled.div<{ isFullWidth: boolean }>`
   }
 `;
 
-const StyledCardInnerContainer = styled.div`
+// C33, Marcus 14 September 2026: a note or a task draws its own card, so a
+// second box around it was the same border twice with eight pixels between
+// them. Full width means an activity, and there the container carries nothing
+// of its own: the card opens directly under the row.
+const StyledCardInnerContainer = styled.div<{ isFullWidth: boolean }>`
   align-items: flex-start;
   align-self: stretch;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  background: ${({ isFullWidth }) =>
+    isFullWidth ? 'none' : themeCssVariables.background.secondary};
+  border-color: ${themeCssVariables.border.color.medium};
+  border-radius: ${({ isFullWidth }) =>
+    isFullWidth ? '0' : themeCssVariables.border.radius.md};
+  border-style: ${({ isFullWidth }) => (isFullWidth ? 'none' : 'solid')};
+  border-width: 1px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]};
+  padding: ${({ isFullWidth }) =>
+    isFullWidth ? '0' : themeCssVariables.spacing[2]};
 `;
 
 export const EventCard = ({
@@ -47,7 +56,9 @@ export const EventCard = ({
   return (
     isOpen && (
       <StyledCardContainer isFullWidth={isFullWidth}>
-        <StyledCardInnerContainer>{children}</StyledCardInnerContainer>
+        <StyledCardInnerContainer isFullWidth={isFullWidth}>
+          {children}
+        </StyledCardInnerContainer>
       </StyledCardContainer>
     )
   );

@@ -4,16 +4,21 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { getActivityCardText } from '@/activities/utils/getActivityCardText';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-// Zone CRM: a note or a task shown in the timeline as itself (title and the
-// first lines of the body) instead of a "linked a related note" line.
+// Zone CRM: a note or a task shown in the timeline as itself, the first lines
+// of what was written, instead of a "linked a related note" line. The name is
+// on the row above and is not repeated here.
 
-// Zone CRM: a hundred pixels is about four lines of a note, which is enough to
-// know whether this is the one you are looking for and not enough to push the
-// next entry off the screen.
-const COLLAPSED_HEIGHT = 100;
+// C29, Marcus 14 September 2026: six lines of the note, not a hundred pixels.
+// Six is enough to know whether this is the one you are looking for and few
+// enough that the next entry is still on the screen. Lines rather than pixels
+// because a line is what a reader counts.
+const COLLAPSED_LINES = 6;
+const LINE_HEIGHT = 1.5;
+const COLLAPSED_HEIGHT_EM = COLLAPSED_LINES * LINE_HEIGHT;
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -28,20 +33,16 @@ const StyledCard = styled.div`
   width: 100%;
 `;
 
-const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  overflow-wrap: anywhere;
-  white-space: normal;
-`;
-
-// Cut by height rather than by line count: a note is headings and lists as well
-// as sentences, and six of those lines is not six of these.
-const StyledBody = styled.div<{ expanded: boolean }>`
+// Six lines of body text. A heading or a list item is taller than a sentence,
+// so a note that opens with one shows fewer of them; six lines of prose is the
+// promise, and prose is what nearly every note is.
+const StyledBody = styled.div<{ expanded: boolean; clickable: boolean }>`
   color: ${themeCssVariables.font.color.secondary};
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'auto')};
   line-break: anywhere;
+  line-height: ${LINE_HEIGHT};
   max-height: ${({ expanded }) =>
-    expanded ? 'none' : `${COLLAPSED_HEIGHT}px`};
+    expanded ? 'none' : `${COLLAPSED_HEIGHT_EM}em`};
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -62,7 +63,8 @@ const StyledBody = styled.div<{ expanded: boolean }>`
 `;
 
 // The last line fades into the card rather than stopping mid-letter, which is
-// how a reader knows there is more without being told.
+// how a reader knows there is more without being told. C29: over the last line,
+// so the line above it is read and not guessed at.
 const StyledFade = styled.div`
   background: linear-gradient(
     to bottom,
@@ -70,7 +72,7 @@ const StyledFade = styled.div`
     ${themeCssVariables.background.secondary}
   );
   bottom: 0;
-  height: 32px;
+  height: ${LINE_HEIGHT}em;
   left: 0;
   pointer-events: none;
   position: absolute;
@@ -224,7 +226,11 @@ export const EventRowActivityCard = ({
     }
 
     const measure = () => {
-      setIsLong(element.scrollHeight > COLLAPSED_HEIGHT + 8);
+      const lineHeight =
+        parseFloat(getComputedStyle(element).lineHeight) ||
+        LINE_HEIGHT * parseFloat(getComputedStyle(element).fontSize);
+
+      setIsLong(element.scrollHeight > lineHeight * COLLAPSED_LINES + 2);
     };
 
     measure();
@@ -260,8 +266,19 @@ export const EventRowActivityCard = ({
     return null;
   }
 
-  const title = (record.title ?? '').trim();
-  const body = (record.bodyV2?.markdown ?? '').trim();
+  // The name is said once, on the row above this card, so the card prints what
+  // the row cannot: the body, with the line the row already carries taken off
+  // the front and the imported signature taken off the end. A note whose whole
+  // content is that one line keeps it, because a card with nothing in it is
+  // worse than a line read twice.
+  const written = (record.bodyV2?.markdown ?? '').trim();
+  const trimmed = getActivityCardText({
+    title: record.title,
+    body: written,
+    author: record.createdBy?.name,
+    keepTitle: true,
+  }).body.trim();
+  const body = trimmed !== '' ? trimmed : written;
 
   const isTask = objectNameSingular === 'task';
   const due = readDueDate(record.dueAt);
@@ -278,8 +295,6 @@ export const EventRowActivityCard = ({
   // a second copy of it somewhere else.
   return (
     <StyledCard>
-      {title !== '' && <StyledTitle>{title}</StyledTitle>}
-
       {/* pm/briefs/task-model-hubspot.md: the due date and its time first,
           then the reminder, then a hairline, then the four small fields. A
           date that has passed on a task nobody has finished is the one thing
@@ -327,11 +342,30 @@ export const EventRowActivityCard = ({
       {body !== '' && (
         <StyledBody
           expanded={expanded}
+          clickable={isLong && !expanded}
           ref={bodyRef}
-          // A link in the note is a link. Opening the record as well because
-          // the click also reached the card would take the reader somewhere
-          // they did not ask to go.
-          onClick={(clickEvent) => clickEvent.stopPropagation()}
+          // C29: the note opens where it is, by clicking it or by the words
+          // under it. A link in the note is still a link, and text somebody is
+          // half way through selecting is not a click, so neither opens it.
+          onClick={(clickEvent) => {
+            clickEvent.stopPropagation();
+
+            if (!isLong || expanded) {
+              return;
+            }
+
+            const target = clickEvent.target as HTMLElement;
+
+            if (target.closest('a') !== null) {
+              return;
+            }
+
+            if ((window.getSelection()?.toString() ?? '') !== '') {
+              return;
+            }
+
+            setExpanded(true);
+          }}
         >
           <LazyMarkdownRenderer text={body} />
           {!expanded && isLong && <StyledFade />}

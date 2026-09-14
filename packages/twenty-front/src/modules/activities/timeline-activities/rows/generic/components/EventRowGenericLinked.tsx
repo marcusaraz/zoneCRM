@@ -16,6 +16,7 @@ import { getPhoneCallEventText } from '@/activities/timeline-activities/rows/gen
 import { SYSTEM_AUTHOR_NAME } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import {
   StyledEventRow,
+  StyledEventRowActivityName,
   StyledEventRowContainer,
   StyledEventRowContent,
   StyledEventRowLinkedRecord,
@@ -192,6 +193,11 @@ export const EventRowGenericLinked = ({
                   : t`added a task`
                 : (eventTypeLabel ?? t`linked a ${objectLabel}`)}
           </EventRowItem>
+          {canOpen && isActivity && isDefined(linkedRecordName) && (
+            <StyledEventRowActivityName>
+              {linkedRecordName}
+            </StyledEventRowActivityName>
+          )}
           {canOpen && !isActivity && (
             <StyledEventRowLinkedRecord
               role="button"

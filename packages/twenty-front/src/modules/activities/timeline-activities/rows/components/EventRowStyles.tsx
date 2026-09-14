@@ -35,3 +35,14 @@ export const StyledEventRowLinkedRecord = styled.span`
   white-space: nowrap;
   width: 100%;
 `;
+
+// C33, Marcus 14 September 2026: the name is said once, on the row that already
+// carries who did it and what they did. The card under it opens directly below
+// and shows the detail, without repeating the name as a heading.
+export const StyledEventRowActivityName = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;

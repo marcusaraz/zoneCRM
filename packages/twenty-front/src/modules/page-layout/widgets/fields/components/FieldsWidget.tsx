@@ -28,34 +28,61 @@ import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 // the rule is what separates one field from the next, so a gap on top of it
 // would read as two rules. MASTER.md, cards are separated by hairlines and a
 // change of ground, never by a box.
-const StyledPropertyBox = styled.div`
+//
+// C23, Marcus 14 September 2026: on the record page the fields sit side by
+// side, two to a row, as the Stitch person record draws them. A side panel is
+// too narrow for two of anything and keeps the single column. The second field
+// shares the first one's row, so it is the one child that does not take the
+// hairline above it.
+const StyledPropertyBox = styled.div<{ isGrid: boolean }>`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
+  column-gap: ${themeCssVariables.spacing[4]};
+  display: ${({ isGrid }) => (isGrid ? 'grid' : 'flex')};
   flex-direction: column;
-  gap: 0;
+  grid-template-columns: ${({ isGrid }) => (isGrid ? '1fr 1fr' : 'none')};
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
+  row-gap: 0;
+
+  > * {
+    min-width: 0;
+  }
 
   > * + * {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
+  }
+
+  > *:nth-child(2) {
+    border-top-width: ${({ isGrid }) => (isGrid ? '0' : '1px')};
   }
 `;
 
 const StyledInlineFieldsPropertyBox = styled.div<{
   hasMoreGroup: boolean;
+  isGrid: boolean;
 }>`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
+  column-gap: ${themeCssVariables.spacing[4]};
+  display: ${({ isGrid }) => (isGrid ? 'grid' : 'flex')};
   flex-direction: column;
-  gap: 0;
+  grid-template-columns: ${({ isGrid }) => (isGrid ? '1fr 1fr' : 'none')};
   padding-bottom: ${({ hasMoreGroup }) =>
     hasMoreGroup ? themeCssVariables.spacing[3] : '0'};
   padding-top: 0;
+  row-gap: 0;
+
+  > * {
+    min-width: 0;
+  }
 
   > * + * {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
+  }
+
+  > *:nth-child(2) {
+    border-top-width: ${({ isGrid }) => (isGrid ? '0' : '1px')};
   }
 `;
 
@@ -143,7 +170,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             {shouldDisplayGroupHeaders ? (
               groups.map((group) => (
                 <FieldsWidgetGroupContainer key={group.id} title={group.name}>
-                  <StyledPropertyBox>
+                  <StyledPropertyBox isGrid={!isInSidePanel}>
                     <FieldsWidgetFieldList
                       fields={group.fields}
                       instanceId={instanceId}
@@ -154,6 +181,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             ) : (
               <StyledInlineFieldsPropertyBox
                 hasMoreGroup={shouldShowHiddenFields}
+                isGrid={!isInSidePanel}
               >
                 <FieldsWidgetFieldList
                   fields={visibleFields}
@@ -167,7 +195,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                 title={t`More (${hiddenFieldsWithOffsetGlobalIndex.length})`}
                 defaultExpanded={false}
               >
-                <StyledPropertyBox>
+                <StyledPropertyBox isGrid={!isInSidePanel}>
                   <FieldsWidgetFieldList
                     fields={hiddenFieldsWithOffsetGlobalIndex}
                     instanceId={instanceId}
