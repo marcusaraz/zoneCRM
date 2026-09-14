@@ -15,6 +15,9 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   width: 100%;
 `;
 
+// The pencil is positioned against this box, and a readable row keeps room at
+// its end so a long address does not run under it. A read-only row has no
+// pencil and needs no room.
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   align-items: center;
   background: var(
@@ -25,6 +28,8 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: fit-content;
+  padding-right: ${({ readonly }) => (readonly ? '0' : '34px')};
+  position: relative;
   user-select: text;
   width: 100%;
 `;

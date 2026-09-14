@@ -36,17 +36,26 @@ export const Tag = ({
 }: TagProps) => {
   const theme = useTheme();
 
+  // Decision 14, Marcus on 14 September 2026, having seen the two side by
+  // side: no colour per option, anywhere. Not on the record card, not in the
+  // list, not on the board. A tag is a quiet pill, the fill behind it and the
+  // reading ink on it, and the word is what carries the meaning.
+  //
+  // MASTER.md says the same thing in its own words: one blue, and anything
+  // that has to stand out and is not the action gets weight or space, never a
+  // second colour. The option colours are still stored and still shown in the
+  // settings where somebody picks them; they simply do not reach the screen
+  // somebody works on. The `color` prop is kept so that a caller that wants a
+  // transparent tag can still ask for one.
   const tagBackground =
     color === 'transparent'
       ? 'transparent'
-      : (themeCssVariables.tag.background[color] ??
-        themeCssVariables.tag.background.gray);
+      : themeCssVariables.background.quaternary;
 
   const tagText =
     color === 'transparent'
       ? themeCssVariables.font.color.secondary
-      : (themeCssVariables.tag.text[color] ??
-        themeCssVariables.font.color.secondary);
+      : themeCssVariables.font.color.primary;
 
   const isInteractive = isDefined(onClick);
 
