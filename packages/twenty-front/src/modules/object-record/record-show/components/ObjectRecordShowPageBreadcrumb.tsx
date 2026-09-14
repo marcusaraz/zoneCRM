@@ -6,6 +6,7 @@ import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsR
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
+import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
 import { NavigationDrawerSearchInput } from '@/search-page/components/NavigationDrawerSearchInput';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
@@ -28,12 +29,11 @@ const StyledEditableTitleContainer = styled.div`
   width: 100%;
 `;
 
-// C36: one search, and this is it. The bar holds nothing else, so it can be as
-// long as the bar is wide up to a comfortable measure; a search box the width
-// of a page is harder to aim at than one the width of a sentence.
+// C36: one search, and this is it. It is exactly as wide as the column of cards
+// under it, so the two left edges and the two right edges line up and the bar
+// reads as the top of that column rather than as a strip of its own.
 const StyledSearchContainer = styled.div`
-  flex: 1;
-  max-width: 520px;
+  flex: 0 0 ${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px;
   min-width: 0;
 `;
 

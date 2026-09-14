@@ -105,16 +105,13 @@ export const PageLayoutRecordIdentifierBar = ({
   return (
     <StyledBar hasPinnedTab={hasPinnedTab} hasTabList={hasTabList}>
       <StyledIdentifierCell hasPinnedTab={hasPinnedTab}>
-        {/* Zone CRM, C36: the record's name is the header card at the top of
-            its own column now. Printing it here as well says it twice, one
-            under the other, in two sizes. The cell stays because the pinned-tab
-            control lives in it and because it holds the column's width. */}
-        {!hasPinnedTab && (
-          <RecordIdentifierBarTitle
-            objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-            objectRecordId={targetRecordIdentifier.id}
-          />
-        )}
+        {/* Zone CRM, C36: this compact line is where the record says its
+            name. A card under it in Title type said the same thing again,
+            larger, which Marcus took one look at and cut. */}
+        <RecordIdentifierBarTitle
+          objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+          objectRecordId={targetRecordIdentifier.id}
+        />
 
         {isPinnedTabEditable && isDefined(pinnedTab) && (
           <StyledPinnedTab>

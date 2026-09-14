@@ -1,4 +1,3 @@
-import { RecordHeaderCard } from '@/object-record/record-show/components/RecordHeaderCard';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutScrollResetEffect } from '@/page-layout/components/PageLayoutScrollResetEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -28,7 +27,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
 
   .page-layout-scroll-wrapper {
@@ -79,10 +78,6 @@ export const PageLayoutLeftPanel = ({
 
   return (
     <StyledContainer>
-      <RecordHeaderCard
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        objectRecordId={targetRecordIdentifier.id}
-      />
       <PageLayoutScrollResetEffect
         pageLayoutTabId={pinnedLeftTabId}
         scrollWrapperInstanceId={scrollWrapperInstanceId}
