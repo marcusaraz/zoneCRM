@@ -28,10 +28,13 @@ const StyledEditableTitleContainer = styled.div`
   width: 100%;
 `;
 
+// C36: one search, and this is it. The bar holds nothing else, so it can be as
+// long as the bar is wide up to a comfortable measure; a search box the width
+// of a page is harder to aim at than one the width of a sentence.
 const StyledSearchContainer = styled.div`
-  flex-shrink: 0;
-  margin-right: ${themeCssVariables.spacing[3]};
-  width: 220px;
+  flex: 1;
+  max-width: 520px;
+  min-width: 0;
 `;
 
 const StyledTitle = styled.div<{ isEmphasized: boolean }>`
@@ -136,36 +139,38 @@ export const ObjectRecordShowPageBreadcrumb = ({
           <NavigationDrawerSearchInput variant="pill" />
         </StyledSearchContainer>
       )}
-      <StyledTitle isEmphasized={isMobile}>
-        <FieldContext.Provider
-          value={{
-            recordId: objectRecordId,
-            isLabelIdentifier: false,
-            fieldDefinition: {
-              type:
-                labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.TEXT,
-              iconName: '',
-              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-              label: labelIdentifierFieldMetadataItem?.label || '',
-              metadata: {
-                fieldName: labelIdentifierFieldMetadataItem?.name || '',
-                objectMetadataNameSingular: objectNameSingular,
+      {isMobile && (
+        <StyledTitle isEmphasized={isMobile}>
+          <FieldContext.Provider
+            value={{
+              recordId: objectRecordId,
+              isLabelIdentifier: false,
+              fieldDefinition: {
+                type:
+                  labelIdentifierFieldMetadataItem?.type ||
+                  FieldMetadataType.TEXT,
+                iconName: '',
+                fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+                label: labelIdentifierFieldMetadataItem?.label || '',
+                metadata: {
+                  fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                  objectMetadataNameSingular: objectNameSingular,
+                },
+                defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
               },
-              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
-            },
-            useUpdateRecord: useUpdateOneObjectRecordMutation,
-            isCentered: false,
-            isDisplayModeFixHeight: true,
-            isRecordFieldReadOnly: isLabelIdentifierReadOnly,
-          }}
-        >
-          <RecordTitleCell
-            sizeVariant={isMobile ? 'sm' : 'xs'}
-            containerType={RecordTitleCellContainerType.PageHeader}
-          />
-        </FieldContext.Provider>
-      </StyledTitle>
+              useUpdateRecord: useUpdateOneObjectRecordMutation,
+              isCentered: false,
+              isDisplayModeFixHeight: true,
+              isRecordFieldReadOnly: isLabelIdentifierReadOnly,
+            }}
+          >
+            <RecordTitleCell
+              sizeVariant={isMobile ? 'sm' : 'xs'}
+              containerType={RecordTitleCellContainerType.PageHeader}
+            />
+          </FieldContext.Provider>
+        </StyledTitle>
+      )}
     </StyledEditableTitleContainer>
   );
 };

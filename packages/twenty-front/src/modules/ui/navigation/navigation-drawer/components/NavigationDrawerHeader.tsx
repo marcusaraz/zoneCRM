@@ -53,6 +53,8 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
 
 const StyledFooter = styled.div`
   align-items: center;
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
   border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-shrink: 0;
@@ -110,12 +112,24 @@ export const NavigationDrawerHeader = ({
   );
 };
 
-// The same button, at the foot of the drawer. A second workspace under one
-// account becomes a choice here rather than a badge at the top.
-export const NavigationDrawerWorkspaceFooter = () => (
+// The foot of the drawer: the workspace, and beside it the button that folds
+// the drawer away. C36, Marcus 14 September 2026: the button leaves the top
+// left corner, which is where the first navigation item now begins, and lives
+// next to the thing it belongs to. A second workspace under one account
+// becomes a choice here rather than a badge at the top.
+export const NavigationDrawerWorkspaceFooter = ({
+  showCollapseButton,
+}: {
+  showCollapseButton: boolean;
+}) => (
   <StyledFooter>
     <StyledWorkspaceDropdownContainer>
       <MultiWorkspaceDropdownButton />
     </StyledWorkspaceDropdownContainer>
+    {showCollapseButton && (
+      <StyledNavigationDrawerCollapseButtonContainer>
+        <NavigationDrawerCollapseButton direction="left" />
+      </StyledNavigationDrawerCollapseButtonContainer>
+    )}
   </StyledFooter>
 );

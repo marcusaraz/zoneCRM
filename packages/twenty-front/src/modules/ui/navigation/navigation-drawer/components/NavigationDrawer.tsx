@@ -136,18 +136,23 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          <NavigationDrawerHeader
-            showCollapseButton={isMobile || !isSettingsDrawer}
-            showWorkspace={isSettingsDrawer}
-          />
-          {/* Zone CRM: search starts here, not on a page of its own. A phone
-              has the search in its bottom bar instead. */}
-          {!isMobile && !isSettingsDrawer && isExpanded && (
-            <NavigationDrawerSearchInput />
+          {/* Zone CRM, C36: one search, and it is in the record's top bar.
+              Two boxes that do the same thing is one of them being wrong, and
+              the sidebar now begins with the first thing anyone came for.
+              Settings keeps its own header. A phone keeps the search in its
+              bottom bar. */}
+          {(isSettingsDrawer || isMobile) && (
+            <NavigationDrawerHeader
+              showCollapseButton={isMobile || !isSettingsDrawer}
+              showWorkspace
+            />
           )}
+          {isMobile && !isSettingsDrawer && <NavigationDrawerSearchInput />}
           <StyledContent>{children}</StyledContent>
-          {!isSettingsDrawer && isExpanded && (
-            <NavigationDrawerWorkspaceFooter />
+          {!isSettingsDrawer && isExpanded && !isMobile && (
+            <NavigationDrawerWorkspaceFooter
+              showCollapseButton={!isSettingsDrawer}
+            />
           )}
         </StyledContainer>
 
