@@ -1,9 +1,35 @@
 import { styled } from '@linaria/react';
+import { lazy, Suspense, useState } from 'react';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ActivityBody } from '@/activities/components/ActivityBody';
+import { ActivityCardActions } from '@/activities/components/ActivityCardActions';
+import { ActivityFieldsEditor } from '@/activities/components/ActivityFieldsEditor';
 import { getActivityCardText } from '@/activities/utils/getActivityCardText';
+
+// The editor is the side panel's own, loaded when a card is opened for
+// writing and not before: it is the heaviest thing on the page and most cards
+// are only read.
+const ActivityRichTextEditor = lazy(() =>
+  import('@/activities/components/ActivityRichTextEditor').then((module) => ({
+    default: module.ActivityRichTextEditor,
+  })),
+);
+
+// Marcus, 14 September 2026: a task or a note is edited where it is, in this
+// card, and deleted from here, the way HubSpot does it. No panel from the
+// right. The fields the brief orders are the ones offered for editing, in
+// that order.
+const TASK_FIELDS = [
+  'dueAt',
+  'reminder',
+  'status',
+  'taskType',
+  'priority',
+  'assignee',
+];
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -22,6 +48,16 @@ const StyledCard = styled.div`
   min-width: 0;
   padding: ${themeCssVariables.spacing[3]};
   width: 100%;
+`;
+
+// The card's first line: what is due on the left, Edit and Delete on the
+// right. A note has nothing due, so its first line is the two words alone.
+const StyledHead = styled.div`
+  align-items: baseline;
+  display: flex;
+  gap: ${themeCssVariables.spacing[3]};
+  justify-content: space-between;
+  min-height: 18px;
 `;
 
 // A date that has passed on a task nobody finished. MASTER.md keeps red for
@@ -145,6 +181,9 @@ export const EventRowActivityCard = ({
   objectNameSingular: 'note' | 'task';
   recordId: string;
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isGone, setIsGone] = useState(false);
+
   const { record } = useFindOneRecord<ActivityRecord>({
     objectNameSingular,
     objectRecordId: recordId,
@@ -166,7 +205,9 @@ export const EventRowActivityCard = ({
     },
   });
 
-  if (!isDefined(record)) {
+  // Deleted from this card: the timeline row that pointed at it is Twenty's
+  // and stays, but the card it opened has nothing left to show.
+  if (isGone || !isDefined(record)) {
     return null;
   }
 
@@ -197,21 +238,44 @@ export const EventRowActivityCard = ({
   // in a panel on the right, which Marcus called useless and unnecessary, and
   // he is right: the reader is already looking at the thing, and a panel puts
   // a second copy of it somewhere else.
+  const editorObjectName = objectNameSingular as
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Note;
+
   return (
     <StyledCard>
       {/* pm/briefs/task-model-hubspot.md: the due date and its time first,
           then the reminder, then a hairline, then the four small fields. A
           date that has passed on a task nobody has finished is the one thing
           on this card that is allowed to be red. */}
-      {isTask && isDefined(due) && (
-        <StyledDue overdue={due.isOverdue && record.status !== 'DONE'}>
-          {due.isOverdue && record.status !== 'DONE'
-            ? `Overdue: ${due.text}`
-            : due.text}
-        </StyledDue>
+      <StyledHead>
+        {isTask && isDefined(due) ? (
+          <StyledDue overdue={due.isOverdue && record.status !== 'DONE'}>
+            {due.isOverdue && record.status !== 'DONE'
+              ? `Overdue: ${due.text}`
+              : due.text}
+          </StyledDue>
+        ) : (
+          <span />
+        )}
+        <ActivityCardActions
+          objectNameSingular={objectNameSingular}
+          recordId={recordId}
+          isEditing={isEditing}
+          onToggleEdit={() => setIsEditing(!isEditing)}
+          onDeleted={() => setIsGone(true)}
+        />
+      </StyledHead>
+
+      {isTask && isEditing && (
+        <ActivityFieldsEditor
+          objectNameSingular="task"
+          recordId={recordId}
+          fieldNames={TASK_FIELDS}
+        />
       )}
 
-      {isTask && (
+      {isTask && !isEditing && (
         <StyledFields>
           <StyledField>
             <StyledFieldLabel>Reminder</StyledFieldLabel>
@@ -243,7 +307,16 @@ export const EventRowActivityCard = ({
           </StyledField>
         </StyledFields>
       )}
-      {body !== '' && <ActivityBody markdown={body} />}
+      {isEditing ? (
+        <Suspense fallback={null}>
+          <ActivityRichTextEditor
+            activityId={recordId}
+            activityObjectNameSingular={editorObjectName}
+          />
+        </Suspense>
+      ) : (
+        body !== '' && <ActivityBody markdown={body} />
+      )}
     </StyledCard>
   );
 };
