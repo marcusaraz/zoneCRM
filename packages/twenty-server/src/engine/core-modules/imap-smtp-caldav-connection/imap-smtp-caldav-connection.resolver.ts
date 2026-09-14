@@ -94,29 +94,20 @@ export class ImapSmtpCaldavResolver {
     @Args('userWorkspaceId', { type: () => UUIDScalarType, nullable: true })
     targetUserWorkspaceId?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
+    // Both gates live in the policy service so both can be tested: an admin
+    // role on the key, and an address that is the member own. The address
+    // names the member, so an API key does not have to look one up first.
     const userWorkspaceId = isDefined(apiKey)
-      ? targetUserWorkspaceId
+      ? await this.imapSmtpCaldavApiKeyPolicyService.resolveMemberForApiKey({
+          apiKeyId: apiKey.id,
+          workspaceId: workspace.id,
+          userWorkspaceId: targetUserWorkspaceId,
+          handle,
+        })
       : sessionUserWorkspaceId;
 
     if (!isDefined(userWorkspaceId)) {
-      throw new UserInputError(
-        isDefined(apiKey)
-          ? 'An API key has to say which workspace member the mailbox belongs to.'
-          : 'This endpoint requires a user context.',
-      );
-    }
-
-    // Both gates live in the policy service so both can be tested: an admin
-    // role on the key, and an address that is the member own.
-    if (isDefined(apiKey)) {
-      await this.imapSmtpCaldavApiKeyPolicyService.assertApiKeyMayConnectMailbox(
-        {
-          apiKeyId: apiKey.id,
-          workspaceId: workspace.id,
-          userWorkspaceId,
-          handle,
-        },
-      );
+      throw new UserInputError('This endpoint requires a user context.');
     }
 
     const existingAccount = isDefined(id)

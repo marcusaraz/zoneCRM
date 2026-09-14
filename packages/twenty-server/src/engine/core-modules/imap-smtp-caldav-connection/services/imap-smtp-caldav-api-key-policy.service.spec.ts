@@ -40,7 +40,7 @@ const build = ({
 };
 
 const connect = (service: ImapSmtpCaldavApiKeyPolicyService, handle: string) =>
-  service.assertApiKeyMayConnectMailbox({
+  service.resolveMemberForApiKey({
     apiKeyId: API_KEY_ID,
     workspaceId: WORKSPACE_ID,
     userWorkspaceId: USER_WORKSPACE_ID,
@@ -65,9 +65,9 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
       email: 'naz@capital.works',
     });
 
-    await expect(
-      connect(service, '  Naz@Capital.Works '),
-    ).resolves.toBeUndefined();
+    await expect(connect(service, '  Naz@Capital.Works ')).resolves.toBe(
+      USER_WORKSPACE_ID,
+    );
   });
 
   it('refuses another member address', async () => {
@@ -90,6 +90,21 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
     await expect(connect(service, 'naz@capital.works')).rejects.toThrow(
       'admin role',
     );
+  });
+
+  it('finds the member from the address, with nothing else passed', async () => {
+    const service = build({
+      canUpdateAllSettings: true,
+      email: 'naz@capital.works',
+    });
+
+    await expect(
+      service.resolveMemberForApiKey({
+        apiKeyId: API_KEY_ID,
+        workspaceId: WORKSPACE_ID,
+        handle: 'naz@capital.works',
+      }),
+    ).resolves.toBe(USER_WORKSPACE_ID);
   });
 
   it('refuses a member who is not in this workspace', async () => {

@@ -40,7 +40,14 @@ export class ImapSmtpCaldavApiKeyPolicyService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  async assertApiKeyMayConnectMailbox({
+  // The address is the member. Decision 12 says the mailbox being connected
+  // must be that colleague's own address, so the address already names whose
+  // mailbox it is and the caller has nothing to look up: onboarding passes the
+  // handle it was going to pass anyway. A caller that does know the member may
+  // still say so, and then both have to agree.
+  //
+  // Returns the userWorkspaceId the mailbox will be filed under.
+  async resolveMemberForApiKey({
     apiKeyId,
     workspaceId,
     userWorkspaceId,
@@ -48,9 +55,9 @@ export class ImapSmtpCaldavApiKeyPolicyService {
   }: {
     apiKeyId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId?: string;
     handle: string;
-  }): Promise<void> {
+  }): Promise<string> {
     const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
       apiKeyId,
       workspaceId,
@@ -66,20 +73,25 @@ export class ImapSmtpCaldavApiKeyPolicyService {
       );
     }
 
+    // Addresses are stored lowercased on the user, and a mailbox typed with a
+    // capital letter is the same mailbox. Case is the only thing forgiven.
+    const connecting = handle.trim().toLowerCase();
+
     const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: userWorkspaceId, workspaceId },
+      where: isDefined(userWorkspaceId)
+        ? { id: userWorkspaceId, workspaceId }
+        : { workspaceId, user: { email: connecting } },
       relations: ['user'],
     });
 
     if (!isDefined(userWorkspace) || !isDefined(userWorkspace.user)) {
       throw new UserInputError(
-        'That workspace member was not found in this workspace.',
+        isDefined(userWorkspaceId)
+          ? 'That workspace member was not found in this workspace.'
+          : 'Nobody in this workspace has that address. A colleague who has never signed in has no member record yet.',
       );
     }
 
-    // Addresses are stored lowercased on the user, and a mailbox typed with a
-    // capital letter is the same mailbox. Case is the only thing forgiven.
-    const connecting = handle.trim().toLowerCase();
     const own = userWorkspace.user.email.trim().toLowerCase();
 
     if (connecting !== own) {
@@ -87,5 +99,7 @@ export class ImapSmtpCaldavApiKeyPolicyService {
         'The mailbox being connected must be that member own address.',
       );
     }
+
+    return userWorkspace.id;
   }
 }
