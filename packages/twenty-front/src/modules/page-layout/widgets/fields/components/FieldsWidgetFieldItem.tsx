@@ -28,6 +28,7 @@ type FieldsWidgetFieldItemProps = {
   recordLoading: boolean;
   instanceId: string;
   onMouseEnter: () => void;
+  isStacked: boolean;
 };
 
 export const FieldsWidgetFieldItem = ({
@@ -42,6 +43,7 @@ export const FieldsWidgetFieldItem = ({
   recordLoading,
   instanceId,
   onMouseEnter,
+  isStacked,
 }: FieldsWidgetFieldItemProps) => {
   const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
     field: fieldMetadataItem,
@@ -94,7 +96,7 @@ export const FieldsWidgetFieldItem = ({
           }),
         }}
       >
-        <RecordInlineCell loading={recordLoading} />
+        <RecordInlineCell loading={recordLoading} isStacked={isStacked} />
       </RecordFieldComponentInstanceContext.Provider>
     </FieldContext.Provider>
   );

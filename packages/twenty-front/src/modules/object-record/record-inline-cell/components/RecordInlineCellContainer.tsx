@@ -33,38 +33,59 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-const StyledLabelAndIconContainer = styled.div`
+const StyledLabelAndIconContainer = styled.div<{ stacked?: boolean }>`
   align-items: center;
   align-self: flex-start;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  height: 24px;
+  height: ${({ stacked }) => (stacked ? 'auto' : '24px')};
 `;
 
-const StyledValueContainer = styled.div<{ readonly: boolean }>`
+const StyledValueContainer = styled.div<{
+  readonly: boolean;
+  stacked?: boolean;
+}>`
   display: flex;
   min-width: 0;
   position: relative;
   user-select: text;
   width: 100%;
+
+  // Body type, MASTER.md: 15px on a 13px root.
+  font-size: ${({ stacked }) => (stacked ? '1.15rem' : 'inherit')};
 `;
 
-const StyledLabelContainer = styled.div<{ width?: number }>`
+const StyledLabelContainer = styled.div<{ width?: number; stacked?: boolean }>`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
+  width: ${({ width, stacked }) =>
+    stacked ? 'auto' : width !== undefined ? `${width}px` : 'auto'};
+
+  // Label type, MASTER.md: 12px, 600, uppercase, 0.04em. A label that sits above
+  // its value has to be told apart from the value by its shape, not by distance.
+  font-weight: ${({ stacked }) => (stacked ? '600' : 'inherit')};
+  letter-spacing: ${({ stacked }) => (stacked ? '0.04em' : 'normal')};
+  text-transform: ${({ stacked }) => (stacked ? 'uppercase' : 'none')};
 `;
 
-const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
-  align-items: center;
+const StyledInlineCellBaseContainer = styled.div<{
+  readonly: boolean;
+  stacked?: boolean;
+}>`
+  align-items: ${({ stacked }) => (stacked ? 'stretch' : 'center')};
   box-sizing: border-box;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
+  flex-direction: ${({ stacked }) => (stacked ? 'column' : 'row')};
   gap: ${themeCssVariables.spacing[1]};
   height: fit-content;
   user-select: none;
   width: 100%;
+
+  // Twelve above and twelve below, with the hairline the card draws between
+  // rows falling exactly halfway between one value and the next label.
+  padding: ${({ stacked }) => (stacked ? '12px 0' : '0')};
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -72,7 +93,7 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const { readonly, IconLabel, label, labelWidth, showLabel } =
+  const { readonly, IconLabel, label, labelWidth, showLabel, isStacked } =
     useRecordInlineCellContext();
   const { theme } = useContext(ThemeContext);
 
@@ -107,18 +128,24 @@ export const RecordInlineCellContainer = () => {
   return (
     <StyledInlineCellBaseContainer
       readonly={readonly ?? false}
+      stacked={isStacked}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
       {(IconLabel || label) && (
-        <StyledLabelAndIconContainer id={!showLabel ? labelId : undefined}>
-          {IconLabel && (
+        <StyledLabelAndIconContainer
+          stacked={isStacked}
+          id={!showLabel ? labelId : undefined}
+        >
+          {/* A stacked label is already its own line, so the icon that told a
+              row's label from its value has nothing left to do. */}
+          {IconLabel && isStacked !== true && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
           {showLabel && (
-            <StyledLabelContainer width={labelWidth}>
+            <StyledLabelContainer width={labelWidth} stacked={isStacked}>
               <FieldDescriptionTooltip
                 label={label}
                 description={fieldDefinition?.metadata?.description}
@@ -145,7 +172,11 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
+      <StyledValueContainer
+        readonly={readonly ?? false}
+        stacked={isStacked}
+        id={anchorId}
+      >
         <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>

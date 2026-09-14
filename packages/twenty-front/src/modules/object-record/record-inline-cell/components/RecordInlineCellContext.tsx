@@ -7,6 +7,9 @@ export type RecordInlineCellContextProps = {
   label?: string;
   labelWidth?: number;
   showLabel?: boolean;
+  // Label above value rather than beside it: the record page's left card,
+  // per design-system/capital-works/MASTER.md. Everywhere else keeps the row.
+  isStacked?: boolean;
   buttonIcon?: IconComponent;
   editModeContent?: ReactElement;
   editModeContentOnly?: boolean;
@@ -25,6 +28,7 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   label: '',
   labelWidth: 0,
   showLabel: false,
+  isStacked: false,
   buttonIcon: undefined,
   editModeContent: undefined,
   editModeContentOnly: false,

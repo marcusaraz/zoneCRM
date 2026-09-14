@@ -13,10 +13,15 @@ import { styled } from '@linaria/react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+// The left column of a record, drawn as MASTER.md draws a column of cards: the
+// ground is #f5f5f7 and each widget is a white card with 12px corners on it.
+// Separation is the change of ground, so the cards carry no border and no
+// shadow. The card colour is published as a custom property because the widgets
+// inside read it to know what they are sitting on.
 const StyledContainer = styled.div`
-  --record-card-background-color: ${themeCssVariables.background.secondary};
+  --record-card-background-color: ${themeCssVariables.background.primary};
 
-  background: var(--record-card-background-color);
+  background: ${themeCssVariables.background.tertiary};
   border-bottom-left-radius: 8px;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
@@ -28,6 +33,11 @@ const StyledContainer = styled.div`
   .page-layout-scroll-wrapper {
     container-name: tab-viewport;
     container-type: size;
+  }
+
+  .widget {
+    background: var(--record-card-background-color);
+    border-radius: ${themeCssVariables.border.radius.md};
   }
 `;
 

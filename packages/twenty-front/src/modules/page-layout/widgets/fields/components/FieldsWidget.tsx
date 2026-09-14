@@ -24,14 +24,22 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
+// A hairline between rows, starting where the row's text starts, and no gap:
+// the rule is what separates one field from the next, so a gap on top of it
+// would read as two rules. MASTER.md, cards are separated by hairlines and a
+// change of ground, never by a box.
 const StyledPropertyBox = styled.div`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding-bottom: ${themeCssVariables.spacing[3]};
-  padding-top: ${themeCssVariables.spacing[3]};
+  gap: 0;
+  padding-bottom: ${themeCssVariables.spacing[1]};
+  padding-top: ${themeCssVariables.spacing[1]};
+
+  > * + * {
+    border-top: 1px solid ${themeCssVariables.border.color.medium};
+  }
 `;
 
 const StyledInlineFieldsPropertyBox = styled.div<{
@@ -41,10 +49,14 @@ const StyledInlineFieldsPropertyBox = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: 0;
   padding-bottom: ${({ hasMoreGroup }) =>
     hasMoreGroup ? themeCssVariables.spacing[3] : '0'};
   padding-top: 0;
+
+  > * + * {
+    border-top: 1px solid ${themeCssVariables.border.color.medium};
+  }
 `;
 
 type FieldsWidgetProps = {

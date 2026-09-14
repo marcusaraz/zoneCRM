@@ -8,6 +8,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { FieldsWidgetFieldItem } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldItem';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 type FieldsWidgetFieldListProps = {
@@ -20,6 +21,11 @@ export const FieldsWidgetFieldList = ({
   instanceId,
 }: FieldsWidgetFieldListProps) => {
   const targetRecord = useTargetRecord();
+
+  // The record page's left card puts the label above the value, MASTER.md.
+  // A side panel is narrow and keeps the row, where the label beside the
+  // value is what fits.
+  const isStacked = useWorkspaceSurface().type !== 'side-panel';
 
   const { recordLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,
@@ -60,6 +66,7 @@ export const FieldsWidgetFieldList = ({
       recordLoading={recordLoading}
       instanceId={instanceId}
       onMouseEnter={() => setRecordFieldListHoverPosition(globalIndex)}
+      isStacked={isStacked}
     />
   ));
 };

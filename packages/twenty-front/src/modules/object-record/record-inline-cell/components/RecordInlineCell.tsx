@@ -30,11 +30,13 @@ import {
 type RecordInlineCellProps = {
   loading?: boolean;
   instanceIdPrefix?: string;
+  isStacked?: boolean;
 };
 
 export const RecordInlineCell = ({
   loading,
   instanceIdPrefix,
+  isStacked,
 }: RecordInlineCellProps) => {
   const {
     fieldDefinition,
@@ -189,6 +191,7 @@ export const RecordInlineCell = ({
     label: fieldDefinition.label,
     labelWidth: fieldDefinition.labelWidth,
     showLabel: fieldDefinition.showLabel,
+    isStacked,
     isCentered,
     editModeContent: <FieldInput />,
     displayModeContent: <FieldDisplay />,
