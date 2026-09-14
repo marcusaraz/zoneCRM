@@ -1094,4 +1094,16 @@ export type ThemeType = {
       amber12: string;
     };
   };
+  tint: {
+    blue: string;
+    blueInk: string;
+    green: string;
+    greenInk: string;
+    orange: string;
+    orangeInk: string;
+    purple: string;
+    purpleInk: string;
+    teal: string;
+    tealInk: string;
+  };
 };

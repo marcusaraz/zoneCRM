@@ -1067,4 +1067,16 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       amber12: '#ffe7b3',
     },
   },
+  tint: {
+    blue: '#193450',
+    blueInk: '#2997ff',
+    green: '#21452c',
+    greenInk: '#30d158',
+    orange: '#4f3a1a',
+    orangeInk: '#ff9f0a',
+    purple: '#412a4d',
+    purpleInk: '#bf5af2',
+    teal: '#2d4550',
+    tealInk: '#64d2ff',
+  },
 };

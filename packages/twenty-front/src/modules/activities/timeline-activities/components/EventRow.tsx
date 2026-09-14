@@ -8,6 +8,8 @@ import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/consta
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { getStandardTimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/StandardTimelineActivityRenderer';
 import { type TimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/TimelineActivityRenderer';
+import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
+import { getEventTint } from '@/activities/timeline-activities/rows/utils/getEventTint';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
@@ -29,10 +31,10 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-// Zone CRM: an entry is a date and what happened, side by side, with a hairline
-// between one and the next. The icon rail and its vertical line that used to
-// run down the left are gone: the words already say whether it was a call, a
-// note or a task, and the rail was holding the place where the date belongs.
+// Zone CRM: an entry is a disc, a date and what happened, in that order, with a
+// hairline between one and the next. The vertical line that used to run down
+// the left is gone; the disc stayed, because the eye finds a call in a page of
+// entries by its colour long before it reads a word. MASTER.md "Tints".
 const StyledTimelineItemContainer = styled.div`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
@@ -45,6 +47,22 @@ const StyledTimelineItemContainer = styled.div`
   & + & {
     border-top: 1px solid ${themeCssVariables.border.color.light};
   }
+`;
+
+// 28px, the smaller end of what MASTER.md allows, because a timeline row is a
+// line of text and the disc marks it rather than competing with it. The glyph
+// takes the disc's own ink; nothing else on the row is tinted.
+const StyledDisc = styled.div<{ tint: string; glyph: string }>`
+  align-items: center;
+  background: ${({ tint }) => tint};
+  border-radius: 50%;
+  color: ${({ glyph }) => glyph};
+  display: flex;
+  flex: 0 0 28px;
+  height: 28px;
+  justify-content: center;
+  user-select: none;
+  width: 28px;
 `;
 
 const StyledItemContainer = styled.div`
@@ -133,6 +151,8 @@ export const EventRow = ({ event, mainObjectMetadataItem }: EventRowProps) => {
       objectMetadataItems,
     }) ?? null;
 
+  const tint = getEventTint(linkedObjectMetadataItem?.nameSingular);
+
   if (isUndefinedOrNull(currentWorkspaceMember)) {
     return null;
   }
@@ -175,6 +195,12 @@ export const EventRow = ({ event, mainObjectMetadataItem }: EventRowProps) => {
   return (
     <>
       <StyledTimelineItemContainer>
+        <StyledDisc tint={tint.disc} glyph={tint.glyph}>
+          <EventIconDynamicComponent
+            eventIcon={timelineActivityType?.icon ?? null}
+            linkedObjectMetadataItem={linkedObjectMetadataItem}
+          />
+        </StyledDisc>
         <StyledItemContainer>
           <EventRowDynamicComponent
             authorFullName={authorFullName}

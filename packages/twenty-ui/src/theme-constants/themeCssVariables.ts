@@ -1095,4 +1095,16 @@ export const themeCssVariables = {
       amber12: 'var(--t-color-transparent-amber12)',
     },
   },
+  tint: {
+    blue: 'var(--t-tint-blue)',
+    blueInk: 'var(--t-tint-blue-ink)',
+    green: 'var(--t-tint-green)',
+    greenInk: 'var(--t-tint-green-ink)',
+    orange: 'var(--t-tint-orange)',
+    orangeInk: 'var(--t-tint-orange-ink)',
+    purple: 'var(--t-tint-purple)',
+    purpleInk: 'var(--t-tint-purple-ink)',
+    teal: 'var(--t-tint-teal)',
+    tealInk: 'var(--t-tint-teal-ink)',
+  },
 };

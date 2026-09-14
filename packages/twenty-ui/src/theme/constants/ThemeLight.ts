@@ -1066,4 +1066,16 @@ export const THEME_LIGHT = {
       amber12: '#341500dd',
     },
   },
+  tint: {
+    blue: '#e0eefc',
+    blueInk: '#0071e3',
+    green: '#e7f8eb',
+    greenInk: '#248a3d',
+    orange: '#fff2e0',
+    orangeInk: '#b25000',
+    purple: '#f5eafb',
+    purpleInk: '#8944ab',
+    teal: '#ebf8fe',
+    tealInk: '#0071a4',
+  },
 };

@@ -11,11 +11,19 @@ import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/
 import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled(StyledWidgetContentFrame)<{
   isInEditMode: boolean;
   isSoloLayout: boolean;
+  isFlush: boolean;
 }>`
+  // Zone CRM: the frame is a containment boundary for content the page cannot
+  // style. On a record page the content is ours and follows the same rules as
+  // everything beside it, so the rectangle is a box drawn around a row of
+  // controls for no reason. MASTER.md: a secondary control is a control, not a
+  // box. On a dashboard, where a widget really is a card, it stays.
+  border: ${({ isFlush }) => (isFlush ? 'none' : undefined)};
   height: var(--widget-height, 100%);
   overflow: var(
     --widget-scroll-overflow,
@@ -39,7 +47,8 @@ export const FrontComponentWidgetRenderer = ({
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { presentation } = usePageLayoutContentContext();
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
+  const isFlush = layoutType === PageLayoutType.RECORD_PAGE;
 
   const configuration = widget.configuration;
 
@@ -59,6 +68,7 @@ export const FrontComponentWidgetRenderer = ({
     <StyledContainer
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
+      isFlush={isFlush}
     >
       <Suspense fallback={<FrontComponentSkeletonLoader />}>
         <FrontComponentRenderer

@@ -16,6 +16,7 @@ import { SNACK_BAR_TOKENS } from './snackBar';
 import { SPACING_TOKENS } from './spacing';
 import { TABLE_TOKENS } from './table';
 import { TAG_TOKENS } from './tag';
+import { TINT_TOKENS } from './tint';
 import { TEXT_TOKENS } from './text';
 import { token } from './token';
 import { TOOLTIP_TOKENS } from './tooltip';
@@ -48,4 +49,5 @@ export const DESIGN_TOKENS: DesignTokenNode = {
   IllustrationIcon: ILLUSTRATION_ICON_TOKENS,
   grayScale: GRAY_SCALE_TOKENS,
   color: COLOR_TOKENS,
+  tint: TINT_TOKENS,
 };

@@ -1016,6 +1016,16 @@
   --t-color-transparent-amber10: #ffb300e7;
   --t-color-transparent-amber11: #ab6400;
   --t-color-transparent-amber12: #341500dd;
+  --t-tint-blue: #e0eefc;
+  --t-tint-blue-ink: #0071e3;
+  --t-tint-green: #e7f8eb;
+  --t-tint-green-ink: #248a3d;
+  --t-tint-orange: #fff2e0;
+  --t-tint-orange-ink: #b25000;
+  --t-tint-purple: #f5eafb;
+  --t-tint-purple-ink: #8944ab;
+  --t-tint-teal: #ebf8fe;
+  --t-tint-teal-ink: #0071a4;
 }
 
 /* Squircle corners: progressive enhancement for browsers supporting
