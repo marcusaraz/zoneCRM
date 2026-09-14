@@ -58,6 +58,60 @@ export class ImapSmtpCaldavApiKeyPolicyService {
     userWorkspaceId?: string;
     handle: string;
   }): Promise<string> {
+    await this.assertApiKeyIsAdmin({ apiKeyId, workspaceId });
+
+    return this.resolveMemberFromHandle({
+      workspaceId,
+      userWorkspaceId,
+      handle,
+    });
+  }
+
+  // Reading what is connected for a colleague. Onboarding has to be able to
+  // ask, because the answer is what tells it whether a mailbox still needs
+  // connecting and which account to update rather than add beside. The gate is
+  // the one decision 12 set for writing: an admin key may ask about anybody,
+  // and a signed-in person may ask about themselves and nobody else.
+  //
+  // Returns the userWorkspaceId whose accounts the caller may read.
+  async resolveMemberForReader({
+    apiKeyId,
+    sessionUserWorkspaceId,
+    workspaceId,
+    handle,
+  }: {
+    apiKeyId?: string;
+    sessionUserWorkspaceId?: string;
+    workspaceId: string;
+    handle: string;
+  }): Promise<string> {
+    if (isDefined(apiKeyId)) {
+      await this.assertApiKeyIsAdmin({ apiKeyId, workspaceId });
+
+      return this.resolveMemberFromHandle({ workspaceId, handle });
+    }
+
+    const memberId = await this.resolveMemberFromHandle({
+      workspaceId,
+      handle,
+    });
+
+    if (memberId !== sessionUserWorkspaceId) {
+      throw new UserInputError(
+        'Reading another member connected accounts needs an API key with an admin role.',
+      );
+    }
+
+    return memberId;
+  }
+
+  private async assertApiKeyIsAdmin({
+    apiKeyId,
+    workspaceId,
+  }: {
+    apiKeyId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
       apiKeyId,
       workspaceId,
@@ -72,7 +126,17 @@ export class ImapSmtpCaldavApiKeyPolicyService {
         'Connecting a mailbox for another member needs an API key with an admin role.',
       );
     }
+  }
 
+  private async resolveMemberFromHandle({
+    workspaceId,
+    userWorkspaceId,
+    handle,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    handle: string;
+  }): Promise<string> {
     // Addresses are stored lowercased on the user, and a mailbox typed with a
     // capital letter is the same mailbox. Case is the only thing forgiven.
     const connecting = handle.trim().toLowerCase();

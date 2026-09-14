@@ -28,6 +28,13 @@ jobs:
         run: npx nx run twenty-server:typecheck
       - name: Server lint
         run: npx nx run twenty-server:lint
+      # Decision 12 asked for a test of each refusal. A test that is only
+      # typechecked is not a test, and typecheck and lint were all this job ran,
+      # so the fork's own unit tests are named here and actually run. Scoped to
+      # the fork's files: upstream's suite is long and is not what this gate is
+      # for.
+      - name: Zone CRM server tests
+        run: npx nx run twenty-server:test -- --testPathPattern='imap-smtp-caldav'
 
   front:
     timeout-minutes: 40

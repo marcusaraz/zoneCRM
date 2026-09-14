@@ -13,6 +13,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
 import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import { EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
+import { MemberConnectedAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/member-connected-account.dto';
 import { ImapSmtpCaldavApiKeyPolicyService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-api-key-policy.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { buildPublicConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-public-connection-parameters.util';
@@ -72,6 +73,45 @@ export class ImapSmtpCaldavResolver {
       ),
       userWorkspaceId: connectedAccount.userWorkspaceId,
     };
+  }
+
+  // Zone CRM, decision 12 read rather than written: onboarding connects a
+  // colleague's mailbox for them, and before it does that it has to be able to
+  // ask what is already connected, or every re-run adds an account beside the
+  // one that is there. The gate is the same one the write carries: an admin key
+  // may ask about anybody, a signed-in person about themselves, and the address
+  // names whose accounts these are.
+  @Query(() => [MemberConnectedAccountDTO])
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
+  )
+  async memberConnectedAccounts(
+    @Args('handle') handle: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    sessionUserWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: { id: string } | undefined,
+  ): Promise<MemberConnectedAccountDTO[]> {
+    const userWorkspaceId =
+      await this.imapSmtpCaldavApiKeyPolicyService.resolveMemberForReader({
+        apiKeyId: apiKey?.id,
+        sessionUserWorkspaceId,
+        workspaceId: workspace.id,
+        handle,
+      });
+
+    const connectedAccounts =
+      await this.connectedAccountMetadataService.findByUserWorkspaceId({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    return connectedAccounts.map((connectedAccount) => ({
+      id: connectedAccount.id,
+      handle: connectedAccount.handle,
+      provider: connectedAccount.provider,
+    }));
   }
 
   @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
