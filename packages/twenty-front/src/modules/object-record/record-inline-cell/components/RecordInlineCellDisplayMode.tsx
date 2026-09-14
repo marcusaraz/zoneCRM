@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import {
   useRecordInlineCellContext,
@@ -71,10 +72,10 @@ export const RecordInlineCellDisplayMode = ({
 }>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, label, buttonIcon, readonly } =
+  const { editModeContentOnly, label, buttonIcon, readonly, isStacked } =
     useRecordInlineCellContext();
 
-  const { isForbidden } = useContext(FieldContext);
+  const { isForbidden, fieldDefinition } = useContext(FieldContext);
 
   const isFieldEmpty = useIsFieldEmpty();
   const showEditButton =
@@ -86,7 +87,23 @@ export const RecordInlineCellDisplayMode = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const emptyPlaceHolder = label ?? t`Empty`;
+  // An empty field falls back to its own label, which reads as a hint when the
+  // label sits beside it. Stacked above it, the same word is printed twice, one
+  // under the other: "RELATED PEOPLE / Related People". So a stacked cell says
+  // what to do instead: pick one, or nothing at all when there is nothing to
+  // pick and a value has to be typed.
+  const isChoosable =
+    fieldDefinition?.type === FieldMetadataType.RELATION ||
+    fieldDefinition?.type === FieldMetadataType.MORPH_RELATION ||
+    fieldDefinition?.type === FieldMetadataType.SELECT ||
+    fieldDefinition?.type === FieldMetadataType.MULTI_SELECT;
+
+  const emptyPlaceHolder =
+    isStacked === true
+      ? isChoosable
+        ? t`Select`
+        : t`Empty`
+      : (label ?? t`Empty`);
 
   const shouldShowValue = !isFieldEmpty || isFieldInputOnly || isForbidden;
 
