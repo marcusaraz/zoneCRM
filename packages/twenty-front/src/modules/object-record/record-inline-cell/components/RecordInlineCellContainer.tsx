@@ -33,13 +33,23 @@ const StyledIconContainer = styled.div`
   }
 `;
 
+// C23, Marcus 14 September 2026: "Phone   5464563456". The label and its value
+// sit side by side on one line, as the Stitch person record draws them, so the
+// label holds a fixed column on the left and the value takes what is left. A
+// label that wrapped would push its own value down and break the line it is
+// supposed to share.
+const LABEL_COLUMN_WIDTH = 108;
+
 const StyledLabelAndIconContainer = styled.div<{ stacked?: boolean }>`
   align-items: center;
   align-self: flex-start;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   height: ${({ stacked }) => (stacked ? 'auto' : '24px')};
+  min-height: ${({ stacked }) => (stacked ? '24px' : 'auto')};
+  width: ${({ stacked }) => (stacked ? `${LABEL_COLUMN_WIDTH}px` : 'auto')};
 `;
 
 const StyledValueContainer = styled.div<{
@@ -60,10 +70,11 @@ const StyledLabelContainer = styled.div<{ width?: number; stacked?: boolean }>`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
   width: ${({ width, stacked }) =>
-    stacked ? 'auto' : width !== undefined ? `${width}px` : 'auto'};
+    stacked ? '100%' : width !== undefined ? `${width}px` : 'auto'};
 
-  // Label type, MASTER.md: 12px, 600, uppercase, 0.04em. A label that sits above
-  // its value has to be told apart from the value by its shape, not by distance.
+  // Label type, MASTER.md: 12px, 600, uppercase, 0.04em. The label shares a
+  // line with its value, so it is told apart by its shape rather than by
+  // sitting somewhere else.
   font-weight: ${({ stacked }) => (stacked ? '600' : 'inherit')};
   letter-spacing: ${({ stacked }) => (stacked ? '0.04em' : 'normal')};
   text-transform: ${({ stacked }) => (stacked ? 'uppercase' : 'none')};
@@ -73,19 +84,20 @@ const StyledInlineCellBaseContainer = styled.div<{
   readonly: boolean;
   stacked?: boolean;
 }>`
-  align-items: ${({ stacked }) => (stacked ? 'stretch' : 'center')};
+  align-items: center;
   box-sizing: border-box;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
-  flex-direction: ${({ stacked }) => (stacked ? 'column' : 'row')};
-  gap: ${themeCssVariables.spacing[1]};
+  flex-direction: row;
+  gap: ${({ stacked }) =>
+    stacked ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
   height: fit-content;
   user-select: none;
   width: 100%;
 
-  // Twelve above and twelve below, with the hairline the card draws between
-  // rows falling exactly halfway between one value and the next label.
-  padding: ${({ stacked }) => (stacked ? '12px 0' : '0')};
+  // Ten above and ten below, with the hairline the card draws between rows
+  // falling exactly halfway between one field and the next.
+  padding: ${({ stacked }) => (stacked ? '10px 0' : '0')};
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -137,8 +149,9 @@ export const RecordInlineCellContainer = () => {
           stacked={isStacked}
           id={!showLabel ? labelId : undefined}
         >
-          {/* A stacked label is already its own line, so the icon that told a
-              row's label from its value has nothing left to do. */}
+          {/* The record page's label already holds its own column, so the icon
+              that told a label from its value in a narrow panel has nothing
+              left to do. */}
           {IconLabel && isStacked !== true && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />

@@ -29,21 +29,19 @@ import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 // would read as two rules. MASTER.md, cards are separated by hairlines and a
 // change of ground, never by a box.
 //
-// C23, Marcus 14 September 2026: on the record page the fields sit side by
-// side, two to a row, as the Stitch person record draws them. A side panel is
-// too narrow for two of anything and keeps the single column. The second field
-// shares the first one's row, so it is the one child that does not take the
-// hairline above it.
-const StyledPropertyBox = styled.div<{ isGrid: boolean }>`
+// One field to a row. Marcus, 14 September 2026, on seeing two fields to a
+// row: that is not it. The Stitch person record puts the label and its value
+// side by side, "Phone   5464563456", one under the next; the side-by-side is
+// inside the field, not between two of them. That is laid out in
+// RecordInlineCellContainer.
+const StyledPropertyBox = styled.div`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.sm};
-  column-gap: ${themeCssVariables.spacing[4]};
-  display: ${({ isGrid }) => (isGrid ? 'grid' : 'flex')};
+  display: flex;
   flex-direction: column;
-  grid-template-columns: ${({ isGrid }) => (isGrid ? '1fr 1fr' : 'none')};
+  gap: 0;
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
-  row-gap: 0;
 
   > * {
     min-width: 0;
@@ -51,27 +49,20 @@ const StyledPropertyBox = styled.div<{ isGrid: boolean }>`
 
   > * + * {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
-  }
-
-  > *:nth-child(2) {
-    border-top-width: ${({ isGrid }) => (isGrid ? '0' : '1px')};
   }
 `;
 
 const StyledInlineFieldsPropertyBox = styled.div<{
   hasMoreGroup: boolean;
-  isGrid: boolean;
 }>`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.sm};
-  column-gap: ${themeCssVariables.spacing[4]};
-  display: ${({ isGrid }) => (isGrid ? 'grid' : 'flex')};
+  display: flex;
   flex-direction: column;
-  grid-template-columns: ${({ isGrid }) => (isGrid ? '1fr 1fr' : 'none')};
+  gap: 0;
   padding-bottom: ${({ hasMoreGroup }) =>
     hasMoreGroup ? themeCssVariables.spacing[3] : '0'};
   padding-top: 0;
-  row-gap: 0;
 
   > * {
     min-width: 0;
@@ -79,10 +70,6 @@ const StyledInlineFieldsPropertyBox = styled.div<{
 
   > * + * {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
-  }
-
-  > *:nth-child(2) {
-    border-top-width: ${({ isGrid }) => (isGrid ? '0' : '1px')};
   }
 `;
 
@@ -170,7 +157,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             {shouldDisplayGroupHeaders ? (
               groups.map((group) => (
                 <FieldsWidgetGroupContainer key={group.id} title={group.name}>
-                  <StyledPropertyBox isGrid={!isInSidePanel}>
+                  <StyledPropertyBox>
                     <FieldsWidgetFieldList
                       fields={group.fields}
                       instanceId={instanceId}
@@ -181,7 +168,6 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             ) : (
               <StyledInlineFieldsPropertyBox
                 hasMoreGroup={shouldShowHiddenFields}
-                isGrid={!isInSidePanel}
               >
                 <FieldsWidgetFieldList
                   fields={visibleFields}
@@ -195,7 +181,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                 title={t`More (${hiddenFieldsWithOffsetGlobalIndex.length})`}
                 defaultExpanded={false}
               >
-                <StyledPropertyBox isGrid={!isInSidePanel}>
+                <StyledPropertyBox>
                   <FieldsWidgetFieldList
                     fields={hiddenFieldsWithOffsetGlobalIndex}
                     instanceId={instanceId}
