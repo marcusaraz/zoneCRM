@@ -53,11 +53,17 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     widget.type === WidgetType.EMAIL_THREAD ||
     widget.type === WidgetType.MESSAGE_CAMPAIGN_BODY ||
     widget.type === WidgetType.MESSAGE_CAMPAIGN_DETAILS ||
-    // Zone CRM, the person record checklist: the Stitch card has no "Actions"
-    // and no "Fields" heading; the row of pills and the list of fields stand
-    // on their own. A front component and the fields list carry no heading
-    // in view mode. The Tasks panel and the relation panels keep theirs.
-    widget.type === WidgetType.FRONT_COMPONENT ||
+    // Zone CRM, the person record checklist: the Stitch card has no "Fields"
+    // heading; the list of fields stands on its own.
+    //
+    // A front component used to be in this list too, and it left a hole: a
+    // component that draws nothing when it has nothing to say (the open tasks
+    // on a person with none) became a card with no heading and no content, a
+    // twenty-pixel empty box on the card stack. Found on Oğuzhan Aydın's
+    // record on 14 September 2026. A heading is what makes an empty card read
+    // as "nothing here" instead of as a mistake, so front components keep
+    // theirs until a card can be told to leave when its component draws
+    // nothing.
     widget.type === WidgetType.FIELDS ||
     widget.type === WidgetType.WORKFLOW ||
     widget.type === WidgetType.WORKFLOW_VERSION ||
