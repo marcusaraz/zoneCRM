@@ -42,7 +42,8 @@ const StyledTitle = styled.div`
 const StyledBody = styled.div<{ expanded: boolean }>`
   color: ${themeCssVariables.font.color.secondary};
   line-break: anywhere;
-  max-height: ${({ expanded }) => (expanded ? 'none' : `${COLLAPSED_HEIGHT}px`)};
+  max-height: ${({ expanded }) =>
+    expanded ? 'none' : `${COLLAPSED_HEIGHT}px`};
   overflow: hidden;
   position: relative;
   width: 100%;
