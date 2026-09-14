@@ -100,9 +100,10 @@ const StyledInlineCellBaseContainer = styled.div<{
   user-select: none;
   width: 100%;
 
-  // Ten above and ten below, with the hairline the card draws between rows
-  // falling exactly halfway between one field and the next.
-  padding: ${({ stacked }) => (stacked ? '10px 0' : '0')};
+  // Twelve above and twelve below, which is the drawing's `py-3`, with the
+  // hairline the card draws between rows falling exactly halfway between one
+  // field and the next.
+  padding: ${({ stacked }) => (stacked ? '12px 0' : '0')};
 `;
 
 export const StyledSkeletonDiv = styled.div`
