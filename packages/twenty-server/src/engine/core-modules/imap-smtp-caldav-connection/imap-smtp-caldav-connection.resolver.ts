@@ -13,9 +13,11 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
 import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import { EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
+import { ImapSmtpCaldavApiKeyPolicyService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-api-key-policy.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { buildPublicConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-public-connection-parameters.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -34,6 +36,7 @@ export class ImapSmtpCaldavResolver {
     private readonly imapSmtpCaldavApisService: ImapSmtpCalDavApiService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly imapSmtpCaldavApiKeyPolicyService: ImapSmtpCaldavApiKeyPolicyService,
   ) {}
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
@@ -81,9 +84,41 @@ export class ImapSmtpCaldavResolver {
     @Args('connectionParameters')
     connectionParameters: EmailAccountConnectionParametersInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    sessionUserWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: { id: string } | undefined,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
+    // Zone CRM, decision 12: onboarding a colleague connects their mailbox for
+    // them, which a session cannot do because a session is one person. An API
+    // key may, and then it has to say whose mailbox this is.
+    @Args('userWorkspaceId', { type: () => UUIDScalarType, nullable: true })
+    targetUserWorkspaceId?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
+    const userWorkspaceId = isDefined(apiKey)
+      ? targetUserWorkspaceId
+      : sessionUserWorkspaceId;
+
+    if (!isDefined(userWorkspaceId)) {
+      throw new UserInputError(
+        isDefined(apiKey)
+          ? 'An API key has to say which workspace member the mailbox belongs to.'
+          : 'This endpoint requires a user context.',
+      );
+    }
+
+    // Both gates live in the policy service so both can be tested: an admin
+    // role on the key, and an address that is the member own.
+    if (isDefined(apiKey)) {
+      await this.imapSmtpCaldavApiKeyPolicyService.assertApiKeyMayConnectMailbox(
+        {
+          apiKeyId: apiKey.id,
+          workspaceId: workspace.id,
+          userWorkspaceId,
+          handle,
+        },
+      );
+    }
+
     const existingAccount = isDefined(id)
       ? await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
           id,
