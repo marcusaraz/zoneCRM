@@ -25,7 +25,11 @@ export const EventCardToggleButton = ({
   const { t } = useLingui();
 
   return (
-    <StyledButtonContainer>
+    // The skill Marcus asked be used says an interactive control carrying an
+    // icon needs an accessible name and must expose its state. It had a name;
+    // now it says whether it is open, so a screen reader is told what the
+    // chevron is telling everyone else.
+    <StyledButtonContainer aria-expanded={isOpen}>
       <IconButton
         Icon={isOpen ? IconChevronUp : IconChevronDown}
         onClick={() => setIsOpen(!isOpen)}

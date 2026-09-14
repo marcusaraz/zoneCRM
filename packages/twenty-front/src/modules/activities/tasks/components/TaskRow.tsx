@@ -5,13 +5,26 @@ import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { type Task } from '@/activities/types/Task';
 import { getActivityCardText } from '@/activities/utils/getActivityCardText';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { useContext } from 'react';
+import { EventRowActivityCard } from '@/activities/timeline-activities/rows/generic/components/EventRowActivityCard';
+import { useContext, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconCalendar } from 'twenty-ui/icon';
+import { IconCalendar, IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Checkbox, CheckboxShape } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
+
+const StyledChevron = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+`;
+
+// The detail opens under the row it belongs to, not beside it.
+const StyledDetail = styled.div`
+  cursor: default;
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
 
 // Zone CRM: a task reads like a note card, with the checkbox and the due date on the
 // line that says who wrote it and when it is due.
@@ -87,8 +100,11 @@ const StyledTaskBody = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const { theme } = useContext(ThemeContext);
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { completeTask } = useCompleteTask(task);
+  // C33, Marcus 14 September 2026: a task opens under its own row and a second
+  // click closes it. The panel on the right is gone: the reader is already
+  // looking at the task, and a panel puts a second copy of it somewhere else.
+  const [isOpen, setIsOpen] = useState(false);
 
   const author = task.createdBy?.name ?? '';
   const { title, body } = getActivityCardText({
@@ -101,16 +117,16 @@ export const TaskRow = ({ task }: { task: Task }) => {
   const isDone = task.status === 'DONE';
 
   return (
-    <StyledRow
-      onClick={() =>
-        openRecordInSidePanel({
-          recordId: task.id,
-          objectNameSingular: CoreObjectNameSingular.Task,
-        })
-      }
-    >
+    <StyledRow onClick={() => setIsOpen(!isOpen)}>
       <StyledHead>
         <StyledHeadLeft>
+          <StyledChevron aria-expanded={isOpen}>
+            {isOpen ? (
+              <IconChevronUp size={theme.icon.size.md} />
+            ) : (
+              <IconChevronDown size={theme.icon.size.md} />
+            )}
+          </StyledChevron>
           <StyledCheckboxContainer onClick={(event) => event.stopPropagation()}>
             <Checkbox
               checked={isDone}
@@ -133,7 +149,15 @@ export const TaskRow = ({ task }: { task: Task }) => {
       <StyledTaskTitle completed={isDone}>
         {title !== '' ? title : t`Task title`}
       </StyledTaskTitle>
-      {body !== '' && <StyledTaskBody>{body}</StyledTaskBody>}
+      {!isOpen && body !== '' && <StyledTaskBody>{body}</StyledTaskBody>}
+      {isOpen && (
+        <StyledDetail onClick={(event) => event.stopPropagation()}>
+          <EventRowActivityCard
+            objectNameSingular={CoreObjectNameSingular.Task}
+            recordId={task.id}
+          />
+        </StyledDetail>
+      )}
     </StyledRow>
   );
 };

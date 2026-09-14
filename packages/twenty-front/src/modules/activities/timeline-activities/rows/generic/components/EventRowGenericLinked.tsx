@@ -100,7 +100,10 @@ export const EventRowGenericLinked = ({
   const isOrphanedPhoneCall =
     isPhoneCall && !isPhoneCallLoading && !isDefined(phoneCallRecord);
 
-  const [isOpen, setIsOpen] = useState(isActivity);
+  // C33, Marcus 14 September 2026: a task opens under its own row and a second
+  // click closes it. Closed to begin with, as HubSpot's are, so a record with
+  // twenty notes on it is a list and not a wall.
+  const [isOpen, setIsOpen] = useState(false);
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -166,6 +169,9 @@ export const EventRowGenericLinked = ({
     <StyledEventRow>
       <StyledEventRowContainer>
         <StyledEventRowContent>
+          {canOpen && (
+            <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+          )}
           {showAuthor && !isPhoneCall && (
             <EventRowItem>{displayedAuthor}</EventRowItem>
           )}
@@ -195,9 +201,6 @@ export const EventRowGenericLinked = ({
             >
               <OverflowingTextWithTooltip text={linkedRecordName} />
             </StyledEventRowLinkedRecord>
-          )}
-          {canOpen && (
-            <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
           )}
         </StyledEventRowContent>
         <EventRowDate happensAt={happensAt} />

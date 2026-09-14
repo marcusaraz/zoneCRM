@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
 // Zone CRM: a note or a task shown in the timeline as itself (title and the
 // first lines of the body) instead of a "linked a related note" line.
@@ -21,7 +20,6 @@ const StyledCard = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
@@ -210,7 +208,6 @@ export const EventRowActivityCard = ({
   objectNameSingular: 'note' | 'task';
   recordId: string;
 }) => {
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const [expanded, setExpanded] = useState(false);
   const [isLong, setIsLong] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -275,12 +272,12 @@ export const EventRowActivityCard = ({
     .filter(Boolean)
     .join(' ');
 
+  // C33: the card IS the detail. It used to be a preview that opened the record
+  // in a panel on the right, which Marcus called useless and unnecessary, and
+  // he is right: the reader is already looking at the thing, and a panel puts
+  // a second copy of it somewhere else.
   return (
-    <StyledCard
-      onClick={() =>
-        openRecordInSidePanel({ recordId: record.id, objectNameSingular })
-      }
-    >
+    <StyledCard>
       {title !== '' && <StyledTitle>{title}</StyledTitle>}
 
       {/* pm/briefs/task-model-hubspot.md: the due date and its time first,
