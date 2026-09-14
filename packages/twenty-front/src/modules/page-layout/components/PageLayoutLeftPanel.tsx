@@ -35,9 +35,12 @@ const StyledContainer = styled.div`
     container-type: size;
   }
 
+  // 12px on a card, MASTER.md. The radius scale tops out at 8 for a control and
+  // jumps to 16 for a dialog, and neither is what a card is, so this one is
+  // written out.
   .widget {
     background: var(--record-card-background-color);
-    border-radius: ${themeCssVariables.border.radius.md};
+    border-radius: 12px;
   }
 `;
 

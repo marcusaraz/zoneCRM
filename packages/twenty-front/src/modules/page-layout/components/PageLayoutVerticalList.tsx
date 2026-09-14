@@ -22,9 +22,17 @@ const StyledVerticalListContainer = styled.div<{
   isInPinnedTab: boolean;
   isSideColumnContext: boolean;
   shouldUseWhiteBackground: boolean;
+  isMobile: boolean;
 }>`
-  --record-card-background-color: ${({ shouldUseWhiteBackground }) =>
-    shouldUseWhiteBackground
+  // The pinned tab is the record's left column, and MASTER.md draws that as
+  // white cards on a ground rather than one sheet: the column itself paints
+  // nothing, so the #f5f5f7 behind it shows between the cards, and each card
+  // is white. Everywhere else keeps Twenty's single surface.
+  --record-card-background-color: ${({
+    shouldUseWhiteBackground,
+    isInPinnedTab,
+  }) =>
+    shouldUseWhiteBackground || isInPinnedTab
       ? themeCssVariables.background.primary
       : themeCssVariables.background.secondary};
   --viewport-filling-widget-editor-block-inset: ${({
@@ -40,22 +48,31 @@ const StyledVerticalListContainer = styled.div<{
   --widget-height: auto;
   --widget-scroll-overflow: visible;
 
-  background: var(--record-card-background-color);
+  background: ${({ isInPinnedTab, isMobile }) =>
+    isInPinnedTab && !isMobile
+      ? 'transparent'
+      : 'var(--record-card-background-color)'};
   display: flex;
   flex-direction: column;
+  // Eight between one card and the next, which is what makes a corner read as
+  // a corner rather than as a join.
+  gap: ${({ isInPinnedTab, isMobile }) =>
+    isInPinnedTab && !isMobile ? themeCssVariables.spacing[2] : '0'};
   min-height: ${({ isInEditMode }) => (isInEditMode ? '0' : '100%')};
   // The pinned tab sits next to the main tab area, so while editing it takes
   // that area's vertical padding to line their widgets up, and keeps the
   // tighter side-column one horizontally where the narrow column needs the
   // room.
-  padding: ${({ isInEditMode, isInPinnedTab, isSideColumnContext }) =>
+  padding: ${({ isInEditMode, isInPinnedTab, isSideColumnContext, isMobile }) =>
     isInEditMode
       ? isInPinnedTab
         ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}`
         : isSideColumnContext
           ? themeCssVariables.spacing[1]
           : themeCssVariables.spacing[2]
-      : '0'};
+      : isInPinnedTab && !isMobile
+        ? themeCssVariables.spacing[2]
+        : '0'};
 `;
 
 const StyledHeader = styled.div`
@@ -143,6 +160,7 @@ export const PageLayoutVerticalList = ({
     <StyledVerticalListContainer
       isInEditMode={isInEditMode}
       isInPinnedTab={isInPinnedTab}
+      isMobile={isMobile}
       isSideColumnContext={isSideColumnContext}
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
