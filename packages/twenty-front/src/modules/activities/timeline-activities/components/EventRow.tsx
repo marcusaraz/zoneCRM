@@ -84,10 +84,7 @@ const getTimelineActivityRenderer = ({
   return null;
 };
 
-export const EventRow = ({
-  event,
-  mainObjectMetadataItem,
-}: EventRowProps) => {
+export const EventRow = ({ event, mainObjectMetadataItem }: EventRowProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
