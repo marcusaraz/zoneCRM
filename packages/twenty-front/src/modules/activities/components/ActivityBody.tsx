@@ -7,16 +7,16 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 
 // C29, Marcus 14 September 2026: what somebody wrote, shown as they wrote it.
 //
-// Six lines of it, not a hundred pixels: six is enough to know whether this is
-// the one you are looking for and few enough that the next entry is still on
-// the screen, and a line is what a reader counts. Anything longer fades into
-// the card over its last line, which is how a reader knows there is more
-// without being told, and opens where it is.
+// Five lines of it, not a hundred pixels. It was six, and on 15 September he
+// took one off: five is still enough to know whether this is the one you are
+// looking for, and a timeline of notes stays a list rather than a wall. A line
+// is what a reader counts. Anything longer fades into the card over its last
+// visible line, which is how a reader knows there is more without being told,
+// and opens where it is.
 //
 // One component because the timeline and the Notes tab are the same promise
-// twice, and a rule about six lines kept in two places is a rule about five
-// lines by Christmas.
-const COLLAPSED_LINES = 6;
+// twice, so the number is changed here once and both follow.
+const COLLAPSED_LINES = 5;
 const LINE_HEIGHT = 1.5;
 const COLLAPSED_HEIGHT_EM = COLLAPSED_LINES * LINE_HEIGHT;
 

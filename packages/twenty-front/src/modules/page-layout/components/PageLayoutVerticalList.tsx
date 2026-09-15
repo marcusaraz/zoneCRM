@@ -183,7 +183,11 @@ export const PageLayoutVerticalList = ({
       isMobile={isMobile}
       isSideColumnContext={isSideColumnContext}
       isOnRecordGround={isOnRecordGround}
-      shouldUseWhiteBackground={!isOnRecordGround}
+      // What the cards are painted with is not what the list stands on. This
+      // stays the surface on every page, as it always was; only the list's own
+      // ground, inset and gap follow the record page. Tying the two together
+      // painted the right column's cards the raised grey instead of white.
+      shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
       <WorkflowDiagramAllowPageScrollContext.Provider value={hasPageScroll}>
         {isInEditMode && isDefined(leadingElement) && (
