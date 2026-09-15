@@ -20,7 +20,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { NavigationDrawerSearchInput } from '@/search-page/components/NavigationDrawerSearchInput';
 import {
   NavigationDrawerHeader,
   NavigationDrawerWorkspaceFooter,
@@ -140,18 +139,16 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          {/* Zone CRM, C36: one search, and it is in the record's top bar.
-              Two boxes that do the same thing is one of them being wrong, and
-              the sidebar now begins with the first thing anyone came for.
-              Settings keeps its own header. A phone keeps the search in its
-              bottom bar. */}
+          {/* Zone CRM, C36 as revised: one search, in the sidebar, under
+              Dashboard. It is placed with the navigation items rather than
+              here, so a phone and a desktop get the one box in the one place.
+              Settings keeps its own header. */}
           {(isSettingsDrawer || isMobile) && (
             <NavigationDrawerHeader
               showCollapseButton={isMobile || !isSettingsDrawer}
               showWorkspace
             />
           )}
-          {isMobile && !isSettingsDrawer && <NavigationDrawerSearchInput />}
           <StyledContent>{children}</StyledContent>
           {!isSettingsDrawer && isExpanded && !isMobile && (
             <NavigationDrawerWorkspaceFooter

@@ -105,17 +105,16 @@ const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
-// The panel itself is a card no longer. Marcus asked for that on 14 September
-// 2026: a white card holding other white cards made the page read as a box
-// inside a box. It keeps the 24 of air so nothing touches the column edge, and
-// what is a card in here says so for itself, exactly as the left column does.
+// The panel itself is a card no longer. The inset and the gap are the widget
+// list's, the same eight the left column uses, so there is nothing to set here:
+// padding of its own would have added to that and pushed the two columns out of
+// line, which is the thing being fixed.
 const StyledScrollWrapperContainer = styled.div`
   --record-card-background-color: ${themeCssVariables.background.primary};
 
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
-  padding: ${themeCssVariables.spacing[6]};
 
   // 12px on a card, MASTER.md, the same rule the left column carries.
   .widget {

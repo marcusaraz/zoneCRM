@@ -9,31 +9,21 @@ import { useOpenSearchResultsInSidePanel } from '@/search-page/hooks/useOpenSear
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledField = styled.label<{ pill?: boolean }>`
+// C36 as revised on 15 September 2026: the box is in the sidebar, under
+// Dashboard, and there is no second one in the record's top bar. It had two
+// shapes while it lived in two places; one place needs one shape. 32 tall with
+// the shortcut at its right end, measured off the Stitch sidebar.
+const StyledField = styled.label`
   align-items: center;
-  background: ${({ pill }) =>
-    pill
-      ? themeCssVariables.background.tertiary
-      : themeCssVariables.background.transparent.light};
-  border: ${({ pill }) =>
-    pill ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
-  // A pill in the record's top bar, a box in the sidebar: the bar is a row of
-  // controls and MASTER.md makes every control there a pill.
-  border-radius: ${({ pill }) =>
-    pill ? '999px' : themeCssVariables.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.light};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   cursor: text;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${({ pill }) => (pill ? '0' : themeCssVariables.spacing[3])};
-  margin-right: ${({ pill }) => (pill ? '0' : themeCssVariables.spacing[2])};
-  // The pill is 32 tall with the shortcut at its right end, measured off the
-  // Stitch screens (h-[32px], and the shortcut in the sidebar's search).
-  box-sizing: border-box;
-  height: ${({ pill }) => (pill ? '32px' : 'auto')};
-  padding: ${({ pill }) =>
-    pill
-      ? '0 12px'
-      : `${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
+  height: 32px;
+  padding: 0 ${themeCssVariables.spacing[2]};
 
   &:focus-within {
     background: ${themeCssVariables.background.primary};
@@ -78,11 +68,7 @@ const StyledInput = styled.input`
  * someone up costs nothing: the record being read stays where it is, and an
  * empty box puts the panel away again.
  */
-export const NavigationDrawerSearchInput = ({
-  variant,
-}: {
-  variant?: 'pill';
-} = {}) => {
+export const NavigationDrawerSearchInput = () => {
   const { t } = useLingui();
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { search } = useOpenSearchResultsInSidePanel();
@@ -92,7 +78,7 @@ export const NavigationDrawerSearchInput = ({
   };
 
   return (
-    <StyledField pill={variant === 'pill'}>
+    <StyledField>
       <StyledIcon>
         <IconSearch size={16} />
       </StyledIcon>
@@ -106,7 +92,7 @@ export const NavigationDrawerSearchInput = ({
         aria-label={t`Search`}
         onChange={handleChange}
       />
-      {variant === 'pill' && <StyledShortcut>⌘K</StyledShortcut>}
+      <StyledShortcut>⌘K</StyledShortcut>
     </StyledField>
   );
 };

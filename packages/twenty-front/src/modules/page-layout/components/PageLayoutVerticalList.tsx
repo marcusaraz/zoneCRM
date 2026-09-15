@@ -11,11 +11,15 @@ import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagr
 import { type Draggable } from '@dnd-kit/abstract';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
+import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { styled } from '@linaria/react';
 import { Fragment, type ReactNode, useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 
 const StyledVerticalListContainer = styled.div<{
   isInEditMode: boolean;
@@ -23,6 +27,7 @@ const StyledVerticalListContainer = styled.div<{
   isSideColumnContext: boolean;
   shouldUseWhiteBackground: boolean;
   isMobile: boolean;
+  isOnRecordGround: boolean;
 }>`
   // The pinned tab is the record's left column, and MASTER.md draws that as
   // white cards on a ground rather than one sheet: the column itself paints
@@ -48,29 +53,36 @@ const StyledVerticalListContainer = styled.div<{
   --widget-height: auto;
   --widget-scroll-overflow: visible;
 
-  background: ${({ isInPinnedTab, isMobile }) =>
-    isInPinnedTab && !isMobile
-      ? 'transparent'
-      : 'var(--record-card-background-color)'};
+  // Marcus, 15 September 2026: the two columns of a record are built the same
+  // way. The ground shows through, the cards sit directly on it, and the inset
+  // and the gap are the same eight on both sides. It read as white, grey, white
+  // before: a sheet holding a band holding a card.
+  background: ${({ isOnRecordGround }) =>
+    isOnRecordGround ? 'transparent' : 'var(--record-card-background-color)'};
   display: flex;
   flex-direction: column;
   // Eight between one card and the next, which is what makes a corner read as
   // a corner rather than as a join.
-  gap: ${({ isInPinnedTab, isMobile }) =>
-    isInPinnedTab && !isMobile ? themeCssVariables.spacing[2] : '0'};
+  gap: ${({ isOnRecordGround }) =>
+    isOnRecordGround ? themeCssVariables.spacing[2] : '0'};
   min-height: ${({ isInEditMode }) => (isInEditMode ? '0' : '100%')};
   // The pinned tab sits next to the main tab area, so while editing it takes
   // that area's vertical padding to line their widgets up, and keeps the
   // tighter side-column one horizontally where the narrow column needs the
   // room.
-  padding: ${({ isInEditMode, isInPinnedTab, isSideColumnContext, isMobile }) =>
+  padding: ${({
+    isInEditMode,
+    isInPinnedTab,
+    isSideColumnContext,
+    isOnRecordGround,
+  }) =>
     isInEditMode
       ? isInPinnedTab
         ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}`
         : isSideColumnContext
           ? themeCssVariables.spacing[1]
           : themeCssVariables.spacing[2]
-      : isInPinnedTab && !isMobile
+      : isOnRecordGround
         ? themeCssVariables.spacing[2]
         : '0'};
 `;
@@ -111,6 +123,14 @@ export const PageLayoutVerticalList = ({
 
   const { isInPinnedTab, isMobile, isSideColumnContext } =
     useIsSideColumnContext();
+  const { currentPageLayout } = useCurrentPageLayout();
+
+  // Both columns of a record page stand on the ground. The pinned one always
+  // did; the tab column was a white sheet of its own, which is what made the
+  // page read as a box inside a box. A dashboard is still one surface, and a
+  // phone still is, because there are no two columns to line up there.
+  const isOnRecordGround =
+    currentPageLayout?.type === PageLayoutType.RECORD_PAGE && !isMobile;
 
   const shouldUseSoloCanvasPresentation =
     layoutMode === PageLayoutTabLayoutMode.CANVAS &&
@@ -162,7 +182,8 @@ export const PageLayoutVerticalList = ({
       isInPinnedTab={isInPinnedTab}
       isMobile={isMobile}
       isSideColumnContext={isSideColumnContext}
-      shouldUseWhiteBackground={!isInPinnedTab || isMobile}
+      isOnRecordGround={isOnRecordGround}
+      shouldUseWhiteBackground={!isOnRecordGround}
     >
       <WorkflowDiagramAllowPageScrollContext.Provider value={hasPageScroll}>
         {isInEditMode && isDefined(leadingElement) && (

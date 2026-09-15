@@ -23,7 +23,10 @@ const StyledBar = styled.div<{
   hasTabList: boolean;
 }>`
   align-items: stretch;
-  background: ${themeCssVariables.background.secondary};
+  // Marcus, 15 September 2026: no white band around the tab strip. The bar is
+  // the top of the two columns under it and stands on the same ground they do,
+  // so the eye reads one page and not three stacked sheets.
+  background: ${themeCssVariables.background.tertiary};
   // The bottom line sits inside the box so the tab strip can fill the whole row
   // and land its active indicator on that line rather than above it.
   box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};

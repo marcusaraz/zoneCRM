@@ -59,8 +59,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     // A front component used to be in this list too, and it left a hole: a
     // component that draws nothing when it has nothing to say (the open tasks
     // on a person with none) became a card with no heading and no content, a
-    // twenty-pixel empty box on the card stack. Found on Oğuzhan Aydın's
-    // record on 14 September 2026. A heading is what makes an empty card read
+    // twenty-pixel empty box on the card stack, found on a person record on
+    // 14 September 2026. A heading is what makes an empty card read
     // as "nothing here" instead of as a mistake, so front components keep
     // theirs until a card can be told to leave when its component draws
     // nothing.

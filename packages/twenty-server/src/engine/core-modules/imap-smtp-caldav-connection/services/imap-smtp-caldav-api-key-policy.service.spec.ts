@@ -4,6 +4,9 @@ import { ImapSmtpCaldavApiKeyPolicyService } from './imap-smtp-caldav-api-key-po
 // refused, and a key that is not an admin is refused. Both are here, with the
 // case that should pass beside them so a refusal that refuses everything
 // cannot go unnoticed.
+//
+// The addresses are example.com on purpose. This repository is public, and a
+// colleague's real address is not a test fixture.
 
 const WORKSPACE_ID = 'workspace-id';
 const USER_WORKSPACE_ID = 'user-workspace-id';
@@ -51,10 +54,10 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
   it('lets an admin key connect the member own address', async () => {
     const service = build({
       canUpdateAllSettings: true,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
-    await expect(connect(service, 'naz@capital.works')).resolves.toBe(
+    await expect(connect(service, 'member@example.com')).resolves.toBe(
       USER_WORKSPACE_ID,
     );
   });
@@ -62,10 +65,10 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
   it('forgives the case of the address, which is the same mailbox', async () => {
     const service = build({
       canUpdateAllSettings: true,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
-    await expect(connect(service, '  Naz@Capital.Works ')).resolves.toBe(
+    await expect(connect(service, '  Member@Example.Com ')).resolves.toBe(
       USER_WORKSPACE_ID,
     );
   });
@@ -73,10 +76,10 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
   it('refuses another member address', async () => {
     const service = build({
       canUpdateAllSettings: true,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
-    await expect(connect(service, 'marcus@capital.works')).rejects.toThrow(
+    await expect(connect(service, 'somebody-else@example.com')).rejects.toThrow(
       'must be that member own address',
     );
   });
@@ -84,10 +87,10 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
   it('refuses a key whose role is not an admin', async () => {
     const service = build({
       canUpdateAllSettings: false,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
-    await expect(connect(service, 'naz@capital.works')).rejects.toThrow(
+    await expect(connect(service, 'member@example.com')).rejects.toThrow(
       'admin role',
     );
   });
@@ -95,14 +98,14 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
   it('finds the member from the address, with nothing else passed', async () => {
     const service = build({
       canUpdateAllSettings: true,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
     await expect(
       service.resolveMemberForApiKey({
         apiKeyId: API_KEY_ID,
         workspaceId: WORKSPACE_ID,
-        handle: 'naz@capital.works',
+        handle: 'member@example.com',
       }),
     ).resolves.toBe(USER_WORKSPACE_ID);
   });
@@ -110,7 +113,7 @@ describe('ImapSmtpCaldavApiKeyPolicyService', () => {
   it('refuses a member who is not in this workspace', async () => {
     const service = build({ canUpdateAllSettings: true, email: null });
 
-    await expect(connect(service, 'naz@capital.works')).rejects.toThrow(
+    await expect(connect(service, 'member@example.com')).rejects.toThrow(
       'was not found in this workspace',
     );
   });
@@ -123,14 +126,14 @@ describe('ImapSmtpCaldavApiKeyPolicyService, reading', () => {
   it('lets an admin key ask about a colleague', async () => {
     const service = build({
       canUpdateAllSettings: true,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
     await expect(
       service.resolveMemberForReader({
         apiKeyId: API_KEY_ID,
         workspaceId: WORKSPACE_ID,
-        handle: 'naz@capital.works',
+        handle: 'member@example.com',
       }),
     ).resolves.toBe(USER_WORKSPACE_ID);
   });
@@ -138,14 +141,14 @@ describe('ImapSmtpCaldavApiKeyPolicyService, reading', () => {
   it('refuses a key whose role is not an admin', async () => {
     const service = build({
       canUpdateAllSettings: false,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
     await expect(
       service.resolveMemberForReader({
         apiKeyId: API_KEY_ID,
         workspaceId: WORKSPACE_ID,
-        handle: 'naz@capital.works',
+        handle: 'member@example.com',
       }),
     ).rejects.toThrow('admin role');
   });
@@ -153,14 +156,14 @@ describe('ImapSmtpCaldavApiKeyPolicyService, reading', () => {
   it('lets a signed-in person ask about themselves', async () => {
     const service = build({
       canUpdateAllSettings: false,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
     await expect(
       service.resolveMemberForReader({
         sessionUserWorkspaceId: USER_WORKSPACE_ID,
         workspaceId: WORKSPACE_ID,
-        handle: 'naz@capital.works',
+        handle: 'member@example.com',
       }),
     ).resolves.toBe(USER_WORKSPACE_ID);
   });
@@ -168,14 +171,14 @@ describe('ImapSmtpCaldavApiKeyPolicyService, reading', () => {
   it('refuses a signed-in person asking about somebody else', async () => {
     const service = build({
       canUpdateAllSettings: false,
-      email: 'naz@capital.works',
+      email: 'member@example.com',
     });
 
     await expect(
       service.resolveMemberForReader({
         sessionUserWorkspaceId: 'a-different-member',
         workspaceId: WORKSPACE_ID,
-        handle: 'naz@capital.works',
+        handle: 'member@example.com',
       }),
     ).rejects.toThrow('needs an API key with an admin role');
   });
